@@ -1,9 +1,8 @@
 {
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/admin",        "destination": "/Dashboard.html" },
     { "source": "/admin/:path*", "destination": "/Dashboard.html" },
-    { "source": "/:path*",       "destination": "/Filamour.html" }
+    { "source": "/",             "destination": "/Filamour.html" }
   ],
   "headers": [
     {
