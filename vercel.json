@@ -1,0 +1,14 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/admin",        "destination": "/Dashboard.html" },
+    { "source": "/admin/:path*", "destination": "/Dashboard.html" },
+    { "source": "/:path*",       "destination": "/Filamour.html" }
+  ],
+  "headers": [
+    {
+      "source": "/Dashboard.html",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    }
+  ]
+}

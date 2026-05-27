@@ -1,0 +1,10 @@
+{
+  "name": "filamour-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Filamour storefront and admin dashboard (static HTML + vanilla JS).",
+  "scripts": {
+    "dev": "npx serve public -l 5173",
+    "build": "echo 'No build step - static site' && exit 0"
+  }
+}
