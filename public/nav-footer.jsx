@@ -70,7 +70,7 @@ const MobileMenu = ({ onClose }) => {
           <li><a href="#/" onClick={onClose}>Home</a></li>
           <li><a href="#/shop" onClick={onClose}>Shop</a></li>
           <li><a href="#/our-story" onClick={onClose}>Our Story</a></li>
-          <li><a href="#/artisans" onClick={onClose}>The Artisans</a></li>
+          <li><a href="#/materials" onClick={onClose}>The Materials</a></li>
           <li><a href="#/gift-guide" onClick={onClose}>Gift Guide</a></li>
           <li><a href="#/bespoke" onClick={onClose}>Bespoke</a></li>
         </ul>
@@ -124,7 +124,7 @@ const Nav = () => {
             <a href="#/" className={active("/") && route === "/" ? "active" : ""}>Home</a>
             <a href="#/shop" className={active("/shop") ? "active" : ""} onMouseEnter={() => setMega(true)}>Shop</a>
             <a href="#/our-story" className={active("/our-story") ? "active" : ""}>Our Story</a>
-            <a href="#/artisans" className={active("/artisans") ? "active" : ""}>The Artisans</a>
+            <a href="#/materials" className={active("/materials") ? "active" : ""}>The Materials</a>
             <a href="#/lookbook" className={active("/lookbook") ? "active" : ""}>Lookbook</a>
             <a href="#/gift-guide" className={active("/gift-guide") ? "active" : ""}>Gift Guide</a>
           </div>
@@ -161,8 +161,8 @@ const Footer = () => (
               <div className="tagline">Thread of Love</div>
             </div>
           </div>
-          <p className="blurb">Heirloom hand-smocked children's wear, crafted by skilled artisans in Sri Lanka from fine muslin and organic cotton.</p>
-          <div className="footer-wa"><Icon name="whatsapp" size={16}/> +94 77 000 0000</div>
+          <p className="blurb">Heirloom children's wear made from GOTS-certified organic cotton and fine muslin. The fabrics we'd choose for a baby of our own, and nothing else.</p>
+          <div className="footer-wa"><Icon name="whatsapp" size={16}/> Message us on WhatsApp</div>
         </div>
         <div>
           <h4>Shop</h4>
@@ -195,7 +195,7 @@ const Footer = () => (
             <li><a href="#"><Icon name="fb" size={14}/> &nbsp; filamour</a></li>
             <li><a href="#"><Icon name="tiktok" size={14}/> &nbsp; @filamour</a></li>
           </ul>
-          <h4 style={{ marginTop: 28 }}>Letters from the workshop</h4>
+          <h4 style={{ marginTop: 28 }}>The occasional letter</h4>
           <form className="footer-email" onSubmit={(e) => e.preventDefault()}>
             <input placeholder="Your email" type="email" />
             <button type="submit">Subscribe →</button>
@@ -203,7 +203,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="footer-bottom">
-        <div>© 2026 Filamour. Handcrafted in Sri Lanka.</div>
+        <div>© 2026 Filamour. Made by hand, made to last.</div>
         <div style={{ display: "flex", gap: 24 }}>
           <a href="#">Privacy Policy</a>
           <a href="#">Terms</a>

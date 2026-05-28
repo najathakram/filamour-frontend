@@ -9,7 +9,6 @@ const ProductPage = ({ slug }) => {
   const [gift, setGift] = React.useState(false);
   const [giftMsg, setGiftMsg] = React.useState("");
   const saved = wishlist.includes(product.slug);
-  const artisan = ARTISANS.find(a => a.name === product.artisan);
 
   const onAdd = () => addToCart(product.slug, size);
   const waMsg = encodeURIComponent(`Hi, I would like to order a ${product.name} in size ${size}. Can you confirm availability and payment details? Thank you.`);
@@ -67,32 +66,27 @@ const ProductPage = ({ slug }) => {
               <Btn variant="secondary" block onClick={() => toggleWish(product.slug)}>
                 <Icon name={saved ? "heart-fill" : "heart"} size={15}/> {saved ? "Saved to wishlist" : "Add to wishlist"}
               </Btn>
-              <a href={`https://wa.me/94770000000?text=${waMsg}`} target="_blank" rel="noopener" className="btn btn-wa btn-block">
+              <a href={`https://wa.me/447000000000?text=${waMsg}`} target="_blank" rel="noopener" className="btn btn-wa btn-block">
                 <Icon name="whatsapp" size={16}/> Order via WhatsApp
               </a>
             </div>
 
             <div className="accord">
               <AccordItem id="piece" open={accord} onToggle={setAccord} title="The Piece">
-                <p>A hand-smocked bishop dress, cut from soft cotton-muslin with a high yoke and gathered fullness through the body. The smocking panel uses a honeycomb and cable stitch combination, worked entirely by hand over four hours.</p>
-                <p><strong>Fabric:</strong> 100% organic cotton-muslin, double-layered through the bodice. <strong>Closure:</strong> three covered buttons at the back. <strong>Care:</strong> hand wash in cool water, lay flat to dry, iron on low.</p>
-                <p><strong>Production time:</strong> {product.avail.type === "ready" ? "in stock, ships in 2 working days" : `${product.avail.days} working days from order`}.</p>
+                <p>A softly-gathered bishop silhouette cut from cotton-muslin, with a high yoke that sits gently above the collarbones and never pulls. The smocked panel gives at the chest as your baby breathes — no waistband, no elastic dig.</p>
+                <p><strong>Fabric:</strong> 100% GOTS-certified organic cotton-muslin, double-layered through the bodice for shape and softness. <strong>Closure:</strong> three covered buttons at the back, sized large enough for adult fingers in a hurry. <strong>Care:</strong> machine wash cool on a delicate cycle, hang to dry, warm iron if you like. It will be softer in three months than the day it arrived.</p>
+                <p><strong>Availability:</strong> {product.avail.type === "ready" ? "in stock, ships within 2 working days." : `made to order — ${product.avail.days} working days, then shipped.`}</p>
               </AccordItem>
-              <AccordItem id="artisan" open={accord} onToggle={setAccord} title={`Made by ${product.artisan}`}>
-                <div className="artisan-mini">
-                  <div className="avatar"/>
-                  <div>
-                    <div className="name">{artisan?.name}</div>
-                    <div className="yr">{artisan?.years} years of the craft</div>
-                  </div>
-                </div>
-                <p style={{ marginTop: 16 }}>{artisan?.story}</p>
-                <a href="#/artisans" className="link" style={{ display: "inline-block", marginTop: 8, fontSize: 13, letterSpacing: "0.08em", borderBottom: "0.5px solid var(--charcoal)", paddingBottom: 2 }}>Meet all our artisans</a>
+              <AccordItem id="materials" open={accord} onToggle={setAccord} title="Why this fabric, for your baby">
+                <p><strong>GOTS-certified organic cotton.</strong> Grown without pesticides — important, because conventional cotton is one of the most chemically-treated crops on earth, and traces of those chemicals can linger in the fibers that sit against your baby's skin.</p>
+                <p><strong>A loose, breathable weave.</strong> Air moves through it, so your baby doesn't overheat. Synthetic blends (polyester, acrylic) trap heat against the body and can leave the skin clammy after an hour of wear. Muslin does the opposite — it cools as it breathes.</p>
+                <p><strong>Softer with every wash.</strong> Natural cotton softens; synthetics pill and roughen. The piece you buy today will feel kinder against the skin in six months than it did when it arrived.</p>
+                <p><strong>What you won't find:</strong> optical brighteners, formaldehyde finishes, azo dyes, or anti-wrinkle treatments. <a href="#/materials" className="link">More on our materials →</a></p>
               </AccordItem>
               <AccordItem id="delivery" open={accord} onToggle={setAccord} title="Delivery & Returns">
-                <p><strong>Sri Lanka:</strong> 2-3 working days in Colombo. Cash on delivery available.</p>
-                <p><strong>International:</strong> 7-14 days via EMS, 3-5 days via DHL. Tracked, signed-for shipping.</p>
-                <p><strong>Returns:</strong> free returns within 7 days if unworn, with tags attached.</p>
+                <p><strong>Worldwide shipping</strong> with tracked, signed-for delivery. UK & EU: 3-5 days via DHL. North America: 4-7 days via DHL. Rest of world: 7-14 days via EMS.</p>
+                <p><strong>Returns:</strong> free returns within 14 days if unworn, with tags attached. We want you to be sure.</p>
+                <p><strong>Gift orders:</strong> we'll never include a receipt or price. Just the piece, the card, and the wrapping.</p>
               </AccordItem>
             </div>
 
@@ -164,65 +158,104 @@ const AccordItem = ({ id, open, onToggle, title, children }) => {
 const OurStoryPage = () => (
   <div className="page editorial">
     <div className="editorial-hero">
-      <FmImage src={window.IMG.ourStoryHero} alt="Filamour workshop"/>
-      <h1>A story made by hand</h1>
+      <FmImage src={window.IMG.ourStoryHero} alt="Filamour piece, softly folded"/>
+      <h1>For the way they should feel</h1>
     </div>
     <div className="eyebrow gold" style={{ marginBottom: 12 }}>Our Story</div>
-    <p className="lead">Filamour began with a simple question: why is it so hard to find truly beautiful, honestly-made clothing for the smallest people?</p>
-    <h2>Why Filamour exists</h2>
-    <p>Our founder spent her first months as a new mother searching for garments that felt right — pieces with the softness of muslin, the structure of a proper bishop dress, the quiet beauty of work done by hand. What she found instead was mass-produced sameness, dressed up in the language of luxury.</p>
-    <p>So she walked the hill country of Sri Lanka, where her grandmother had learned smocking decades before, and found the artisans who still kept the craft alive. Filamour is built on their hands, their patience, and their patterns.</p>
-    <h2>The craft</h2>
-    <p>Hand smocking is a centuries-old technique. A row of pleats is gathered into the cloth, then embroidered through by hand, stitch by stitch, in patterns named after the things they resemble — honeycomb, wave, cable, diamond. A finished bishop yoke can take three hours of careful work.</p>
-    <div className="fullwidth-img"><FmImage src={window.IMG.artisanPortraits[1]} alt="Smocking detail"/></div>
-    <h2>The materials</h2>
-    <p>We work with two fabrics only: fine cotton-muslin, woven for breathability and the way it falls; and certified organic cotton, chosen for what it doesn't carry. Both are sourced from family mills, dyed without azo compounds, and tested for what's against the skin.</p>
+    <p className="lead">Filamour began the night a new mother held up two baby dresses in a high street shop and realised one was a glossy-finish polyester and the other had been sprayed with a wrinkle-release chemical. Neither was going on her daughter.</p>
+    <h2>Why we exist</h2>
+    <p>Babies wear what we give them. They can't tell us the synthetic blend is making them sweat, or that the seam is rubbing the back of the neck raw, or that the "soft cotton" hangtag was attached to a fabric chemically treated with a finish you wouldn't put on your own pillow. We started Filamour because the people making the smallest, most-loved clothes deserve the most honest fabric and the most careful sewing.</p>
+    <h2>What we obsess over</h2>
+    <p>The hand of the fabric. The drape on a small body. How a seam sits behind the knee when your baby is sitting on the floor. Whether the natural cotton came from a field that was sprayed with something that shouldn't be against newborn skin. Whether the dye held in the wash. Whether the buttons are sewn on tightly enough that you'll never find one in a mouth.</p>
+    <div className="fullwidth-img"><FmImage src={window.IMG.artisanPortraits[1]} alt="Soft cotton-muslin, folded"/></div>
+    <h2>The materials, only two</h2>
+    <p>We make every Filamour piece from one of two fabrics. <strong>GOTS-certified organic cotton-muslin</strong> for the warmth of summer and the layers of every other season — breathable, light, gentler with every wash. <strong>Heavyweight organic cotton</strong> for our pinafores, jackets, and the structured pieces. That's the whole list. No polyester blends, no chemical "easy-care" finishes, no surprises against the skin.</p>
     <h2>The promise</h2>
-    <p>Every Filamour piece is made by someone whose name we know, in a workshop we visit each week. The garment that arrives at your door has been touched, checked, folded, and wrapped by people who care that it is right. That, we think, is what luxury actually means.</p>
+    <p>Every piece is checked twice — once at the sewing table, once by a person whose only job that day is to make sure nothing leaves with a loose thread, a rough seam, or a button that wouldn't survive a determined two-year-old. Then it's folded, wrapped, and sent. That is what luxury for babies should actually mean: not a price tag, but a fabric you'd be glad to find against your own skin.</p>
     <div style={{ textAlign: "center", marginTop: 64 }}>
-      <Btn variant="primary" onClick={() => navigate("/artisans")}>Meet the artisans who make every piece</Btn>
+      <Btn variant="primary" onClick={() => navigate("/materials")}>Read more on our materials</Btn>
     </div>
   </div>
 );
 
-// ===================== ARTISANS =====================
-const ArtisansPage = () => (
-  <div className="page">
-    <div className="wrap artisans-page">
-      <div className="artisans-intro">
-        <div className="eyebrow gold" style={{ marginBottom: 16 }}>The Workshop</div>
-        <h1>The hands behind every piece</h1>
-        <p>Our artisans have practiced the craft of hand smocking for decades. Each garment carries their skill and their story.</p>
-      </div>
+// ===================== MATERIALS =====================
+const MaterialsPage = () => {
+  const used = [
+    {
+      title: "GOTS-certified organic cotton",
+      cert: "GOTS · OEKO-TEX Standard 100",
+      use: "Our day dresses, sets, layettes, pinafores.",
+      why: "Grown without synthetic pesticides, processed without chlorine bleach or formaldehyde finishes. The full chain — field, mill, dye-house — is audited, so what reaches your baby is the cotton, and only the cotton.",
+      feel: "Soft from the first wash, softer after the tenth. Holds shape, breathes, and doesn't pill the way blends do.",
+    },
+    {
+      title: "Fine cotton-muslin",
+      cert: "Organic · loose-weave · undyed or low-impact dyed",
+      use: "Our bishop dresses, rompers, summer pieces.",
+      why: "Loose-woven, so air moves through it. A baby's body temperature rises and falls faster than yours — they need something that breathes, not something that traps heat against the skin.",
+      feel: "Barely-there weight, drapes like a whisper, gets softer every time it's washed. The fabric your grandmother put against newborn skin, for good reason.",
+    },
+  ];
 
-      {ARTISANS.map((a, i) => (
-        <div key={a.name} className={`artisan-card ${i % 2 === 1 ? "flip" : ""}`}>
-          <div className="portrait">
-            <FmImage src={window.IMG.artisanPortraits[i]} alt={`Portrait of ${a.name}`}/>
-          </div>
-          <div className="artisan-detail">
-            <div className="eyebrow gold">Artisan no. 0{i+1}</div>
-            <h2 style={{ marginTop: 8 }}>{a.name}</h2>
-            <div className="years">{a.years} years of the craft</div>
-            <p>{a.story}</p>
-            <a className="link" href="#/shop">See her pieces →</a>
+  const avoided = [
+    { name: "Polyester, acrylic, nylon blends", reason: "Plastic-based fibers. Trap heat against the body, shed microplastics in the wash, can leave skin clammy and irritated after an hour of wear. Common in fast-fashion baby clothes." },
+    { name: "Conventional (non-organic) cotton", reason: "One of the most pesticide-treated crops in the world. Residues can remain in the fibers — not what you want against thin newborn skin." },
+    { name: "Bamboo viscose / rayon", reason: "Marketed as natural; chemically processed into fiber using sodium hydroxide and carbon disulfide. The finished thread is technically a regenerated cellulose, not a plant fiber. We don't use it." },
+    { name: "Anti-wrinkle, easy-care, stain-release finishes", reason: "Usually formaldehyde-based or PFC-based. Designed to make laundry easy for adults; not designed for what sits against a baby's face when they sleep." },
+    { name: "Optical brighteners and azo dyes", reason: "Brighteners make whites look extra-white by reflecting UV. Some azo dyes break down into compounds you really don't want in skin contact. Common in mass-market children's wear, banned in the EU at certain levels, never used in ours." },
+  ];
+
+  return (
+    <div className="page">
+      <div className="wrap" style={{ padding: "72px 0 96px" }}>
+        <div style={{ maxWidth: 780, margin: "0 auto 64px", textAlign: "center" }}>
+          <div className="eyebrow gold" style={{ marginBottom: 16 }}>The Materials</div>
+          <h1 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 52, lineHeight: 1.1 }}>What's against the skin matters</h1>
+          <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 300, fontSize: 20, marginTop: 20, color: "var(--charcoal-soft)" }}>A baby's skin is up to 30% thinner than yours. It absorbs more. It reacts faster. We chose Filamour's two fabrics with that in mind — and ruled almost everything else out.</p>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 56, marginBottom: 88 }}>
+          {used.map((m, i) => (
+            <div key={m.title} style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 56, alignItems: "center", background: "var(--white)", padding: 48 }}>
+              <div style={{ aspectRatio: "4/5", overflow: "hidden" }}>
+                <FmImage src={window.IMG.artisanPortraits[i] || window.IMG.artisanWork} alt={m.title}/>
+              </div>
+              <div>
+                <div className="eyebrow gold">What we use no. 0{i+1}</div>
+                <h2 style={{ fontFamily: "var(--display)", fontWeight: 400, fontSize: 38, marginTop: 8 }}>{m.title}</h2>
+                <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gold)", marginTop: 8 }}>{m.cert}</div>
+                <p style={{ marginTop: 24 }}><strong>Where you'll find it:</strong> {m.use}</p>
+                <p style={{ marginTop: 12 }}><strong>Why we chose it:</strong> {m.why}</p>
+                <p style={{ marginTop: 12 }}><strong>How it feels:</strong> {m.feel}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ maxWidth: 880, margin: "0 auto", background: "var(--white)", padding: "56px 48px" }}>
+          <div className="eyebrow gold" style={{ marginBottom: 16, textAlign: "center" }}>What you won't find in a Filamour piece</div>
+          <h2 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 36, textAlign: "center", lineHeight: 1.15 }}>The list of things we ruled out is longer than the list of things we use</h2>
+          <div style={{ marginTop: 48, display: "grid", gap: 28 }}>
+            {avoided.map(a => (
+              <div key={a.name} style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 24, paddingBottom: 24, borderBottom: "0.5px solid var(--line)" }}>
+                <div style={{ fontFamily: "var(--display)", fontSize: 18, color: "var(--charcoal)" }}>{a.name}</div>
+                <div style={{ color: "var(--charcoal-soft)", lineHeight: 1.7 }}>{a.reason}</div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
 
-      <div style={{ background: "var(--white)", padding: "64px 48px", textAlign: "center", marginTop: 32 }}>
-        <div className="eyebrow gold" style={{ marginBottom: 16 }}>Watch the craft</div>
-        <h2 className="h-display" style={{ fontSize: 36 }}>Three hours of hand work, in three minutes</h2>
-        <div style={{ aspectRatio: "16/9", maxWidth: 900, margin: "40px auto 0", background: "linear-gradient(135deg, #5a4a3c, #2e2926)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ivory)", position: "relative" }}>
-          <button style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(245,239,230,0.95)", color: "var(--charcoal)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Icon name="play" size={26}/>
-          </button>
-          <div style={{ position: "absolute", bottom: 20, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.6 }}>Video · Artisan hand smocking close-up</div>
+        <div style={{ maxWidth: 780, margin: "72px auto 0", textAlign: "center" }}>
+          <div className="eyebrow gold" style={{ marginBottom: 16 }}>How we check</div>
+          <h2 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 36, lineHeight: 1.15 }}>Every batch, every piece, every seam</h2>
+          <p style={{ marginTop: 20, color: "var(--charcoal-soft)", lineHeight: 1.8 }}>Each new batch of fabric is washed at 40°C and inspected for shrinkage, colour hold, and how it feels against the inside of the wrist after a full 24 hours. Every finished piece is felt for seam roughness before it's folded. We'd rather scrap a piece than ship one we wouldn't put on a baby we love.</p>
+          <div style={{ marginTop: 40 }}>
+            <Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn>
+          </div>
         </div>
-        <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontSize: 19, marginTop: 28, color: "var(--charcoal-soft)" }}>Every dress takes three hours of hand work.</p>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
-Object.assign(window, { ProductPage, OurStoryPage, ArtisansPage, AccordItem });
+Object.assign(window, { ProductPage, OurStoryPage, MaterialsPage, AccordItem });

@@ -4,7 +4,7 @@ const CheckoutPage = () => {
   const { ccy } = useCurrency();
   const [step, setStep] = React.useState(1);
   const [done, setDone] = React.useState(false);
-  const [shipping, setShipping] = React.useState({ name: "", email: "", phone: "", address: "", city: "Colombo", country: "Sri Lanka", postal: "" });
+  const [shipping, setShipping] = React.useState({ name: "", email: "", phone: "", address: "", city: "", country: "United Kingdom", postal: "" });
   const [method, setMethod] = React.useState("card");
 
   const subtotal = cart.reduce((s, it) => s + (PRODUCTS.find(p => p.slug === it.slug)?.priceLKR || 0), 0);
@@ -69,7 +69,7 @@ const CheckoutPage = () => {
                     <div><label className="form-label">Postal code</label><input className="form-input" value={shipping.postal} onChange={e => setShipping({...shipping, postal: e.target.value})}/></div>
                     <div className="span-2"><label className="form-label">Country</label>
                       <select className="form-select" value={shipping.country} onChange={e => setShipping({...shipping, country: e.target.value})}>
-                        <option>Sri Lanka</option><option>United Kingdom</option><option>United States</option><option>India</option><option>Australia</option>
+                        <option>United Kingdom</option><option>United States</option><option>Canada</option><option>Australia</option><option>Ireland</option><option>Germany</option><option>France</option><option>Netherlands</option><option>United Arab Emirates</option><option>Singapore</option><option>India</option><option>Other</option>
                       </select>
                     </div>
                   </div>
@@ -85,9 +85,9 @@ const CheckoutPage = () => {
                 <div className="dash-card-head"><h3>Delivery method</h3></div>
                 <div className="dash-card-body padded">
                   {[
-                    { id: "std", n: "Standard · 2-3 days (Colombo)", p: subtotal > 15000 ? "Free" : "LKR 800" },
-                    { id: "ems", n: "EMS International · 7-14 days", p: "from £60" },
-                    { id: "dhl", n: "DHL Express · 3-5 days", p: "from £90" },
+                    { id: "uk",  n: "United Kingdom · 2-4 working days · tracked",       p: "£12 (free over £120)" },
+                    { id: "dhl", n: "International DHL Express · 3-7 working days",        p: "from £35" },
+                    { id: "ems", n: "International EMS · 7-14 working days · tracked",     p: "from £60" },
                   ].map((o, i) => (
                     <label key={o.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 16, border: "0.5px solid var(--line)", borderRadius: 4, marginBottom: 10, cursor: "pointer" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -109,10 +109,9 @@ const CheckoutPage = () => {
                 <div className="dash-card-head"><h3>Payment</h3></div>
                 <div className="dash-card-body padded">
                   {[
-                    { id: "card", t: "Card", d: "Visa, Mastercard, Amex" },
-                    { id: "wa",   t: "WhatsApp + bank transfer", d: "Sri Lanka only" },
-                    { id: "pp",   t: "PayPal", d: "International" },
-                    { id: "cod",  t: "Cash on delivery", d: "Colombo only" },
+                    { id: "card", t: "Card", d: "Visa, Mastercard, Amex, Apple Pay, Google Pay" },
+                    { id: "pp",   t: "PayPal", d: "Buyer protection, worldwide" },
+                    { id: "wa",   t: "WhatsApp + bank transfer", d: "Message us and we'll send instructions" },
                   ].map(o => (
                     <label key={o.id} style={{ display: "flex", alignItems: "center", padding: 16, border: "0.5px solid " + (method === o.id ? "var(--gold)" : "var(--line)"), borderRadius: 4, marginBottom: 10, cursor: "pointer", gap: 12 }} onClick={() => setMethod(o.id)}>
                       <input type="radio" name="pay" checked={method === o.id} onChange={() => setMethod(o.id)}/>
@@ -178,7 +177,7 @@ const JournalPage = () => {
   const articles = [
     { slug: "honeycomb-stitch", title: "Why honeycomb is our favourite stitch", excerpt: "Kamala on the pattern she has worked for twenty-two years.", date: "MAY 2026" },
     { slug: "muslin", title: "On muslin, and what it is for", excerpt: "The fabric we choose for our smallest pieces — and why.", date: "APR 2026" },
-    { slug: "workshop", title: "A morning in the workshop", excerpt: "Photographs from one of our quieter days in Colombo.", date: "MAR 2026" },
+    { slug: "fabric-test", title: "What we test before a fabric makes the cut", excerpt: "The shrinkage check, the 24-hour skin test, and the seam-roughness pass.", date: "MAR 2026" },
   ];
   return (
     <div className="page">
@@ -218,7 +217,7 @@ const SearchOverlay = ({ onClose }) => {
         <div className="wrap" style={{ maxWidth: 880, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, borderBottom: "0.5px solid var(--charcoal)", paddingBottom: 12 }}>
             <Icon name="search" size={22}/>
-            <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Search pieces, occasions, artisans…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--display)", fontSize: 28, fontWeight: 300 }}/>
+            <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Search pieces, occasions, materials…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--display)", fontSize: 28, fontWeight: 300 }}/>
             <button onClick={onClose} style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase" }}>Esc · Close</button>
           </div>
           <div style={{ marginTop: 24 }}>

@@ -41,8 +41,8 @@ const PaymentsSection = () => (
           {[
             { name: "Stripe · Card", status: "active", id: "Connected · acct_8K2pq", icon: "check" },
             { name: "PayPal", status: "active", id: "filamour@studio.com", icon: "check" },
-            { name: "Bank transfer (Sri Lanka)", status: "active", id: "BOC · ****8203", icon: "check" },
-            { name: "Cash on delivery", status: "active", id: "Colombo only", icon: "check" },
+            { name: "Bank transfer",     status: "active",    id: "Wise · ****8203",    icon: "check" },
+            { name: "Apple Pay",         status: "active",    id: "via Stripe",          icon: "check" },
             { name: "WhatsApp Pay", status: "available", id: "Not connected", icon: "plus" },
           ].map(m => (
             <div key={m.name} style={{ display: "flex", alignItems: "center", padding: "16px 22px", borderBottom: "0.5px solid var(--line)", gap: 14 }}>
@@ -100,10 +100,10 @@ const PayoutsSection = () => (
       <div className="dash-card-head"><h3>Bank account</h3></div>
       <div className="dash-card-body padded">
         <div className="form-grid">
-          <div><label className="form-label">Account holder</label><input className="form-input" defaultValue="Filamour (Pvt) Ltd."/></div>
-          <div><label className="form-label">Bank</label><select className="form-select"><option>Bank of Ceylon</option><option>Commercial Bank</option><option>HSBC</option></select></div>
+          <div><label className="form-label">Account holder</label><input className="form-input" defaultValue="Filamour Ltd."/></div>
+          <div><label className="form-label">Bank</label><select className="form-select"><option>Wise Business</option><option>HSBC</option><option>Monzo Business</option><option>Revolut Business</option></select></div>
           <div><label className="form-label">Account number</label><input className="form-input" defaultValue="•••• •••• 8203"/></div>
-          <div><label className="form-label">Branch</label><input className="form-input" defaultValue="Colombo Fort"/></div>
+          <div><label className="form-label">Sort code / IBAN</label><input className="form-input" defaultValue="GB •• WISE •••• ••••"/></div>
           <div className="span-2"><label className="form-label">Payout schedule</label>
             <div style={{ display: "flex", gap: 10 }}>
               <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, padding: 10, border: "0.5px solid var(--gold)", borderRadius: 4, flex: 1 }}><input type="radio" name="sch" defaultChecked/> Twice monthly · 1st & 15th</label>
@@ -118,9 +118,14 @@ const PayoutsSection = () => (
   </>
 );
 
-// ===== ARTISANS =====
+// ===== MAKERS (internal — production team) =====
+const MAKERS = [
+  { name: "Studio 01", years: 22, story: "Studio 01 leads our bishop dresses and christening gowns. Specialises in the soft-yoke construction and the hand-finished hem we use on all our heirloom pieces." },
+  { name: "Studio 02", years: 14, story: "Studio 02 produces our rompers, day dresses, and the cap-sleeve everyday line. Known for the precise gathering work that makes our smocking sit flat against the chest." },
+  { name: "Studio 03", years: 9,  story: "Studio 03 brings a modern eye to traditional patterns. Handles our seasonal sets and the diamond-lattice pattern that runs through the festive collection." },
+];
 const ArtisansSection = () => {
-  const team = ARTISANS.map((a, i) => ({
+  const team = MAKERS.map((a, i) => ({
     ...a,
     queue: [6, 4, 3][i],
     monthRev: [284000, 196000, 142000][i],
@@ -129,7 +134,7 @@ const ArtisansSection = () => {
   return (
     <>
       <div className="kpi-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
-        <KPI label="Active artisans" value="3" delta={0} spark={[3,3,3,3,3,3,3,3,3,3,3,3]}/>
+        <KPI label="Active makers" value="3" delta={0} spark={[3,3,3,3,3,3,3,3,3,3,3,3]}/>
         <KPI label="In production" value="13" delta={8.0} spark={[8,9,9,10,10,11,11,12,12,12,13,13]}/>
         <KPI label="Avg on-time" value="98%" delta={1.2} spark={[95,96,96,97,97,97,98,98,98,98,98,98]}/>
         <KPI label="Output · 30d" value="42 pieces" delta={6.0} spark={[24,28,30,32,34,36,38,40,40,41,42,42]}/>
@@ -137,8 +142,8 @@ const ArtisansSection = () => {
 
       <div className="dash-card">
         <div className="dash-card-head">
-          <h3>Workshop team</h3>
-          <button className="btn btn-primary btn-sm">+ Add artisan</button>
+          <h3>Production team</h3>
+          <button className="btn btn-primary btn-sm">+ Add maker</button>
         </div>
         <div className="dash-card-body padded">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
@@ -405,9 +410,9 @@ const SettingsSection = () => {
             <div><label className="form-label">Store name</label><input className="form-input" defaultValue="Filamour"/></div>
             <div><label className="form-label">Tagline</label><input className="form-input" defaultValue="Thread of Love"/></div>
             <div><label className="form-label">Business email</label><input className="form-input" defaultValue="studio@filamour.com"/></div>
-            <div><label className="form-label">WhatsApp number</label><input className="form-input" defaultValue="+94 77 000 0000"/></div>
-            <div className="span-2"><label className="form-label">Workshop address</label><input className="form-input" defaultValue="14/2 Flower Road, Colombo 07, Sri Lanka"/></div>
-            <div className="span-2"><label className="form-label">About (footer)</label><textarea className="form-text" rows="3" defaultValue="Heirloom hand-smocked children's wear, crafted by skilled artisans in Sri Lanka from fine muslin and organic cotton."/></div>
+            <div><label className="form-label">WhatsApp number</label><input className="form-input" defaultValue="+44 7000 000 000"/></div>
+            <div className="span-2"><label className="form-label">Studio address</label><input className="form-input" defaultValue="Studio 14, Westbourne Park, London W11"/></div>
+            <div className="span-2"><label className="form-label">About (footer)</label><textarea className="form-text" rows="3" defaultValue="Heirloom children's wear made from GOTS-certified organic cotton and fine muslin. The fabrics we'd choose for a baby of our own, and nothing else."/></div>
           </div>
         )}
         {tab === "shipping" && (
@@ -439,10 +444,10 @@ const SettingsSection = () => {
             <table className="dash-tbl" style={{ border: "0.5px solid var(--line)", borderRadius: 4 }}>
               <thead><tr><th>Currency</th><th>Rate (1 LKR =)</th><th>Display</th><th>Status</th></tr></thead>
               <tbody>
-                <tr><td className="strong">LKR · Sri Lankan Rupee</td><td>1.00</td><td>LKR 16,500</td><td><StatusPill s="active"/></td></tr>
-                <tr><td className="strong">GBP · Pound Sterling</td><td><input className="form-input" defaultValue="0.00278" style={{ width: 100 }}/></td><td>£46</td><td><StatusPill s="active"/></td></tr>
-                <tr><td className="strong">USD · US Dollar</td><td><input className="form-input" defaultValue="0.00339" style={{ width: 100 }}/></td><td>$56</td><td><StatusPill s="active"/></td></tr>
-                <tr><td className="strong">EUR · Euro</td><td>—</td><td>—</td><td><StatusPill s="neutral"/></td></tr>
+                <tr><td className="strong">GBP · Pound Sterling</td><td>1.00 (base)</td><td>£46</td><td><StatusPill s="active"/></td></tr>
+                <tr><td className="strong">USD · US Dollar</td><td><input className="form-input" defaultValue="1.27"  style={{ width: 100 }}/></td><td>$58</td><td><StatusPill s="active"/></td></tr>
+                <tr><td className="strong">EUR · Euro</td><td><input className="form-input" defaultValue="1.16"  style={{ width: 100 }}/></td><td>€53</td><td><StatusPill s="active"/></td></tr>
+                <tr><td className="strong">AUD · Australian Dollar</td><td><input className="form-input" defaultValue="1.92"  style={{ width: 100 }}/></td><td>A$88</td><td><StatusPill s="active"/></td></tr>
               </tbody>
             </table>
           </div>

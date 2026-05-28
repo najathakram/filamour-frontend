@@ -41,7 +41,7 @@ const HomePage = () => {
           <div className="section-head">
             <div className="left">
               <h2>New Arrivals</h2>
-              <div className="sub">The latest from our artisans</div>
+              <div className="sub">Made in small batches. When they're gone, they're gone.</div>
             </div>
             <a className="view-all" href="#/shop">View all <Icon name="arrow-right" size={14}/></a>
           </div>
@@ -51,19 +51,19 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ARTISAN STORY */}
+      {/* MATERIALS STORY */}
       <section className="section" style={{ background: "var(--white)" }}>
         <div className="wrap">
           <div className="artisan-story">
             <div className="artisan-img">
-              <FmImage src={window.IMG.artisanWork} alt="Artisan at work"/>
+              <FmImage src={window.IMG.artisanWork} alt="Folded organic cotton-muslin"/>
             </div>
             <div className="artisan-copy">
-              <div className="eyebrow gold" style={{ marginBottom: 16 }}>The Craft</div>
-              <h2>Made by hand.<br/>Made with love.</h2>
-              <p>Every Filamour garment is hand-smocked by a skilled artisan in our workshop in Sri Lanka. Each row of stitching is placed by hand. Each fabric is chosen for how it feels against small skin.</p>
-              <div className="artisan-tag">Crafted by Kamala · 22 years of the craft</div>
-              <div><a className="link" href="#/artisans">Meet our artisans <Icon name="arrow-right" size={12}/></a></div>
+              <div className="eyebrow gold" style={{ marginBottom: 16 }}>What's against the skin</div>
+              <h2>Two fabrics.<br/>Nothing else.</h2>
+              <p>A baby's skin is up to 30% thinner than yours. It absorbs more and reacts faster. Every Filamour piece is made from one of two fabrics — GOTS-certified organic cotton, or a fine cotton-muslin that breathes. No polyester blends, no chemical easy-care finishes, no surprises.</p>
+              <div className="artisan-tag">GOTS organic cotton · OEKO-TEX certified</div>
+              <div><a className="link" href="#/materials">Why these fabrics, and what we ruled out <Icon name="arrow-right" size={12}/></a></div>
             </div>
           </div>
         </div>
@@ -162,7 +162,7 @@ const ShopPage = () => {
         <div className="shop-head">
           <div className="eyebrow gold" style={{ marginBottom: 12 }}>The Collection</div>
           <h1>Shop</h1>
-          <div className="sub">Hand-smocked pieces, made in small batches</div>
+          <div className="sub">Made by hand, in small batches</div>
         </div>
 
         <div className="shop-layout">

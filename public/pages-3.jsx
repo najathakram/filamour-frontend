@@ -10,7 +10,7 @@ const GiftGuidePage = () => {
         <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto 80px" }}>
           <div className="eyebrow gold" style={{ marginBottom: 16 }}>The Gift Guide</div>
           <h1 className="h-display" style={{ fontSize: 56, lineHeight: 1.05 }}>The perfect gift,<br/>beautifully made</h1>
-          <p className="h-italic" style={{ fontSize: 19, marginTop: 24, color: "var(--charcoal-soft)" }}>Hand-smocked pieces, wrapped in tissue and ribbon, with a handwritten card. Choose by milestone or by hand.</p>
+          <p className="h-italic" style={{ fontSize: 19, marginTop: 24, color: "var(--charcoal-soft)" }}>Pieces wrapped in tissue and ribbon, with a handwritten card. Choose by milestone, or let us suggest.</p>
         </div>
 
         <GgSection title="For a new baby" intro="The most precious moments deserve the most beautiful things." products={newBaby} badge="Free gift wrapping on all orders"/>
@@ -157,7 +157,7 @@ const SizeGuidePage = () => {
           {[
             { n: "01", h: "Chest", b: "Measure around the fullest part of the chest, just under the arms. Keep the tape level." },
             { n: "02", h: "Length", b: "From the highest point of the shoulder, straight down to the desired hem. Babies: to mid-calf." },
-            { n: "03", h: "When unsure", b: "Always size up. Hand-smocked garments are forgiving, and a child grows quickly." },
+            { n: "03", h: "When unsure", b: "Always size up. Our pieces are forgiving in the chest and waist, and a child grows quickly." },
           ].map(s => (
             <div key={s.n} style={{ padding: 28, background: "var(--white)", border: "0.5px solid var(--line)" }}>
               <div className="eyebrow gold" style={{ marginBottom: 12 }}>Step {s.n}</div>
@@ -179,27 +179,27 @@ const SizeGuidePage = () => {
 const FaqPage = () => {
   const cats = [
     { h: "Ordering", qs: [
-      ["How do I place an order?", "Add pieces to your cart and check out online with card, or message us directly on WhatsApp and we will guide you through the order."],
-      ["Can I order via WhatsApp?", "Yes — Sri Lanka customers are welcome to order entirely via WhatsApp. Tap the green button on any product page."],
-      ["How long does production take?", "Ready-to-ship pieces leave the workshop within 2 working days. Made-to-order pieces take 8–14 working days depending on the style."],
+      ["How do I place an order?", "Add pieces to your cart and check out online with card, PayPal, or Apple Pay. Or message us on WhatsApp and we'll walk you through it."],
+      ["Can I order via WhatsApp?", "Yes — tap the green button on any product page. We answer most messages within a working day."],
+      ["How long does production take?", "Ready-to-ship pieces leave within 2 working days. Made-to-order pieces take 8–14 working days, then ship."],
       ["Can I request a custom size?", "Yes. Use the Bespoke page to send your child's measurements and we will hand-make to fit."],
     ]},
     { h: "Shipping", qs: [
-      ["Do you ship internationally?", "Yes. We ship worldwide via EMS (7–14 days) and DHL Express (3–5 days)."],
-      ["How long does international shipping take?", "EMS 7–14 days, DHL 3–5 days. Times exclude the production window for made-to-order pieces."],
-      ["What are the shipping costs?", "Sri Lanka: free over LKR 15,000. International: from GBP 60, free over GBP 120."],
-      ["How do I track my order?", "We send tracking via WhatsApp and email the day your piece leaves the workshop."],
+      ["Do you ship internationally?", "Yes. Worldwide, with tracked and signed-for delivery."],
+      ["How long does international shipping take?", "UK & EU: 3–5 days via DHL. North America: 4–7 days via DHL. Rest of world: 7–14 days via EMS. Times exclude the production window for made-to-order pieces."],
+      ["What are the shipping costs?", "From GBP 12 within the UK, from GBP 35 to Europe, from GBP 60 elsewhere. Free shipping on orders over GBP 120."],
+      ["How do I track my order?", "We send tracking via email and WhatsApp the day your piece ships."],
     ]},
     { h: "Returns", qs: [
-      ["What is your returns policy?", "Free returns within 7 days if unworn, with tags attached. Bespoke pieces are not returnable."],
+      ["What is your returns policy?", "Free returns within 14 days if unworn, with tags attached. Bespoke pieces are not returnable."],
       ["What if my order arrives damaged?", "Send a photo within 48 hours and we will replace it at our cost. Always."],
-      ["Can I exchange a size?", "Yes — within 7 days, for any in-stock piece in another size."],
+      ["Can I exchange a size?", "Yes — within 14 days, for any in-stock piece in another size."],
     ]},
-    { h: "The garments", qs: [
-      ["What fabric is used?", "Fine cotton-muslin and certified organic cotton. Linen is used for select gift sets."],
-      ["How do I care for my Filamour piece?", "Hand wash in cool water with mild soap, lay flat to dry, iron on low. See the care label inside each piece."],
-      ["Are the garments suitable for sensitive skin?", "Yes. Our fabrics are OEKO-TEX certified and dyed without azo compounds."],
-      ["Are the dyes safe for children?", "All our dyes meet the EU AZO-free standard and are tested for direct skin contact."],
+    { h: "Materials & care", qs: [
+      ["What fabrics do you use?", "GOTS-certified organic cotton and fine cotton-muslin. That's the whole list. No polyester blends, no chemical easy-care finishes."],
+      ["Why does organic cotton matter for a baby?", "A baby's skin is up to 30% thinner than yours. Conventional cotton is one of the most pesticide-treated crops in the world, and residues can stay in the finished fabric. Organic cotton means a cleaner fiber against very sensitive skin."],
+      ["Are the dyes safe for sensitive skin?", "Yes. OEKO-TEX Standard 100 certified, dyed without azo compounds, optical brighteners, or formaldehyde finishes."],
+      ["How do I wash a Filamour piece?", "Machine wash cool on a delicate cycle is fine. Hang to dry. Warm iron if you like. Our fabrics soften with every wash."],
     ]},
   ];
   const [open, setOpen] = React.useState({});
@@ -251,7 +251,7 @@ const LookbookPage = () => {
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div className="eyebrow gold" style={{ marginBottom: 12 }}>Lookbook</div>
           <h1 className="h-display" style={{ fontSize: 52 }}>Spring · 2026</h1>
-          <p className="h-italic" style={{ fontSize: 18, marginTop: 18, color: "var(--charcoal-soft)" }}>Photographed in Galle and Colombo, in the soft hours of the morning.</p>
+          <p className="h-italic" style={{ fontSize: 18, marginTop: 18, color: "var(--charcoal-soft)" }}>Photographed in the soft hours of the morning. The way you'll remember them.</p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gridAutoRows: "200px", gap: 12 }}>
           {tiles.map((t, i) => {
@@ -285,7 +285,7 @@ const CartPage = () => {
           <div style={{ background: "var(--white)", padding: 80, textAlign: "center", marginTop: 32, border: "0.5px solid var(--line)" }}>
             <Icon name="bag" size={32} stroke={1.2}/>
             <h2 className="h-display" style={{ fontSize: 26, marginTop: 16 }}>Your bag is empty</h2>
-            <p style={{ color: "var(--charcoal-soft)", marginTop: 8 }}>Each piece is hand-smocked. Browse the collection to begin.</p>
+            <p style={{ color: "var(--charcoal-soft)", marginTop: 8 }}>Each piece is made by hand from organic cotton. Browse the collection to begin.</p>
             <div style={{ marginTop: 28 }}><Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn></div>
           </div>
         ) : (
@@ -315,7 +315,7 @@ const CartPage = () => {
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, paddingTop: 16, borderTop: "0.5px solid var(--line)", fontSize: 17 }}><span>Total</span><span>{window.fmtPrice(subtotal, c)}</span></div>
               <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 10 }}>
                 <Btn variant="primary" block onClick={() => navigate("/checkout")}>Continue to checkout</Btn>
-                <a href="https://wa.me/94770000000" target="_blank" rel="noopener" className="btn btn-wa btn-block"><Icon name="whatsapp" size={16}/> Checkout via WhatsApp</a>
+                <a href="https://wa.me/447000000000" target="_blank" rel="noopener" className="btn btn-wa btn-block"><Icon name="whatsapp" size={16}/> Checkout via WhatsApp</a>
               </div>
             </div>
           </div>
@@ -364,27 +364,31 @@ const SimplePage = ({ title, eyebrow, children }) => (
 
 const CareGuidePage = () => (
   <SimplePage eyebrow="Care" title="Caring for your Filamour piece">
-    <p className="lead">Hand-smocked garments are tougher than they look. With small kindnesses, yours will outlast its first wearer.</p>
+    <p className="lead">Organic cotton is tougher than it looks. With small kindnesses, your Filamour piece will outlast its first wearer — and very probably the next.</p>
     <h2>Washing</h2>
-    <p>Hand wash in cool water with a mild soap. Avoid bleach and fabric softener. If you must machine wash, use a mesh bag and the delicate cycle, cold only.</p>
+    <p>Machine wash cool on a delicate cycle is fine. Use a gentle, fragrance-free detergent. Avoid bleach, fabric softener, and anything with optical brighteners — these can build up in natural fibers over time. If your washing machine is on the older side, a mesh bag protects the smocking from snagging.</p>
     <h2>Drying</h2>
-    <p>Lay flat on a clean towel, smoothing the smocking with your fingers. Never tumble dry — heat distorts the gathered stitches.</p>
+    <p>Hang to dry, or lay flat on a clean towel — never tumble dry. Heat sets shrinkage and distorts the gathered stitches.</p>
     <h2>Ironing</h2>
-    <p>Iron on low, on the reverse, avoiding the smocked panel itself. A light steaming is gentler.</p>
+    <p>Warm iron on the reverse, avoiding the smocked panel itself. A light steaming brings the drape back without crushing the texture.</p>
     <h2>Storage</h2>
-    <p>Fold the smocking face-up, layered with acid-free tissue. Avoid sharp creases through the embroidery.</p>
+    <p>Fold the smocking face-up, layered with acid-free tissue. Avoid sharp creases through the embroidery, and a sachet of cedar keeps natural fibers fresh.</p>
   </SimplePage>
 );
 
 const ShippingPage = () => (
   <SimplePage eyebrow="Shipping & Returns" title="Getting it to you">
     <p className="lead">We ship worldwide. Every order is packaged in our charcoal box with tissue, ribbon, and a handwritten card.</p>
-    <h2>Sri Lanka</h2>
-    <p>Free shipping on orders over LKR 15,000. Colombo: 2 working days. Other regions: 3–5 working days. Cash on delivery available.</p>
-    <h2>International</h2>
-    <p>EMS tracked: 7–14 days, from GBP 60. DHL Express: 3–5 days, from GBP 90. Free shipping on international orders over GBP 120.</p>
+    <h2>United Kingdom</h2>
+    <p>Tracked & signed-for delivery via Royal Mail or DHL, from GBP 12. 2–4 working days. Free shipping on orders over GBP 120.</p>
+    <h2>Europe</h2>
+    <p>Tracked DHL Express, from GBP 35. 3–5 working days. Free shipping on orders over GBP 120.</p>
+    <h2>United States, Canada, Australia</h2>
+    <p>DHL Express, from GBP 60. 4–7 working days. Free shipping on orders over GBP 120. Local duties are calculated at checkout where applicable.</p>
+    <h2>Rest of world</h2>
+    <p>EMS tracked, from GBP 60. 7–14 working days. Times exclude the production window for made-to-order pieces.</p>
     <h2>Returns</h2>
-    <p>Free returns within 7 days, on unworn pieces with tags attached. Bespoke pieces are not returnable. If anything arrives damaged, send us a photo on WhatsApp within 48 hours and we will replace it at our cost.</p>
+    <p>Free returns within 14 days, on unworn pieces with tags attached. Bespoke pieces are not returnable. If anything arrives damaged, send us a photo on WhatsApp within 48 hours and we'll replace it at our cost.</p>
   </SimplePage>
 );
 
@@ -401,7 +405,7 @@ const ContactPage = () => (
           <Icon name="whatsapp" size={28} stroke={1.4}/>
           <div className="eyebrow gold" style={{ marginTop: 14 }}>WhatsApp</div>
           <div className="h-display" style={{ fontSize: 22, marginTop: 6 }}>+94 77 000 0000</div>
-          <a href="https://wa.me/94770000000" target="_blank" rel="noopener" className="btn btn-wa" style={{ marginTop: 18 }}>Open chat</a>
+          <a href="https://wa.me/447000000000" target="_blank" rel="noopener" className="btn btn-wa" style={{ marginTop: 18 }}>Open chat</a>
         </div>
         <div style={{ padding: 32, background: "var(--white)", border: "0.5px solid var(--line)", textAlign: "center" }}>
           <Icon name="ig" size={28} stroke={1.4}/>

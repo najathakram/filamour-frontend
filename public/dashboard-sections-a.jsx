@@ -44,7 +44,7 @@ const OrdersSection = () => {
                   <td onClick={e => e.stopPropagation()}><input type="checkbox"/></td>
                   <td className="mono strong">{o.id}</td>
                   <td style={{ color: "var(--charcoal-soft)" }}>{o.date}</td>
-                  <td><div>{o.customer}</div><div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>by {o.artisan}</div></td>
+                  <td><div>{o.customer}</div><div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{o.maker || o.artisan}</div></td>
                   <td>{o.items}</td>
                   <td>{fmtLKR(o.total)}</td>
                   <td>{o.method}</td>
@@ -75,7 +75,7 @@ const OrderDrawer = ({ order, onClose }) => (
         <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
           <StatusPill s={order.status}/>
           <div className="dash-pill">{order.method}</div>
-          <div className="dash-pill">Artisan · {order.artisan}</div>
+          <div className="dash-pill">Maker · {order.maker || order.artisan}</div>
         </div>
 
         <h4 className="eyebrow" style={{ marginBottom: 12 }}>Items</h4>
@@ -97,9 +97,9 @@ const OrderDrawer = ({ order, onClose }) => (
             <h4 className="eyebrow" style={{ marginBottom: 8 }}>Shipping</h4>
             <div style={{ fontSize: 13, color: "var(--charcoal-soft)", lineHeight: 1.7 }}>
               {order.customer}<br/>
-              42 Flower Road<br/>
-              Colombo 07<br/>
-              Sri Lanka
+              42 Westbourne Grove<br/>
+              London W11<br/>
+              United Kingdom
             </div>
           </div>
           <div>
@@ -117,7 +117,7 @@ const OrderDrawer = ({ order, onClose }) => (
           {[
             ["Order placed", order.date, true],
             ["Payment captured", order.date, true],
-            ["Assigned to " + order.artisan, order.date, order.status !== "pending"],
+            ["Assigned to " + (order.maker || order.artisan), order.date, order.status !== "pending"],
             ["Production complete", "—", ["shipped","delivered"].includes(order.status)],
             ["Shipped via DHL", "—", ["shipped","delivered"].includes(order.status)],
             ["Delivered", "—", order.status === "delivered"],
@@ -191,7 +191,7 @@ const ProductsSection = () => {
           <thead>
             <tr>
               <th style={{ width: 32 }}><input type="checkbox"/></th>
-              <th>Piece</th><th>Category</th><th>Artisan</th><th>Price</th><th>Sizes</th><th>Stock</th><th>Status</th><th></th>
+              <th>Piece</th><th>Category</th><th>Maker</th><th>Price</th><th>Sizes</th><th>Stock</th><th>Status</th><th></th>
             </tr>
           </thead>
           <tbody>
@@ -208,7 +208,7 @@ const ProductsSection = () => {
                   </div>
                 </td>
                 <td>{p.category}</td>
-                <td>{p.artisan}</td>
+                <td>{p.maker || p.artisan}</td>
                 <td>{fmtLKR(p.priceLKR)}</td>
                 <td style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{p.sizes.join(", ")}</td>
                 <td>{p.avail.type === "ready" ? <span className="status success">In stock</span> : <span className="status warn">Made to order</span>}</td>
@@ -247,10 +247,10 @@ const ProductEditor = ({ product, onClose }) => {
             <div className="form-grid">
               <div className="span-2"><label className="form-label">Name</label><input className="form-input" defaultValue={product.name}/></div>
               <div className="span-2"><label className="form-label">Short description</label><input className="form-input" defaultValue={product.desc}/></div>
-              <div className="span-2"><label className="form-label">Full description</label><textarea className="form-text" rows="4" defaultValue="A hand-smocked bishop dress, cut from soft cotton-muslin with a high yoke and gathered fullness through the body."/></div>
+              <div className="span-2"><label className="form-label">Full description</label><textarea className="form-text" rows="4" defaultValue="A softly-gathered bishop dress cut from GOTS-certified organic cotton-muslin, with a high yoke that sits gently above the collarbones and gives at the chest as your baby breathes."/></div>
               <div><label className="form-label">Category</label><select className="form-select" defaultValue={product.category}><option>Dresses</option><option>Rompers</option><option>Sets</option><option>Tops</option><option>Gift Sets</option></select></div>
               <div><label className="form-label">Occasion</label><select className="form-select" defaultValue={product.occasion}><option>Christening & Baptism</option><option>First Birthday</option><option>Family Photoshoot</option><option>Everyday Luxury</option></select></div>
-              <div><label className="form-label">Assigned artisan</label><select className="form-select" defaultValue={product.artisan}>{D.customers && ["Kamala","Priya","Nirmala"].map(a => <option key={a}>{a}</option>)}</select></div>
+              <div><label className="form-label">Assigned maker</label><select className="form-select" defaultValue={product.maker || product.artisan}>{D.customers && ["Studio 01","Studio 02","Studio 03"].map(a => <option key={a}>{a}</option>)}</select></div>
               <div><label className="form-label">Badge</label><select className="form-select" defaultValue={product.badge || ""}><option value="">— None —</option><option>New</option><option>Bestseller</option><option>Limited</option><option>Signature</option></select></div>
             </div>
           )}
@@ -300,14 +300,14 @@ const ProductEditor = ({ product, onClose }) => {
             <div>
               <div className="form-grid">
                 <div className="span-2"><label className="form-label">Meta title</label><input className="form-input" defaultValue={`${product.name} · Filamour`} maxLength={60}/><div className="form-counter">0 / 60</div></div>
-                <div className="span-2"><label className="form-label">Meta description</label><textarea className="form-text" rows="3" maxLength={160} defaultValue={`${product.desc}. Hand-smocked in Sri Lanka.`}/><div className="form-counter">0 / 160</div></div>
+                <div className="span-2"><label className="form-label">Meta description</label><textarea className="form-text" rows="3" maxLength={160} defaultValue={`${product.desc}. GOTS-certified organic cotton, made by hand.`}/><div className="form-counter">0 / 160</div></div>
                 <div className="span-2"><label className="form-label">URL handle</label><input className="form-input" defaultValue={`/product/${product.slug || "new-piece"}`}/></div>
               </div>
               <h4 className="eyebrow" style={{ marginTop: 20, marginBottom: 10 }}>Google preview</h4>
               <div className="preview-card">
                 <div className="url">filamour.com › product › {product.slug || "new-piece"}</div>
                 <div className="ttl">{product.name || "New piece"} · Filamour</div>
-                <div className="desc">{product.desc || "A new Filamour piece."}. Hand-smocked in Sri Lanka by skilled artisans.</div>
+                <div className="desc">{product.desc || "A new Filamour piece."}. GOTS-certified organic cotton, made by hand.</div>
               </div>
             </div>
           )}

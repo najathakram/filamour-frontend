@@ -14,8 +14,8 @@ const DASH_SECTIONS = [
     { id: "payments",   label: "Payments",  icon: "check" },
     { id: "payouts",    label: "Payouts",   icon: "arrow-right" },
   ]},
-  { group: "Workshop", items: [
-    { id: "artisans",   label: "Artisans",  icon: "leaf" },
+  { group: "Production", items: [
+    { id: "artisans",   label: "Makers",    icon: "leaf" },
     { id: "reviews",    label: "Reviews",   icon: "star" },
   ]},
   { group: "Storefront", items: [
@@ -90,7 +90,7 @@ const SECTION_TITLES = {
   customers: { t: "Customers", s: "Buyers, loyalty and segments" },
   payments: { t: "Payments", s: "Transactions, fees, refunds" },
   payouts: { t: "Payouts", s: "Transfers to your bank account" },
-  artisans: { t: "Artisans", s: "Workshop team and assignments" },
+  artisans: { t: "Makers", s: "Production team and assignments" },
   reviews: { t: "Reviews", s: "Customer feedback moderation" },
   seo: { t: "SEO & Metadata", s: "Search, social previews, sitemap" },
   marketing: { t: "Marketing", s: "Promo codes, banners, email" },
@@ -261,17 +261,17 @@ const Overview = () => {
       </div>
 
       <div className="dash-card" style={{ marginTop: 24 }}>
-        <div className="dash-card-head"><h3>Workshop · today</h3></div>
+        <div className="dash-card-head"><h3>Production · today</h3></div>
         <div className="dash-card-body padded">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
-              { artisan: "Kamala", queue: 6, today: "Marguerite Bishop · size 12M", days: 4 },
-              { artisan: "Priya", queue: 4, today: "Floret Romper · size 6M", days: 2 },
-              { artisan: "Nirmala", queue: 3, today: "Saffron Smocked Set · size 18M", days: 5 },
+              { artisan: "Studio 01", queue: 6, today: "Marguerite Bishop · size 12M", days: 4 },
+              { artisan: "Studio 02", queue: 4, today: "Floret Romper · size 6M",     days: 2 },
+              { artisan: "Studio 03", queue: 3, today: "Saffron Set · size 18M",      days: 5 },
             ].map(a => (
               <div key={a.artisan} style={{ padding: 16, background: "var(--ivory)", borderRadius: 6 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, var(--blush), var(--dusty-rose))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--display)", fontSize: 17 }}>{a.artisan[0]}</div>
+                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, var(--blush), var(--dusty-rose))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--display)", fontSize: 17 }}>{a.artisan.split(" ").map(w=>w[0]).join("")}</div>
                   <div>
                     <div style={{ fontFamily: "var(--display)", fontSize: 17 }}>{a.artisan}</div>
                     <div className="eyebrow" style={{ fontSize: 10 }}>{a.queue} in queue</div>

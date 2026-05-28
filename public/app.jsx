@@ -6,7 +6,7 @@ const Router = () => {
   else if (route.startsWith("/shop")) page = <ShopPage/>;
   else if (route.startsWith("/product/")) page = <ProductPage slug={route.split("/")[2]}/>;
   else if (route === "/our-story") page = <OurStoryPage/>;
-  else if (route === "/artisans") page = <ArtisansPage/>;
+  else if (route === "/materials" || route === "/artisans") page = <MaterialsPage/>;
   else if (route === "/gift-guide") page = <GiftGuidePage/>;
   else if (route === "/bespoke") page = <BespokePage/>;
   else if (route === "/size-guide") page = <SizeGuidePage/>;
