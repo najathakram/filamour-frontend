@@ -74,6 +74,9 @@ const ProductPage = ({ slug }) => {
               return null;
             })()}
 
+            {/* Sold-out waitlist — captures the buyer who would have left */}
+            {product.oos.includes(size) && <SoldOutWaitlist product={product} size={size}/>}
+
             <div className="prod-section">
               <div className="prod-section-label">
                 <span>Select size</span>
@@ -436,4 +439,31 @@ const MaterialsPage = () => {
   );
 };
 
-Object.assign(window, { ProductPage, OurStoryPage, MaterialsPage, AccordItem });
+// ===== Sold-out waitlist (notify me) =====
+const SoldOutWaitlist = ({ product, size }) => {
+  const [email, setEmail] = React.useState("");
+  const [done, setDone] = React.useState(false);
+  React.useEffect(() => { setDone(false); }, [product?.slug, size]);
+  if (done) {
+    return (
+      <div className="waitlist done">
+        <Icon name="check" size={14} stroke={1.8}/>
+        <span>We'll write the moment size {size} comes back. Quietly, on email — no marketing.</span>
+      </div>
+    );
+  }
+  return (
+    <form className="waitlist" onSubmit={(e) => { e.preventDefault(); if (email) setDone(true); }}>
+      <div className="waitlist-head">
+        <strong>Tell us if size {size} comes back.</strong>
+        <span>One email when the next batch lands. Promise.</span>
+      </div>
+      <div className="waitlist-row">
+        <input type="email" placeholder="Your email" value={email} onChange={e => setEmail(e.target.value)} required/>
+        <button type="submit">Notify me</button>
+      </div>
+    </form>
+  );
+};
+
+Object.assign(window, { ProductPage, OurStoryPage, MaterialsPage, AccordItem, SoldOutWaitlist });

@@ -57,7 +57,10 @@ const MegaMenu = ({ onNav }) => {
 
 // ===== Mobile Menu =====
 const MobileMenu = ({ onClose }) => {
+  const { user, openAccount, wishlist, cart } = useShop();
+  const { ccy, setCcy } = useCurrency();
   React.useEffect(() => { document.body.style.overflow = "hidden"; return () => { document.body.style.overflow = ""; }; }, []);
+  const go = (path) => { onClose(); navigate(path); };
   return (
     <div className="mob-menu">
       <div className="mm-head">
@@ -67,13 +70,35 @@ const MobileMenu = ({ onClose }) => {
         </div>
         <button onClick={onClose}><Icon name="x" size={22} /></button>
       </div>
+
+      {/* Account state at top — primary handle for repeat visitors */}
+      <div className="mm-acct">
+        {user ? (
+          <button className="mm-acct-row" onClick={() => go("/account")}>
+            <span className="mm-acct-name">Hello, {user.name}</span>
+            <span className="mm-acct-meta">{user.email}</span>
+          </button>
+        ) : (
+          <button className="mm-acct-row mm-acct-cta" onClick={() => { onClose(); openAccount(); }}>
+            <Icon name="user" size={15} stroke={1.6}/>
+            <span>Sign in or create account</span>
+            <Icon name="chev-right" size={14} stroke={1.6}/>
+          </button>
+        )}
+        <div className="mm-quicklinks">
+          <button onClick={() => go("/wishlist")}><Icon name={wishlist.length ? "heart-fill" : "heart"} size={13}/>Wishlist {wishlist.length ? `· ${wishlist.length}` : ""}</button>
+          <button onClick={() => go("/cart")}><Icon name="bag" size={13}/>Cart {cart.length ? `· ${cart.length}` : ""}</button>
+        </div>
+      </div>
+
       <div className="mm-section">
         <h5>Main</h5>
         <ul>
           <li><a href="#/" onClick={onClose}>Home</a></li>
-          <li><a href="#/shop" onClick={onClose}>Shop</a></li>
+          <li><a href="#/shop" onClick={onClose}>Shop the collection</a></li>
           <li><a href="#/our-story" onClick={onClose}>Our Story</a></li>
           <li><a href="#/materials" onClick={onClose}>The Materials</a></li>
+          <li><a href="#/lookbook" onClick={onClose}>Lookbook</a></li>
           <li><a href="#/gift-guide" onClick={onClose}>Gift Guide</a></li>
           <li><a href="#/bespoke" onClick={onClose}>Bespoke</a></li>
         </ul>
@@ -85,7 +110,7 @@ const MobileMenu = ({ onClose }) => {
           <li><a href="#/shop" onClick={onClose} style={{ fontSize: 16 }}>First Birthday</a></li>
           <li><a href="#/shop" onClick={onClose} style={{ fontSize: 16 }}>Family Photoshoot</a></li>
           <li><a href="#/shop" onClick={onClose} style={{ fontSize: 16 }}>New Baby Gift</a></li>
-          <li><a href="#/shop" onClick={onClose} style={{ fontSize: 16 }}>Everyday Luxury</a></li>
+          <li><a href="#/shop" onClick={onClose} style={{ fontSize: 16 }}>Everyday</a></li>
         </ul>
       </div>
       <div className="mm-section">
@@ -94,8 +119,26 @@ const MobileMenu = ({ onClose }) => {
           <li><a href="#/size-guide" onClick={onClose} style={{ fontSize: 16 }}>Size Guide</a></li>
           <li><a href="#/faq" onClick={onClose} style={{ fontSize: 16 }}>FAQ</a></li>
           <li><a href="#/shipping" onClick={onClose} style={{ fontSize: 16 }}>Shipping & Returns</a></li>
+          <li><a href="#/care-guide" onClick={onClose} style={{ fontSize: 16 }}>Care Guide</a></li>
           <li><a href="#/contact" onClick={onClose} style={{ fontSize: 16 }}>Contact</a></li>
         </ul>
+      </div>
+
+      {/* Currency selector inline (avoids a separate tap on the small pill) */}
+      <div className="mm-section">
+        <h5>Showing prices in</h5>
+        <div className="mm-ccy">
+          {["GBP","USD","LKR"].map(c => (
+            <button key={c} className={`mm-ccy-btn ${ccy === c ? "active" : ""}`} onClick={() => setCcy(c)}>{c}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Trust trio — reminded of the promises at the bottom */}
+      <div className="mm-trust">
+        <div><Icon name="check" size={12} stroke={1.6}/>Free shipping over £120</div>
+        <div><Icon name="heart" size={12} stroke={1.6}/>14-day returns</div>
+        <div><Icon name="gift" size={12} stroke={1.6}/>Handwritten card</div>
       </div>
     </div>
   );

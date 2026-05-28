@@ -285,35 +285,74 @@ const FaqPage = () => {
 
 // ===================== LOOKBOOK =====================
 const LookbookPage = () => {
-  const tiles = [
-    { sz: "tall", l: "Garden · Spring", img: window.IMG.lookbook[0] },
-    { sz: "wide", l: "Christening · Indoors", img: window.IMG.lookbook[1] },
-    { sz: "sq",   l: "Detail · Honeycomb", img: window.IMG.lookbook[2] },
-    { sz: "sq",   l: "First Birthday", img: window.IMG.lookbook[3] },
-    { sz: "tall", l: "Family · At home", img: window.IMG.lookbook[4] },
-    { sz: "wide", l: "Bishop · Detail", img: window.IMG.lookbook[5] },
+  // Editorial chapters — each is a small visual essay
+  const chapters = [
+    {
+      eyebrow: "Chapter 01",
+      title: "The morning of",
+      lede: "A christening, photographed at home. The hour before the family arrives, when the dress is laid out and the light is honest.",
+      hero: window.IMG.lookbook[1],
+      detail: window.IMG.lookbook[2],
+      tag: "The Alba Gown",
+      tagHref: "#/product/alba-christening-gown",
+    },
+    {
+      eyebrow: "Chapter 02",
+      title: "One year, kept",
+      lede: "First birthdays don't repeat. We made the Saffron Set for the photograph you'll still be glad of in fifteen years.",
+      hero: window.IMG.lookbook[3],
+      detail: window.IMG.lookbook[5],
+      tag: "The Saffron Set",
+      tagHref: "#/product/saffron-smocked-set",
+    },
+    {
+      eyebrow: "Chapter 03",
+      title: "Worn in",
+      lede: "The dress your daughter reaches for, because it's the softest thing in the drawer. A year of wear, a dozen washes, better now than the day it arrived.",
+      hero: window.IMG.lookbook[4],
+      detail: window.IMG.lookbook[0],
+      tag: "The Marguerite Bishop Dress",
+      tagHref: "#/product/marguerite-bishop-dress",
+    },
   ];
+
   return (
-    <div className="page">
-      <div className="wrap" style={{ padding: "64px 0 96px" }}>
-        <div style={{ textAlign: "center", marginBottom: 56 }}>
+    <div className="page lookbook-page">
+      <div className="wrap" style={{ padding: "64px 0 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
           <div className="eyebrow gold" style={{ marginBottom: 12 }}>Lookbook</div>
-          <h1 className="h-display" style={{ fontSize: 52 }}>Spring · 2026</h1>
-          <p className="h-italic" style={{ fontSize: 18, marginTop: 18, color: "var(--charcoal-soft)" }}>Photographed in the soft hours of the morning. The way you'll remember them.</p>
+          <h1 className="h-display" style={{ fontSize: 56, lineHeight: 1.05 }}>Spring · 2026</h1>
+          <p className="h-italic" style={{ fontSize: 20, marginTop: 22, color: "var(--charcoal-soft)", maxWidth: 580, margin: "22px auto 0" }}>Photographed in the soft hours of the morning. The way you'll remember them.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gridAutoRows: "200px", gap: 12 }}>
-          {tiles.map((t, i) => {
-            const span = t.sz === "tall" ? { gridRow: "span 2", gridColumn: "span 1" } : t.sz === "wide" ? { gridRow: "span 1", gridColumn: "span 2" } : { gridRow: "span 2", gridColumn: "span 2" };
-            return (
-              <div key={i} style={{ ...span, position: "relative", overflow: "hidden", cursor: "pointer" }}>
-                <FmImage src={t.img} alt={t.l}/>
-                <div style={{ position: "absolute", bottom: 16, left: 16, color: "var(--ivory)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.95, zIndex: 2, textShadow: "0 1px 4px rgba(46,41,38,0.6)" }}>{t.l}</div>
-              </div>
-            );
-          })}
-        </div>
-        <style>{`@media (max-width: 640px) { .page > .wrap > div:nth-child(2) { grid-template-columns: 1fr 1fr !important; grid-auto-rows: 160px !important; } }`}</style>
       </div>
+
+      {chapters.map((c, i) => (
+        <section key={i} className={`lb-ch ${i % 2 ? "lb-ch-flip" : ""}`}>
+          <div className="lb-ch-hero">
+            <FmImage src={c.hero} alt={c.title}/>
+          </div>
+          <div className="lb-ch-copy">
+            <div className="eyebrow gold">{c.eyebrow}</div>
+            <h2>{c.title}</h2>
+            <p>{c.lede}</p>
+            <div className="lb-ch-detail">
+              <FmImage src={c.detail} alt={`${c.title} — detail`}/>
+            </div>
+            <a className="lb-ch-tag" href={c.tagHref}>{c.tag} <Icon name="arrow-right" size={12}/></a>
+          </div>
+        </section>
+      ))}
+
+      {/* Closing note */}
+      <section className="lb-close">
+        <div className="wrap" style={{ maxWidth: 640, margin: "0 auto", textAlign: "center", padding: "72px 24px" }}>
+          <p className="h-italic" style={{ fontSize: 22, color: "var(--charcoal)" }}>Every piece in this lookbook is one we'd put on our own daughter.</p>
+          <div className="mat-founder-name" style={{ marginTop: 18 }}>Gaika · Founder</div>
+          <div style={{ marginTop: 32 }}>
+            <Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

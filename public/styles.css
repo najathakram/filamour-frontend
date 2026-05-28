@@ -946,3 +946,57 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .acct-setting-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; background: var(--white); padding: 22px 26px; border: 0.5px solid var(--line); }
 .acct-setting-row strong { font-weight: 400; font-family: var(--display); font-size: 17px; color: var(--charcoal); display: block; }
 .acct-setting-row p { font-family: var(--body); font-size: 13px; color: var(--charcoal-soft); margin: 6px 0 0; line-height: 1.55; max-width: 56ch; }
+
+/* ============================================================ */
+/* ===== Sold-out waitlist ================================== */
+/* ============================================================ */
+.waitlist { margin-top: 16px; padding: 18px 20px; background: var(--ivory); border-left: 2px solid var(--gold); border-radius: 0 4px 4px 0; }
+.waitlist-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.waitlist-head strong { font-family: var(--display); font-weight: 400; font-size: 17px; color: var(--charcoal); }
+.waitlist-head span { font-family: var(--body); font-size: 12px; color: var(--charcoal-soft); }
+.waitlist-row { display: flex; gap: 8px; }
+.waitlist-row input { flex: 1; background: var(--white); border: 0.5px solid var(--line); padding: 11px 13px; font-size: 13px; font-family: var(--body); color: var(--charcoal); border-radius: 3px; }
+.waitlist-row input:focus { outline: none; border-color: var(--gold); }
+.waitlist-row button { background: var(--charcoal); color: var(--ivory); border: none; padding: 11px 16px; font-family: var(--body); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 3px; }
+.waitlist-row button:hover { background: var(--gold); }
+.waitlist.done { display: flex; align-items: center; gap: 10px; padding: 14px 18px; font-family: var(--display); font-style: italic; font-size: 14px; color: var(--charcoal); border-left-color: var(--gold); }
+.waitlist.done svg { color: var(--gold); flex-shrink: 0; }
+
+/* ============================================================ */
+/* ===== Mobile menu polish ================================ */
+/* ============================================================ */
+.mm-acct { padding: 16px 24px 18px; border-bottom: 0.5px solid var(--line); background: var(--blush); }
+.mm-acct-row { width: 100%; background: var(--ivory); border: 0.5px solid var(--line); padding: 14px 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; cursor: pointer; font-family: var(--body); text-align: left; border-radius: 4px; }
+.mm-acct-cta { flex-direction: row; align-items: center; gap: 10px; }
+.mm-acct-cta svg:first-child { color: var(--gold); flex-shrink: 0; }
+.mm-acct-cta span { flex: 1; font-size: 13px; color: var(--charcoal); }
+.mm-acct-cta svg:last-child { color: var(--charcoal-soft); }
+.mm-acct-name { font-family: var(--display); font-size: 17px; color: var(--charcoal); }
+.mm-acct-meta { font-size: 11px; color: var(--charcoal-soft); letter-spacing: 0.04em; }
+.mm-quicklinks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.mm-quicklinks button { background: none; border: 0.5px solid rgba(46,41,38,0.15); padding: 10px 12px; font-family: var(--body); font-size: 12px; letter-spacing: 0.06em; color: var(--charcoal); cursor: pointer; border-radius: 3px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+.mm-quicklinks button svg { color: var(--gold); }
+.mm-ccy { display: flex; gap: 8px; padding: 0 24px; }
+.mm-ccy-btn { background: none; border: 0.5px solid var(--line); padding: 8px 14px; font-family: var(--body); font-size: 12px; letter-spacing: 0.08em; color: var(--charcoal-soft); cursor: pointer; border-radius: 3px; }
+.mm-ccy-btn.active { background: var(--charcoal); color: var(--ivory); border-color: var(--charcoal); }
+.mm-trust { padding: 24px; border-top: 0.5px solid var(--line); display: grid; gap: 10px; }
+.mm-trust > div { display: flex; align-items: center; gap: 10px; font-family: var(--body); font-size: 12px; color: var(--charcoal-soft); }
+.mm-trust svg { color: var(--gold); flex-shrink: 0; }
+
+/* ============================================================ */
+/* ===== Lookbook editorial =============================== */
+/* ============================================================ */
+.lookbook-page { background: var(--ivory); }
+.lb-ch { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; max-width: 1240px; margin: 56px auto; padding: 0 40px; }
+@media (max-width: 960px) { .lb-ch { grid-template-columns: 1fr; gap: 32px; padding: 0 24px; } }
+.lb-ch-flip .lb-ch-hero { order: 2; }
+@media (max-width: 960px) { .lb-ch-flip .lb-ch-hero { order: 0; } }
+.lb-ch-hero { aspect-ratio: 4/5; position: relative; overflow: hidden; }
+.lb-ch-copy h2 { font-family: var(--display); font-weight: 300; font-size: 44px; line-height: 1.1; margin-top: 14px; }
+@media (max-width: 640px) { .lb-ch-copy h2 { font-size: 32px; } }
+.lb-ch-copy > p { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 19px; line-height: 1.6; color: var(--charcoal-soft); margin-top: 24px; max-width: 44ch; }
+@media (max-width: 640px) { .lb-ch-copy > p { font-size: 16px; } }
+.lb-ch-detail { aspect-ratio: 16/9; position: relative; overflow: hidden; margin-top: 32px; }
+.lb-ch-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; font-family: var(--body); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--charcoal); border-bottom: 0.5px solid var(--charcoal); padding-bottom: 4px; }
+.lb-ch-tag:hover { color: var(--gold); border-color: var(--gold); }
+.lb-close { background: var(--white); margin-top: 72px; }
