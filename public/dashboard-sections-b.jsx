@@ -498,4 +498,108 @@ const SettingsSection = () => {
   );
 };
 
-Object.assign(window, { PaymentsSection, PayoutsSection, ArtisansSection, ReviewsSection, SeoSection, MarketingSection, SettingsSection });
+// ===== INVENTORY =====
+// Reads stock per size off the merged FILAMOUR_DATA.products. Writes go
+// through persistAdminProduct so the storefront reflects them immediately.
+const InventorySection = () => {
+  const [query, setQuery] = React.useState("");
+  const [view, setView] = React.useState("all"); // all | low | oos
+  const [, force] = React.useReducer(x => x + 1, 0);
+
+  const products = window.FILAMOUR_DATA.products;
+
+  // Flatten to one row per product × size
+  const rows = [];
+  products.forEach(p => {
+    (p.sizes || []).forEach(s => {
+      const qty = (p.stockBySize && p.stockBySize[s] !== undefined) ? p.stockBySize[s] : ((p.oos || []).includes(s) ? 0 : 4);
+      const lowAlert = p.lowStockAlert || 2;
+      const status = qty === 0 ? "oos" : (qty <= lowAlert ? "low" : "ok");
+      rows.push({ slug: p.slug, name: p.name, category: p.category, size: s, qty, status, priceLKR: p.priceLKR, sku: `${p.slug.toUpperCase().slice(0, 8)}-${s}` });
+    });
+  });
+
+  const filtered = rows.filter(r => {
+    const matchesQ = !query || [r.name, r.size, r.sku, r.category].some(s => (s || "").toLowerCase().includes(query.toLowerCase()));
+    const matchesV = view === "all" || (view === "low" && r.status === "low") || (view === "oos" && r.status === "oos");
+    return matchesQ && matchesV;
+  });
+
+  const totalUnits = rows.reduce((s, r) => s + r.qty, 0);
+  const totalValueLKR = rows.reduce((s, r) => s + (r.qty * (r.priceLKR || 0)), 0);
+  const lowCount = rows.filter(r => r.status === "low").length;
+  const oosCount = rows.filter(r => r.status === "oos").length;
+
+  const updateQty = (slug, size, qty) => {
+    const product = products.find(p => p.slug === slug);
+    if (!product) return;
+    const stockBySize = { ...(product.stockBySize || {}), [size]: qty };
+    const oos = qty === 0
+      ? [...new Set([...(product.oos || []), size])]
+      : (product.oos || []).filter(x => x !== size);
+    const lowAlert = product.lowStockAlert || 2;
+    const lowStock = Object.fromEntries(Object.entries(stockBySize).filter(([_, q]) => q > 0 && q <= lowAlert));
+    window.persistAdminProduct(slug, { stockBySize, oos, lowStock });
+    force();
+  };
+
+  const restock = (slug, size) => updateQty(slug, size, 12);
+  const restockAll = () => {
+    rows.filter(r => r.status !== "ok").forEach(r => updateQty(r.slug, r.size, 12));
+    alert(`Restocked ${rows.filter(r => r.status !== "ok").length} size(s) to 12 units each.`);
+  };
+
+  const exportInventory = () => window.downloadCSV(rows.map(r => ({ Product: r.name, SKU: r.sku, Size: r.size, InStock: r.qty, Status: r.status })), `filamour-inventory-${Date.now()}.csv`);
+
+  return (
+    <>
+      <div className="kpi-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+        <KPI label="Total units" value={totalUnits.toString()} delta={2.1} spark={[180,184,182,188,192,190,194,196,200,204,206,210]}/>
+        <KPI label="Inventory value" value={fmtLKR(totalValueLKR)} delta={4.2} spark={[80,82,84,84,86,88,90,92,92,94,96,98]}/>
+        <KPI label="Low stock" value={lowCount.toString()} delta={lowCount > 4 ? 12.0 : -8.0} spark={[3,4,5,4,5,4,5,5,4,5,5,5]}/>
+        <KPI label="Sold out" value={oosCount.toString()} delta={0} spark={[2,2,3,3,3,3,3,3,3,3,3,3]}/>
+      </div>
+
+      <div className="prod-mgr-bar">
+        <div className="prod-mgr-pills">
+          {[["all", `All · ${rows.length}`], ["low", `Low · ${lowCount}`], ["oos", `Sold out · ${oosCount}`]].map(([id, l]) => (
+            <button key={id} className={`prod-mgr-pill ${view === id ? "active" : ""}`} onClick={() => setView(id)}>{l}</button>
+          ))}
+        </div>
+        <div className="prod-mgr-actions">
+          <div className="prod-mgr-search">
+            <Icon name="search" size={13} stroke={1.5}/>
+            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search by piece, SKU, size…"/>
+          </div>
+          <button className="btn btn-secondary btn-sm" onClick={exportInventory}>Export CSV</button>
+          {(lowCount + oosCount > 0) && <button className="btn btn-primary btn-sm" onClick={restockAll}>Restock all to 12</button>}
+        </div>
+      </div>
+
+      <div className="dash-card">
+        <table className="dash-tbl">
+          <thead>
+            <tr><th>Piece</th><th>SKU</th><th>Size</th><th>In stock</th><th>Status</th><th>Quick restock</th></tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 && (
+              <tr><td colSpan="6" style={{ padding: 40, textAlign: "center", color: "var(--charcoal-soft)" }}>No items match.</td></tr>
+            )}
+            {filtered.map(r => (
+              <tr key={r.sku}>
+                <td><a href={`#/product/${r.slug}`} target="_blank" className="strong" style={{ color: "var(--charcoal)" }}>{r.name}</a><div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{r.category}</div></td>
+                <td className="mono" style={{ fontSize: 11 }}>{r.sku}</td>
+                <td className="strong">{r.size}</td>
+                <td><input type="number" className="form-input" min="0" value={r.qty} onChange={e => updateQty(r.slug, r.size, Math.max(0, Number(e.target.value) || 0))} style={{ width: 90, padding: "6px 10px", fontSize: 13 }}/></td>
+                <td>{r.status === "oos" ? <span className="status warn">Sold out</span> : r.status === "low" ? <span className="status warn">Low ({r.qty})</span> : <span className="status success">In stock</span>}</td>
+                <td><div style={{ display: "flex", gap: 4 }}>{[6, 12, 24].map(n => (<button key={n} className="btn btn-secondary btn-sm" style={{ padding: "4px 10px", fontSize: 11 }} onClick={() => updateQty(r.slug, r.size, n)}>+{n}</button>))}</div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+};
+
+Object.assign(window, { PaymentsSection, PayoutsSection, ArtisansSection, ReviewsSection, SeoSection, MarketingSection, SettingsSection, InventorySection });

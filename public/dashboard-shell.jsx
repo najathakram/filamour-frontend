@@ -8,6 +8,7 @@ const DASH_SECTIONS = [
     { id: "orders",     label: "Orders",    icon: "bag",    badge: 4 },
     { id: "bespoke",    label: "Bespoke",   icon: "needle", badge: 2 },
     { id: "products",   label: "Products",  icon: "flower" },
+    { id: "inventory",  label: "Inventory", icon: "filter" },
     { id: "customers",  label: "Customers", icon: "heart" },
   ]},
   { group: "Money", items: [
@@ -87,6 +88,7 @@ const SECTION_TITLES = {
   orders: { t: "Orders", s: "Manage fulfilment, status and shipments" },
   bespoke: { t: "Bespoke requests", s: "Custom orders queue" },
   products: { t: "Products", s: "Catalogue, stock, photography" },
+  inventory: { t: "Inventory", s: "Stock per piece, per size — and quick restocks" },
   customers: { t: "Customers", s: "Buyers, loyalty and segments" },
   payments: { t: "Payments", s: "Transactions, fees, refunds" },
   payouts: { t: "Payouts", s: "Transfers to your bank account" },
@@ -127,6 +129,7 @@ const DashSection = ({ seg }) => {
     case "orders":    return <OrdersSection/>;
     case "bespoke":   return <BespokeSection/>;
     case "products":  return <ProductsSection/>;
+    case "inventory": return <InventorySection/>;
     case "customers": return <CustomersSection/>;
     case "payments":  return <PaymentsSection/>;
     case "payouts":   return <PayoutsSection/>;

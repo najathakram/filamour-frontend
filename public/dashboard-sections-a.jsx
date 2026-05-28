@@ -1,48 +1,145 @@
 // ===== ORDERS =====
+// Localstorage-backed overrides for staging: track status changes, tracking
+// numbers, refunds, notes, and timeline events between sessions. When wiring
+// Railway, swap persistAdminOrder / readAdminOrders for /api/orders calls.
+const ORDERS_KEY = "filamour.orders.overrides";
+const readAdminOrders = () => { try { return JSON.parse(localStorage.getItem(ORDERS_KEY) || "{}"); } catch { return {}; } };
+const writeAdminOrders = (ov) => { try { localStorage.setItem(ORDERS_KEY, JSON.stringify(ov)); } catch {} };
+const persistAdminOrder = (id, patch) => {
+  const ov = readAdminOrders();
+  ov[id] = { ...(ov[id] || {}), ...patch };
+  writeAdminOrders(ov);
+};
+const mergedOrders = () => {
+  const ov = readAdminOrders();
+  return D.orders.map(o => ({ ...o, ...(ov[o.id] || {}) }));
+};
+const appendOrderEvent = (id, event) => {
+  const ov = readAdminOrders();
+  const existing = ov[id] || {};
+  const events = [...(existing.events || []), { ...event, at: new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) }];
+  ov[id] = { ...existing, events };
+  writeAdminOrders(ov);
+};
+
+// CSV export — kept here so Bespoke + Orders + Customers can reuse it
+const downloadCSV = (rows, filename) => {
+  if (!rows || !rows.length) return;
+  const headers = Object.keys(rows[0]);
+  const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const csv = [headers.join(","), ...rows.map(r => headers.map(h => esc(r[h])).join(","))].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
 const OrdersSection = () => {
   const [tab, setTab] = React.useState("all");
   const [selected, setSelected] = React.useState(null);
-  const filtered = tab === "all" ? D.orders : D.orders.filter(o => o.status === tab);
+  const [query, setQuery] = React.useState("");
+  const [bulk, setBulk] = React.useState(new Set());
+  const [, force] = React.useReducer(x => x + 1, 0);
+
+  const orders = mergedOrders();
+  const filtered = orders.filter(o => {
+    const matchesTab = tab === "all" || o.status === tab;
+    const matchesQ = !query || [o.id, o.customer, o.method, o.maker].some(s => (s || "").toLowerCase().includes(query.toLowerCase()));
+    return matchesTab && matchesQ;
+  });
+
+  const counts = {
+    all: orders.length,
+    pending: orders.filter(o => o.status === "pending").length,
+    processing: orders.filter(o => o.status === "processing").length,
+    production: orders.filter(o => o.status === "production").length,
+    shipped: orders.filter(o => o.status === "shipped").length,
+    delivered: orders.filter(o => o.status === "delivered").length,
+    cancelled: orders.filter(o => o.status === "cancelled").length,
+  };
+
+  const toggleBulk = (id) => {
+    const next = new Set(bulk);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setBulk(next);
+  };
+  const allOnPage = filtered.every(o => bulk.has(o.id)) && filtered.length > 0;
+  const toggleAll = () => {
+    const next = new Set(bulk);
+    if (allOnPage) filtered.forEach(o => next.delete(o.id));
+    else filtered.forEach(o => next.add(o.id));
+    setBulk(next);
+  };
+  const bulkStatus = (status, label) => {
+    bulk.forEach(id => {
+      persistAdminOrder(id, { status });
+      appendOrderEvent(id, { label });
+    });
+    setBulk(new Set());
+    force();
+  };
+  const bulkExport = () => {
+    const rows = filtered.filter(o => bulk.has(o.id)).map(o => ({
+      Order: o.id, Date: o.date, Customer: o.customer, Items: o.items, Total: o.total, Currency: o.ccy, Payment: o.method, Status: o.status, Tracking: o.tracking || "",
+    }));
+    downloadCSV(rows, `filamour-orders-${Date.now()}.csv`);
+  };
+
   return (
     <>
       <div className="dash-card">
         <div className="tabs">
           {[
-            ["all", "All", D.orders.length],
-            ["pending", "Pending", D.orders.filter(o => o.status === "pending").length],
-            ["processing", "Processing", D.orders.filter(o => o.status === "processing").length],
-            ["production", "In production", D.orders.filter(o => o.status === "production").length],
-            ["shipped", "Shipped", D.orders.filter(o => o.status === "shipped").length],
-            ["delivered", "Delivered", D.orders.filter(o => o.status === "delivered").length],
-            ["cancelled", "Cancelled", D.orders.filter(o => o.status === "cancelled").length],
+            ["all", "All", counts.all],
+            ["pending", "Pending", counts.pending],
+            ["processing", "Processing", counts.processing],
+            ["production", "In production", counts.production],
+            ["shipped", "Shipped", counts.shipped],
+            ["delivered", "Delivered", counts.delivered],
+            ["cancelled", "Cancelled", counts.cancelled],
           ].map(([id, l, n]) => (
             <div key={id} className={`tab ${tab === id ? "active" : ""}`} onClick={() => setTab(id)}>{l} <span style={{ color: "var(--charcoal-soft)", marginLeft: 6 }}>{n}</span></div>
           ))}
         </div>
         <div className="dash-card-head" style={{ borderBottom: "none" }}>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <div className="dash-pill"><Icon name="filter" size={11}/> Filters</div>
-            <div className="dash-pill">Date · Last 30 days</div>
-            <div className="dash-pill">Status · All</div>
+          <div className="prod-mgr-search" style={{ flex: 1, maxWidth: 320 }}>
+            <Icon name="search" size={13} stroke={1.5}/>
+            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search orders, customers, SKUs…"/>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button className="btn btn-secondary btn-sm">Export CSV</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => downloadCSV(filtered.map(o => ({ Order: o.id, Date: o.date, Customer: o.customer, Items: o.items, Total: o.total, Status: o.status })), `filamour-orders-${Date.now()}.csv`)}>Export CSV</button>
             <button className="btn btn-primary btn-sm">+ Create order</button>
           </div>
         </div>
+        {bulk.size > 0 && (
+          <div className="prod-mgr-bulk" style={{ margin: "0 22px 14px" }}>
+            <span>{bulk.size} selected</span>
+            <button onClick={() => bulkStatus("processing", "Marked processing (bulk)")}>Mark processing</button>
+            <button onClick={() => bulkStatus("production", "Sent to production (bulk)")}>To production</button>
+            <button onClick={() => bulkStatus("shipped", "Marked shipped (bulk)")}>Mark shipped</button>
+            <button onClick={bulkExport}>Export selected</button>
+            <button onClick={() => bulkStatus("cancelled", "Cancelled (bulk)")} className="prod-mgr-bulk-del">Cancel</button>
+            <button onClick={() => setBulk(new Set())} className="prod-mgr-bulk-cancel">Done</button>
+          </div>
+        )}
         <div className="dash-card-body" style={{ padding: 0 }}>
           <table className="dash-tbl">
             <thead>
               <tr>
-                <th style={{ width: 32 }}><input type="checkbox"/></th>
+                <th style={{ width: 32 }}><input type="checkbox" checked={allOnPage} onChange={toggleAll}/></th>
                 <th>Order</th><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th></th>
               </tr>
             </thead>
             <tbody>
+              {filtered.length === 0 && (
+                <tr><td colSpan="9" style={{ padding: 40, textAlign: "center", color: "var(--charcoal-soft)" }}>No orders match. Adjust your filters.</td></tr>
+              )}
               {filtered.map(o => (
                 <tr key={o.id} onClick={() => setSelected(o)} style={{ cursor: "pointer" }}>
-                  <td onClick={e => e.stopPropagation()}><input type="checkbox"/></td>
-                  <td className="mono strong">{o.id}</td>
+                  <td onClick={e => e.stopPropagation()}><input type="checkbox" checked={bulk.has(o.id)} onChange={() => toggleBulk(o.id)}/></td>
+                  <td className="mono strong">{o.id}{o.tracking && <div style={{ fontSize: 10, color: "var(--gold)", fontFamily: "var(--body)", letterSpacing: "0.06em", marginTop: 2 }}>↗ {o.tracking}</div>}</td>
                   <td style={{ color: "var(--charcoal-soft)" }}>{o.date}</td>
                   <td><div>{o.customer}</div><div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{o.maker || o.artisan}</div></td>
                   <td>{o.items}</td>
@@ -56,88 +153,214 @@ const OrdersSection = () => {
           </table>
         </div>
       </div>
-      {selected && <OrderDrawer order={selected} onClose={() => setSelected(null)}/>}
+      {selected && <OrderDrawer order={selected} onClose={() => { setSelected(null); force(); }}/>}
     </>
   );
 };
 
-const OrderDrawer = ({ order, onClose }) => (
-  <div className="modal-overlay" onClick={onClose}>
-    <div className="modal" style={{ maxWidth: 720 }} onClick={e => e.stopPropagation()}>
-      <div className="modal-head">
-        <div>
-          <h2>Order {order.id}</h2>
-          <div style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>{order.date} · {order.customer}</div>
-        </div>
-        <button onClick={onClose}><Icon name="x" size={18}/></button>
-      </div>
-      <div className="modal-body">
-        <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-          <StatusPill s={order.status}/>
-          <div className="dash-pill">{order.method}</div>
-          <div className="dash-pill">Maker · {order.maker || order.artisan}</div>
-        </div>
+const OrderDrawer = ({ order, onClose }) => {
+  // Pull the latest merged copy so newly-saved overrides show
+  const live = mergedOrders().find(o => o.id === order.id) || order;
+  const [status, setStatus] = React.useState(live.status);
+  const [tracking, setTracking] = React.useState(live.tracking || "");
+  const [carrier, setCarrier] = React.useState(live.carrier || "DHL Express");
+  const [notes, setNotes] = React.useState(live.notes || "");
+  const [refundOpen, setRefundOpen] = React.useState(false);
+  const events = live.events || [];
 
-        <h4 className="eyebrow" style={{ marginBottom: 12 }}>Items</h4>
-        <div style={{ border: "0.5px solid var(--line)", borderRadius: 4 }}>
-          {Array.from({ length: order.items }).map((_, i) => (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "60px 1fr auto", gap: 14, padding: 14, alignItems: "center", borderBottom: i < order.items - 1 ? "0.5px solid var(--line)" : "none" }}>
-              <div style={{ aspectRatio: "3/4", background: "linear-gradient(160deg,#efe1d8,#c4a49a)" }}/>
-              <div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 16 }}>{["Marguerite Bishop Dress", "Floret Romper", "Linen Bloomer Gift Set"][i % 3]}</div>
-                <div style={{ fontSize: 11, color: "var(--charcoal-soft)", marginTop: 2 }}>Size · {["12M","6M","NB"][i % 3]} · Qty 1</div>
+  const setOrderStatus = (s, label) => {
+    setStatus(s);
+    persistAdminOrder(order.id, { status: s });
+    appendOrderEvent(order.id, { label });
+  };
+  const saveTracking = () => {
+    persistAdminOrder(order.id, { tracking, carrier });
+    appendOrderEvent(order.id, { label: `Tracking added · ${carrier} ${tracking}` });
+    if (status !== "shipped") setOrderStatus("shipped", "Marked shipped");
+  };
+  const saveNotes = () => {
+    persistAdminOrder(order.id, { notes });
+    appendOrderEvent(order.id, { label: "Note added" });
+  };
+  const printInvoice = () => {
+    const w = window.open("", "_blank");
+    if (!w) { alert("Pop-up blocked. Allow pop-ups to print invoices."); return; }
+    w.document.write(`<!doctype html><html><head><title>Invoice ${order.id}</title>
+      <style>
+        body{font-family:Georgia,serif;color:#2E2926;padding:48px;max-width:680px;margin:0 auto;line-height:1.6}
+        h1{font-weight:300;font-size:32px;letter-spacing:-0.01em;margin:0 0 4px}
+        .meta{color:#8a857d;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:40px}
+        table{width:100%;border-collapse:collapse;margin-top:24px}
+        th,td{text-align:left;padding:10px 0;border-bottom:0.5px solid #ddd;font-size:14px}
+        th{color:#8a857d;font-weight:400;font-size:11px;letter-spacing:0.12em;text-transform:uppercase}
+        .totals td{border:none;padding:4px 0}
+        .totals tr:last-child td{border-top:0.5px solid #2E2926;padding-top:12px;margin-top:8px;font-weight:500;font-size:16px}
+        .gold{color:#B8924A;letter-spacing:0.18em;font-size:11px;text-transform:uppercase}
+      </style></head><body>
+      <div class="gold">Filamour</div>
+      <h1>Invoice</h1>
+      <div class="meta">${order.id} · ${order.date}</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:32px">
+        <div><div class="gold">Billed to</div><div style="margin-top:6px">${order.customer}<br/>42 Westbourne Grove<br/>London W11<br/>United Kingdom</div></div>
+        <div><div class="gold">Payment</div><div style="margin-top:6px">${order.method}<br/>Status: ${status}</div></div>
+      </div>
+      <table><thead><tr><th>Piece</th><th>Size</th><th>Qty</th><th style="text-align:right">Price</th></tr></thead>
+      <tbody>${Array.from({length: order.items}).map((_,i)=>`
+        <tr><td>${["The Marguerite Bishop Dress","The Floret Romper","The Linen Gift Set"][i%3]}</td><td>${["12M","6M","NB"][i%3]}</td><td>1</td><td style="text-align:right">${fmtLKR(order.total/order.items)}</td></tr>`).join("")}
+      </tbody></table>
+      <table class="totals" style="margin-top:24px;width:280px;margin-left:auto">
+        <tr><td>Subtotal</td><td style="text-align:right">${fmtLKR(order.total - 800)}</td></tr>
+        <tr><td>Shipping</td><td style="text-align:right">LKR 800</td></tr>
+        <tr><td>Total</td><td style="text-align:right">${fmtLKR(order.total)}</td></tr>
+      </table>
+      <div style="margin-top:60px;color:#8a857d;font-size:11px;text-align:center;letter-spacing:0.14em;text-transform:uppercase">Thank you — kept for you, with care</div>
+      <script>window.onload = () => window.print();</script></body></html>`);
+    w.document.close();
+  };
+
+  const nextActions = {
+    pending: { next: "processing", label: "Mark processing" },
+    processing: { next: "production", label: "Send to production" },
+    production: { next: "shipped", label: "Mark shipped" },
+    shipped: { next: "delivered", label: "Mark delivered" },
+  };
+  const action = nextActions[status];
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal prod-editor" onClick={e => e.stopPropagation()}>
+        <div className="modal-head">
+          <div>
+            <h2>Order {order.id}</h2>
+            <div style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>{order.date} · {order.customer}</div>
+          </div>
+          <button onClick={onClose}><Icon name="x" size={18}/></button>
+        </div>
+        <div className="modal-body">
+          <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
+            <StatusPill s={status}/>
+            <div className="dash-pill">{order.method}</div>
+            <div className="dash-pill">Maker · {order.maker || order.artisan}</div>
+            {live.tracking && <div className="dash-pill" style={{ background: "rgba(184,146,74,0.12)", color: "var(--gold)", borderColor: "rgba(184,146,74,0.3)" }}>↗ {live.carrier || "DHL"} · {live.tracking}</div>}
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            <div>
+              <h4 className="eyebrow" style={{ marginBottom: 12 }}>Items</h4>
+              <div style={{ border: "0.5px solid var(--line)", borderRadius: 4 }}>
+                {Array.from({ length: order.items }).map((_, i) => (
+                  <div key={i} style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 12, padding: 12, alignItems: "center", borderBottom: i < order.items - 1 ? "0.5px solid var(--line)" : "none" }}>
+                    <div style={{ aspectRatio: "3/4", background: "linear-gradient(160deg,#efe1d8,#c4a49a)", borderRadius: 2 }}/>
+                    <div>
+                      <div style={{ fontFamily: "var(--display)", fontSize: 14 }}>{["Marguerite Bishop", "Floret Romper", "Linen Set"][i % 3]}</div>
+                      <div style={{ fontSize: 11, color: "var(--charcoal-soft)", marginTop: 2 }}>Size · {["12M","6M","NB"][i % 3]} · Qty 1</div>
+                    </div>
+                    <div style={{ fontSize: 12 }}>{fmtLKR(order.total / order.items)}</div>
+                  </div>
+                ))}
               </div>
-              <div style={{ fontSize: 13 }}>{fmtLKR(order.total / order.items)}</div>
-            </div>
-          ))}
-        </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 24 }}>
-          <div>
-            <h4 className="eyebrow" style={{ marginBottom: 8 }}>Shipping</h4>
-            <div style={{ fontSize: 13, color: "var(--charcoal-soft)", lineHeight: 1.7 }}>
-              {order.customer}<br/>
-              42 Westbourne Grove<br/>
-              London W11<br/>
-              United Kingdom
+              <h4 className="eyebrow" style={{ marginTop: 24, marginBottom: 8 }}>Shipping address</h4>
+              <div style={{ fontSize: 13, color: "var(--charcoal-soft)", lineHeight: 1.7 }}>
+                {order.customer}<br/>
+                42 Westbourne Grove<br/>
+                London W11<br/>
+                United Kingdom
+              </div>
+            </div>
+            <div>
+              <h4 className="eyebrow" style={{ marginBottom: 8 }}>Summary</h4>
+              <div style={{ fontSize: 13, padding: 14, background: "var(--ivory)", borderRadius: 4 }}>
+                <Row k="Subtotal" v={fmtLKR(order.total - 800)}/>
+                <Row k="Shipping" v="LKR 800"/>
+                <div style={{ borderTop: "0.5px solid var(--line)", marginTop: 10, paddingTop: 10, display: "flex", justifyContent: "space-between", fontWeight: 400 }}><span>Total</span><span>{fmtLKR(order.total)}</span></div>
+              </div>
+
+              {(status === "production" || status === "shipped") && (
+                <div style={{ marginTop: 22 }}>
+                  <h4 className="eyebrow" style={{ marginBottom: 8 }}>Tracking</h4>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <select className="form-select" value={carrier} onChange={e => setCarrier(e.target.value)} style={{ width: 140 }}>
+                      <option>DHL Express</option>
+                      <option>FedEx</option>
+                      <option>UPS</option>
+                      <option>Royal Mail</option>
+                      <option>Aramex</option>
+                    </select>
+                    <input className="form-input" placeholder="Tracking number" value={tracking} onChange={e => setTracking(e.target.value)}/>
+                    <button className="btn btn-primary btn-sm" onClick={saveTracking} disabled={!tracking.trim()}>Save</button>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ marginTop: 22 }}>
+                <h4 className="eyebrow" style={{ marginBottom: 8 }}>Internal notes</h4>
+                <textarea className="form-text" rows="3" placeholder="Notes for the studio — won't be visible to the customer." value={notes} onChange={e => setNotes(e.target.value)} onBlur={saveNotes}/>
+              </div>
             </div>
           </div>
-          <div>
-            <h4 className="eyebrow" style={{ marginBottom: 8 }}>Summary</h4>
-            <div style={{ fontSize: 13 }}>
-              <Row k="Subtotal" v={fmtLKR(order.total - 800)}/>
-              <Row k="Shipping" v="LKR 800"/>
-              <div style={{ borderTop: "0.5px solid var(--line)", marginTop: 10, paddingTop: 10, display: "flex", justifyContent: "space-between", fontWeight: 400 }}><span>Total</span><span>{fmtLKR(order.total)}</span></div>
-            </div>
+
+          <h4 className="eyebrow" style={{ marginTop: 28, marginBottom: 12 }}>Timeline</h4>
+          <div style={{ borderLeft: "0.5px solid var(--gold)", paddingLeft: 16 }}>
+            {[
+              ["Order placed", order.date, true],
+              ["Payment captured", order.date, true],
+              ["Assigned to " + (order.maker || order.artisan), order.date, status !== "pending"],
+              ["Production complete", "—", ["shipped","delivered"].includes(status)],
+              ["Shipped" + (live.tracking ? ` via ${live.carrier || "DHL"}` : ""), "—", ["shipped","delivered"].includes(status)],
+              ["Delivered", "—", status === "delivered"],
+              ...(status === "cancelled" ? [["Cancelled", "—", true]] : []),
+            ].map(([t, d, done], i) => (
+              <div key={i} style={{ display: "flex", gap: 12, padding: "6px 0", fontSize: 13, color: done ? "var(--charcoal)" : "var(--charcoal-soft)" }}>
+                <Icon name={done ? "check" : "chev-right"} size={14} stroke={1.6}/>
+                <div style={{ flex: 1 }}>{t}</div>
+                <div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{d}</div>
+              </div>
+            ))}
+            {events.map((ev, i) => (
+              <div key={`e${i}`} style={{ display: "flex", gap: 12, padding: "6px 0", fontSize: 13, color: "var(--gold)" }}>
+                <Icon name="check" size={14} stroke={1.6}/>
+                <div style={{ flex: 1 }}>{ev.label}</div>
+                <div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{ev.at}</div>
+              </div>
+            ))}
           </div>
         </div>
-
-        <h4 className="eyebrow" style={{ marginTop: 28, marginBottom: 12 }}>Timeline</h4>
-        <div style={{ borderLeft: "0.5px solid var(--gold)", paddingLeft: 16 }}>
-          {[
-            ["Order placed", order.date, true],
-            ["Payment captured", order.date, true],
-            ["Assigned to " + (order.maker || order.artisan), order.date, order.status !== "pending"],
-            ["Production complete", "—", ["shipped","delivered"].includes(order.status)],
-            ["Shipped via DHL", "—", ["shipped","delivered"].includes(order.status)],
-            ["Delivered", "—", order.status === "delivered"],
-          ].map(([t, d, done], i) => (
-            <div key={i} style={{ display: "flex", gap: 12, padding: "6px 0", fontSize: 13, color: done ? "var(--charcoal)" : "var(--charcoal-soft)" }}>
-              <Icon name={done ? "check" : "chev-right"} size={14} stroke={1.6}/>
-              <div style={{ flex: 1 }}>{t}</div>
-              <div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{d}</div>
-            </div>
-          ))}
+        <div className="modal-foot">
+          <button className="btn btn-secondary btn-sm" onClick={printInvoice} style={{ marginRight: "auto" }}>Print invoice</button>
+          {status !== "cancelled" && status !== "refunded" && <button className="btn btn-secondary btn-sm" style={{ color: "#a85a3f", borderColor: "#a85a3f" }} onClick={() => setRefundOpen(true)}>Refund</button>}
+          {status !== "cancelled" && status !== "delivered" && status !== "refunded" && <button className="btn btn-secondary btn-sm" onClick={() => { if (confirm("Cancel this order?")) setOrderStatus("cancelled", "Order cancelled"); }}>Cancel order</button>}
+          {action && <button className="btn btn-primary btn-sm" onClick={() => setOrderStatus(action.next, action.label)}>{action.label}</button>}
+          {status === "delivered" && <span style={{ fontSize: 12, color: "var(--charcoal-soft)", padding: "8px 12px" }}>Order delivered ✓</span>}
         </div>
-      </div>
-      <div className="modal-foot">
-        <button className="btn btn-secondary btn-sm">Print invoice</button>
-        <button className="btn btn-secondary btn-sm">Refund</button>
-        <button className="btn btn-primary btn-sm">Mark shipped</button>
+        {refundOpen && <RefundModal order={order} onClose={() => setRefundOpen(false)} onConfirm={(amt, reason) => { persistAdminOrder(order.id, { status: "refunded", refundAmount: amt, refundReason: reason }); appendOrderEvent(order.id, { label: `Refunded ${fmtLKR(amt)} · ${reason}` }); setRefundOpen(false); setStatus("refunded"); }}/>}
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+const RefundModal = ({ order, onClose, onConfirm }) => {
+  const [amount, setAmount] = React.useState(order.total);
+  const [reason, setReason] = React.useState("Customer request");
+  return (
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1000 }}>
+      <div className="modal" style={{ maxWidth: 460 }} onClick={e => e.stopPropagation()}>
+        <div className="modal-head"><div><h2 style={{ fontSize: 22 }}>Issue refund</h2><div style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>Order {order.id} · {fmtLKR(order.total)}</div></div><button onClick={onClose}><Icon name="x" size={18}/></button></div>
+        <div className="modal-body">
+          <div className="form-grid">
+            <div className="span-2"><label className="form-label">Amount · LKR</label><input className="form-input" type="number" value={amount} onChange={e => setAmount(Math.min(order.total, Math.max(0, Number(e.target.value) || 0)))} max={order.total}/><div className="form-help">Maximum refundable · {fmtLKR(order.total)}</div></div>
+            <div className="span-2"><label className="form-label">Reason</label><select className="form-select" value={reason} onChange={e => setReason(e.target.value)}><option>Customer request</option><option>Wrong size shipped</option><option>Damaged in transit</option><option>Not as described</option><option>Late delivery</option><option>Other</option></select></div>
+          </div>
+          <div style={{ marginTop: 16, padding: 12, background: "rgba(168,90,63,0.08)", border: "0.5px solid rgba(168,90,63,0.2)", borderRadius: 4, fontSize: 12, color: "#a85a3f", lineHeight: 1.55 }}>This will refund <strong>{fmtLKR(amount)}</strong> via the original payment method. It can take 5–10 business days to appear on the customer's statement.</div>
+        </div>
+        <div className="modal-foot">
+          <button className="btn btn-secondary btn-sm" onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary btn-sm" style={{ background: "#a85a3f" }} onClick={() => onConfirm(amount, reason)}>Confirm refund</button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // ===== BESPOKE =====
 const BespokeSection = () => (
@@ -591,44 +814,159 @@ const ProductEditor = ({ product, onClose, onSaved }) => {
 };
 
 // ===== CUSTOMERS =====
-const CustomersSection = () => (
-  <>
-    <div className="kpi-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
-      <KPI label="Customers" value="384" delta={8.2} spark={[12,14,16,18,20,22,24,28,32,30,36,42]}/>
-      <KPI label="VIP & loyal" value="58" delta={12.0} spark={[4,5,6,6,7,8,9,10,11,12,13,14]}/>
-      <KPI label="New · 30d" value="42" delta={-3.2} spark={[6,5,4,5,4,3,4,5,4,5,4,4]}/>
-      <KPI label="Repeat rate" value="38%" delta={2.4} spark={[34,35,35,36,36,37,37,37,38,38,38,38]}/>
-    </div>
-    <div className="dash-card">
-      <div className="dash-card-head">
-        <h3>All customers</h3>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button className="btn btn-secondary btn-sm">Export</button>
+// Customer notes + tier overrides persisted to localStorage
+const CUST_KEY = "filamour.customers.overrides";
+const readAdminCustomers = () => { try { return JSON.parse(localStorage.getItem(CUST_KEY) || "{}"); } catch { return {}; } };
+const persistAdminCustomer = (id, patch) => {
+  const ov = readAdminCustomers();
+  ov[id] = { ...(ov[id] || {}), ...patch };
+  try { localStorage.setItem(CUST_KEY, JSON.stringify(ov)); } catch {}
+};
+const mergedCustomers = () => {
+  const ov = readAdminCustomers();
+  return D.customers.map(c => ({ ...c, ...(ov[c.id] || {}) }));
+};
+
+const CustomersSection = () => {
+  const [query, setQuery] = React.useState("");
+  const [tierFilter, setTierFilter] = React.useState("all");
+  const [selected, setSelected] = React.useState(null);
+  const [, force] = React.useReducer(x => x + 1, 0);
+
+  const customers = mergedCustomers();
+  const filtered = customers.filter(c => {
+    const matchesQ = !query || [c.name, c.email, c.country].some(s => (s || "").toLowerCase().includes(query.toLowerCase()));
+    const matchesT = tierFilter === "all" || c.tier === tierFilter;
+    return matchesQ && matchesT;
+  });
+
+  const exportCSV = () => downloadCSV(filtered.map(c => ({ Name: c.name, Email: c.email, Country: c.country, Orders: c.orders, LifetimeValue: c.spent, Tier: c.tier })), `filamour-customers-${Date.now()}.csv`);
+
+  return (
+    <>
+      <div className="kpi-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+        <KPI label="Customers" value={customers.length.toString()} delta={8.2} spark={[12,14,16,18,20,22,24,28,32,30,36,42]}/>
+        <KPI label="VIP & loyal" value={customers.filter(c => c.tier === "VIP" || c.tier === "Loyal").length.toString()} delta={12.0} spark={[4,5,6,6,7,8,9,10,11,12,13,14]}/>
+        <KPI label="New · 30d" value={customers.filter(c => c.tier === "New").length.toString()} delta={-3.2} spark={[6,5,4,5,4,3,4,5,4,5,4,4]}/>
+        <KPI label="Repeat rate" value="38%" delta={2.4} spark={[34,35,35,36,36,37,37,37,38,38,38,38]}/>
+      </div>
+
+      <div className="prod-mgr-bar">
+        <div className="prod-mgr-pills">
+          {[["all","All"],["VIP","VIP"],["Loyal","Loyal"],["Returning","Returning"],["New","New"]].map(([id, label]) => (
+            <button key={id} className={`prod-mgr-pill ${tierFilter === id ? "active" : ""}`} onClick={() => setTierFilter(id)}>{label}</button>
+          ))}
+        </div>
+        <div className="prod-mgr-actions">
+          <div className="prod-mgr-search">
+            <Icon name="search" size={13} stroke={1.5}/>
+            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search by name, email, country…"/>
+          </div>
+          <button className="btn btn-secondary btn-sm" onClick={exportCSV}>Export</button>
           <button className="btn btn-primary btn-sm">Email segment</button>
         </div>
       </div>
-      <table className="dash-tbl">
-        <thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Orders</th><th>Lifetime value</th><th>Tier</th></tr></thead>
-        <tbody>
-          {D.customers.map(c => (
-            <tr key={c.id}>
-              <td>
-                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, var(--blush), var(--dusty-rose))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--display)", fontSize: 14 }}>{c.name[0]}</div>
-                  <div className="strong">{c.name}</div>
-                </div>
-              </td>
-              <td style={{ color: "var(--charcoal-soft)" }}>{c.email}</td>
-              <td>{c.country}</td>
-              <td>{c.orders}</td>
-              <td>{fmtLKR(c.spent)}</td>
-              <td><span className={`status ${c.tier === "VIP" ? "warn" : c.tier === "Loyal" ? "success" : c.tier === "New" ? "info" : "neutral"}`}>{c.tier}</span></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </>
-);
 
-Object.assign(window, { OrdersSection, BespokeSection, ProductsSection, ProductEditor, CustomersSection, OrderDrawer });
+      <div className="dash-card">
+        <table className="dash-tbl">
+          <thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Orders</th><th>Lifetime value</th><th>Tier</th><th></th></tr></thead>
+          <tbody>
+            {filtered.length === 0 && (
+              <tr><td colSpan="7" style={{ padding: 40, textAlign: "center", color: "var(--charcoal-soft)" }}>No customers match.</td></tr>
+            )}
+            {filtered.map(c => (
+              <tr key={c.id} onClick={() => setSelected(c)} style={{ cursor: "pointer" }}>
+                <td>
+                  <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, var(--blush), var(--dusty-rose))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--display)", fontSize: 14 }}>{c.name[0]}</div>
+                    <div><div className="strong">{c.name}</div>{c.note && <div style={{ fontSize: 10, color: "var(--gold)", marginTop: 2 }}>★ Note added</div>}</div>
+                  </div>
+                </td>
+                <td style={{ color: "var(--charcoal-soft)" }}>{c.email}</td>
+                <td>{c.country}</td>
+                <td>{c.orders}</td>
+                <td>{fmtLKR(c.spent)}</td>
+                <td><span className={`status ${c.tier === "VIP" ? "warn" : c.tier === "Loyal" ? "success" : c.tier === "New" ? "info" : "neutral"}`}>{c.tier}</span></td>
+                <td><Icon name="chev-right" size={14}/></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {selected && <CustomerDrawer customer={selected} onClose={() => { setSelected(null); force(); }}/>}
+    </>
+  );
+};
+
+const CustomerDrawer = ({ customer, onClose }) => {
+  const live = mergedCustomers().find(c => c.id === customer.id) || customer;
+  const [tier, setTier] = React.useState(live.tier);
+  const [note, setNote] = React.useState(live.note || "");
+
+  // Pull orders for this customer
+  const orders = mergedOrders().filter(o => o.customer === customer.name);
+  const avgOrder = orders.length > 0 ? Math.round(orders.reduce((s, o) => s + o.total, 0) / orders.length) : 0;
+
+  const updateTier = (t) => {
+    setTier(t);
+    persistAdminCustomer(customer.id, { tier: t });
+  };
+  const saveNote = () => persistAdminCustomer(customer.id, { note });
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal prod-editor" onClick={e => e.stopPropagation()}>
+        <div className="modal-head">
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg, var(--blush), var(--dusty-rose))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--display)", fontSize: 24 }}>{customer.name[0]}</div>
+            <div>
+              <h2>{customer.name}</h2>
+              <div style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>{customer.email} · {customer.country}</div>
+            </div>
+          </div>
+          <button onClick={onClose}><Icon name="x" size={18}/></button>
+        </div>
+        <div className="modal-body">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 28 }}>
+            <div style={{ padding: 14, background: "var(--ivory)", borderRadius: 4 }}><div className="eyebrow" style={{ fontSize: 9 }}>Lifetime value</div><div style={{ fontFamily: "var(--display)", fontSize: 22, marginTop: 4 }}>{fmtLKR(customer.spent)}</div></div>
+            <div style={{ padding: 14, background: "var(--ivory)", borderRadius: 4 }}><div className="eyebrow" style={{ fontSize: 9 }}>Orders</div><div style={{ fontFamily: "var(--display)", fontSize: 22, marginTop: 4 }}>{customer.orders}</div></div>
+            <div style={{ padding: 14, background: "var(--ivory)", borderRadius: 4 }}><div className="eyebrow" style={{ fontSize: 9 }}>Avg order</div><div style={{ fontFamily: "var(--display)", fontSize: 22, marginTop: 4 }}>{avgOrder ? fmtLKR(avgOrder) : "—"}</div></div>
+            <div style={{ padding: 14, background: "var(--ivory)", borderRadius: 4 }}><div className="eyebrow" style={{ fontSize: 9 }}>Tier</div><select className="form-select" value={tier} onChange={e => updateTier(e.target.value)} style={{ marginTop: 4, padding: 4, fontSize: 14, fontFamily: "var(--display)" }}><option>VIP</option><option>Loyal</option><option>Returning</option><option>New</option></select></div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
+            <div>
+              <h4 className="eyebrow" style={{ marginBottom: 12 }}>Order history</h4>
+              {orders.length === 0 && <div style={{ padding: 16, background: "var(--ivory)", borderRadius: 4, fontSize: 12, color: "var(--charcoal-soft)" }}>No orders found in the current dataset.</div>}
+              {orders.map(o => (
+                <div key={o.id} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "0.5px solid var(--line)", fontSize: 13 }}>
+                  <div><div className="mono strong">{o.id}</div><div style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>{o.date}</div></div>
+                  <div style={{ textAlign: "right" }}><div>{fmtLKR(o.total)}</div><div style={{ marginTop: 4 }}><StatusPill s={o.status}/></div></div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h4 className="eyebrow" style={{ marginBottom: 12 }}>Internal notes</h4>
+              <textarea className="form-text" rows="6" placeholder="VIP preferences, sizing notes, gift recipient names — visible to studio only." value={note} onChange={e => setNote(e.target.value)} onBlur={saveNote}/>
+
+              <h4 className="eyebrow" style={{ marginTop: 24, marginBottom: 12 }}>Default address</h4>
+              <div style={{ padding: 14, background: "var(--ivory)", borderRadius: 4, fontSize: 13, lineHeight: 1.7, color: "var(--charcoal-soft)" }}>
+                {customer.name}<br/>
+                42 Westbourne Grove<br/>
+                London W11<br/>
+                {customer.country}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="modal-foot">
+          <button className="btn btn-secondary btn-sm" style={{ marginRight: "auto" }} onClick={() => window.open(`mailto:${customer.email}?subject=A note from Filamour`)}>Email customer</button>
+          <a href={`https://wa.me/447000000000?text=Hi%20${encodeURIComponent(customer.name.split(" ")[0])}`} target="_blank" className="btn btn-secondary btn-sm">WhatsApp</a>
+          <button className="btn btn-primary btn-sm" onClick={onClose}>Done</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window, { OrdersSection, BespokeSection, ProductsSection, ProductEditor, CustomersSection, OrderDrawer, CustomerDrawer, RefundModal, mergedOrders, mergedCustomers, persistAdminOrder, downloadCSV });
