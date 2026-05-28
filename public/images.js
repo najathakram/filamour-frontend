@@ -73,6 +73,12 @@ window.IMG = {
 };
 
 window.productImg = function(slug, idx = 0) {
+  // 1) Admin-uploaded overrides win (stored as data: URIs in localStorage)
+  try {
+    const ov = JSON.parse(localStorage.getItem("filamour.products.overrides") || "{}");
+    const imgs = ov[slug] && ov[slug].images;
+    if (imgs && imgs.length) return imgs[idx % imgs.length];
+  } catch {}
   const list = window.IMG.products[slug] || window.IMG.products["marguerite-bishop-dress"];
   return list[idx % list.length];
 };

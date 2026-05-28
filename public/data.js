@@ -143,6 +143,28 @@ window.FILAMOUR_DATA = {
   symbols: { LKR: "LKR ", GBP: "£", USD: "$" },
 };
 
+// ===== Admin overrides — merge localStorage edits into the live catalogue =====
+// The dashboard at /admin saves product edits into localStorage under
+// `filamour.products.overrides`. On boot, we merge them in so the storefront
+// reflects admin changes immediately. Acts as a thin in-browser "backend" for
+// staging; swap for a real API call when wiring Railway.
+(function mergeAdminOverrides() {
+  try {
+    const overrides = JSON.parse(localStorage.getItem("filamour.products.overrides") || "{}");
+    Object.keys(overrides).forEach(slug => {
+      const o = overrides[slug];
+      const idx = window.FILAMOUR_DATA.products.findIndex(p => p.slug === slug);
+      if (o._deleted) {
+        if (idx >= 0) window.FILAMOUR_DATA.products.splice(idx, 1);
+      } else if (idx >= 0) {
+        window.FILAMOUR_DATA.products[idx] = { ...window.FILAMOUR_DATA.products[idx], ...o };
+      } else {
+        window.FILAMOUR_DATA.products.push(o);
+      }
+    });
+  } catch {}
+})();
+
 window.fmtPrice = function(lkr, ccy) {
   const r = window.FILAMOUR_DATA.rates[ccy];
   const sym = window.FILAMOUR_DATA.symbols[ccy];
