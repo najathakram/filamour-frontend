@@ -57,15 +57,20 @@ const ShopProvider = ({ children }) => {
   const [cart, setCart] = React.useState([]);
   const [wishlist, setWishlist] = React.useState([]);
   const [toasts, setToasts] = React.useState([]);
+  const [cartOpen, setCartOpen] = React.useState(false);
 
   const addToast = (msg) => {
     const id = Math.random();
     setToasts(t => [...t, { id, msg }]);
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3000);
   };
+  const openCart = () => setCartOpen(true);
+  const closeCart = () => setCartOpen(false);
+  const removeFromCart = (id) => setCart(c => c.filter(it => it.id !== id));
+
   const addToCart = (slug, size) => {
     setCart(c => [...c, { slug, size, id: Math.random() }]);
-    addToast("Added to cart");
+    setCartOpen(true);
   };
   const toggleWish = (slug) => {
     setWishlist(w => {
@@ -74,7 +79,7 @@ const ShopProvider = ({ children }) => {
     });
   };
   return (
-    <ShopContext.Provider value={{ cart, wishlist, addToCart, toggleWish, toasts }}>
+    <ShopContext.Provider value={{ cart, wishlist, addToCart, removeFromCart, toggleWish, toasts, cartOpen, openCart, closeCart }}>
       {children}
     </ShopContext.Provider>
   );
@@ -159,4 +164,89 @@ const FmImage = ({ src, alt = "", warm = true, vignette = false, fallback, class
   );
 };
 
-Object.assign(window, { Icon, Monogram, CurrencyContext, useCurrency, ShopContext, ShopProvider, useShop, RouterContext, useRoute, useHashRoute, navigate, ToastStack, Btn, ProductCard, OccChip, FmImage });
+// ===== Mini-cart drawer =====
+const CartDrawer = () => {
+  const { cart, cartOpen, closeCart, removeFromCart } = useShop();
+  const { ccy } = useCurrency();
+  React.useEffect(() => {
+    document.body.style.overflow = cartOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [cartOpen]);
+  if (!cartOpen) return null;
+
+  const PRODUCTS = window.FILAMOUR_DATA.products;
+  const subtotal = cart.reduce((s, it) => s + (PRODUCTS.find(p => p.slug === it.slug)?.priceLKR || 0), 0);
+  const threshold = ccy === "LKR" ? 43200 : ccy === "USD" ? 150 : 120;
+  const symbol = ccy === "LKR" ? "LKR " : ccy === "USD" ? "$" : "£";
+  const subtotalDisp = ccy === "LKR" ? subtotal : subtotal * window.FILAMOUR_DATA.rates[ccy];
+  const remaining = Math.max(0, threshold - subtotalDisp);
+  const pct = Math.min(100, (subtotalDisp / threshold) * 100);
+  const fmtAmt = (n) => ccy === "LKR" ? symbol + Math.round(n).toLocaleString() : symbol + n.toFixed(0);
+
+  const goCheckout = () => { closeCart(); navigate("/checkout"); };
+  const goFullCart = () => { closeCart(); navigate("/cart"); };
+
+  return (
+    <div className="cart-drawer-overlay" onClick={closeCart}>
+      <aside className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+        <header className="cart-drawer-head">
+          <div>
+            <div className="eyebrow gold">Your bag</div>
+            <h3 className="h-display" style={{ fontSize: 22, marginTop: 4 }}>{cart.length} {cart.length === 1 ? "piece" : "pieces"}</h3>
+          </div>
+          <button className="cart-drawer-x" onClick={closeCart} aria-label="Close"><Icon name="x" size={18}/></button>
+        </header>
+
+        {cart.length === 0 ? (
+          <div className="cart-drawer-empty">
+            <Icon name="bag" size={28} stroke={1.2}/>
+            <p>Your bag is quiet for now.</p>
+            <Btn variant="primary" onClick={() => { closeCart(); navigate("/shop"); }}>Browse the collection</Btn>
+          </div>
+        ) : (
+          <>
+            <div className="cart-drawer-ship">
+              {remaining > 0 ? (
+                <div className="cart-drawer-ship-msg"><Icon name="gift" size={12} stroke={1.6}/><span>You're <strong>{fmtAmt(remaining)}</strong> away from free worldwide shipping.</span></div>
+              ) : (
+                <div className="cart-drawer-ship-msg won"><Icon name="check" size={12} stroke={1.8}/><span>Free worldwide shipping unlocked.</span></div>
+              )}
+              <div className="cart-drawer-bar"><div className="cart-drawer-fill" style={{ width: `${pct}%` }}/></div>
+            </div>
+
+            <div className="cart-drawer-items">
+              {cart.map(it => {
+                const p = PRODUCTS.find(pp => pp.slug === it.slug);
+                if (!p) return null;
+                return (
+                  <div key={it.id} className="cart-drawer-item">
+                    <div className="cart-drawer-img">
+                      <FmImage src={window.productImg(it.slug, 0)} alt={p.name}/>
+                    </div>
+                    <div className="cart-drawer-meta">
+                      <div className="cart-drawer-name">{p.name}</div>
+                      <div className="cart-drawer-size">Size · {it.size}</div>
+                      <div className="cart-drawer-price">{window.fmtPrice(p.priceLKR, ccy)}</div>
+                    </div>
+                    <button className="cart-drawer-remove" onClick={() => removeFromCart(it.id)} aria-label="Remove"><Icon name="x" size={12} stroke={1.8}/></button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <footer className="cart-drawer-foot">
+              <div className="cart-drawer-sub"><span>Subtotal</span><span>{window.fmtPrice(subtotal, ccy)}</span></div>
+              <div className="cart-drawer-note">Shipping & taxes at checkout · gift-wrapped with a handwritten card</div>
+              <div className="cart-drawer-actions">
+                <Btn variant="primary" block onClick={goCheckout}>Continue to checkout</Btn>
+                <button className="cart-drawer-link" onClick={goFullCart}>View full bag →</button>
+              </div>
+            </footer>
+          </>
+        )}
+      </aside>
+    </div>
+  );
+};
+
+Object.assign(window, { Icon, Monogram, CurrencyContext, useCurrency, ShopContext, ShopProvider, useShop, RouterContext, useRoute, useHashRoute, navigate, ToastStack, Btn, ProductCard, OccChip, FmImage, CartDrawer });

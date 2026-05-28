@@ -104,7 +104,7 @@ const MobileMenu = ({ onClose }) => {
 // ===== NAV =====
 const Nav = () => {
   const route = useHashRoute();
-  const { cart, wishlist } = useShop();
+  const { cart, wishlist, openCart } = useShop();
   const [mega, setMega] = React.useState(false);
   const [mob, setMob] = React.useState(false);
   const [search, setSearch] = React.useState(false);
@@ -137,10 +137,10 @@ const Nav = () => {
             <a href="#/wishlist" className="nav-icon" aria-label="Wishlist">
               <Icon name={wishlist.length ? "heart-fill" : "heart"} size={18}/>
             </a>
-            <a href="#/cart" className="nav-icon" aria-label="Cart">
+            <button className="nav-icon" aria-label="Cart" onClick={openCart} style={{ position: "relative" }}>
               <Icon name="bag" size={18}/>
               {cart.length > 0 && <span className="cart-badge">{cart.length}</span>}
-            </a>
+            </button>
           </div>
         </div>
         {mega && <MegaMenu onNav={() => setMega(false)} />}
@@ -198,11 +198,9 @@ const Footer = () => (
             <li><a href="#"><Icon name="fb" size={14}/> &nbsp; filamour</a></li>
             <li><a href="#"><Icon name="tiktok" size={14}/> &nbsp; @filamour</a></li>
           </ul>
-          <h4 style={{ marginTop: 28 }}>The occasional letter</h4>
-          <form className="footer-email" onSubmit={(e) => e.preventDefault()}>
-            <input placeholder="Your email" type="email" />
-            <button type="submit">Subscribe →</button>
-          </form>
+          <h4 style={{ marginTop: 28 }}>Add a child's birthday</h4>
+          <p style={{ fontSize: 12, color: "rgba(245,239,230,0.65)", marginTop: 6, marginBottom: 14, lineHeight: 1.6, fontFamily: "var(--body)" }}>We'll write six weeks before — quietly — with a piece in the right size for the day.</p>
+          <BirthdayCapture/>
         </div>
       </div>
       <div className="footer-bottom">
@@ -216,4 +214,25 @@ const Footer = () => (
   </footer>
 );
 
-Object.assign(window, { Nav, Footer, IntlBanner });
+// ===== Birthday-calendar capture (footer) =====
+const BirthdayCapture = () => {
+  const [sent, setSent] = React.useState(false);
+  if (sent) {
+    return (
+      <div className="bday-thanks">
+        <Icon name="check" size={14} stroke={1.8}/>
+        <span>Thank you. We'll write six weeks before.</span>
+      </div>
+    );
+  }
+  return (
+    <form className="bday-form" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+      <input className="bday-input" type="text" placeholder="Child's first name" required/>
+      <input className="bday-input" type="date" placeholder="Birthday" required/>
+      <input className="bday-input" type="email" placeholder="Your email" required/>
+      <button type="submit" className="bday-submit">Add the date →</button>
+    </form>
+  );
+};
+
+Object.assign(window, { Nav, Footer, IntlBanner, BirthdayCapture });

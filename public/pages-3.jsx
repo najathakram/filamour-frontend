@@ -50,48 +50,96 @@ const GgSection = ({ title, intro, products, badge }) => (
 // ===================== BESPOKE =====================
 const BespokePage = () => {
   const [submitted, setSubmitted] = React.useState(false);
+  const { ccy } = useCurrency();
+  const fromPrice = ccy === "LKR" ? "LKR 65,000" : ccy === "USD" ? "$220" : "£180";
   return (
     <div className="page">
-      <div className="wrap" style={{ padding: "64px 0 96px", maxWidth: 860, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 56 }}>
+      <div className="wrap" style={{ padding: "64px 0 96px", maxWidth: 920, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 64 }}>
           <div className="eyebrow gold" style={{ marginBottom: 14 }}>Bespoke</div>
           <h1 className="h-display" style={{ fontSize: 48 }}>A piece made exactly for your little one</h1>
-          <p className="h-italic" style={{ fontSize: 18, marginTop: 22, color: "var(--charcoal-soft)", maxWidth: 560, margin: "22px auto 0" }}>We accept a limited number of bespoke orders each month. Tell us the occasion, the colours, and the date you need it. We will make it by hand, just for you.</p>
+          <p className="h-italic" style={{ fontSize: 18, marginTop: 22, color: "var(--charcoal-soft)", maxWidth: 580, margin: "22px auto 0" }}>We take a small number of bespoke orders each month. Tell us what you imagine — we'll write back within 24 hours with a sketch, a price, and a date.</p>
+        </div>
+
+        {/* How it works — sets expectations, reduces anxiety about a non-standard order */}
+        <div className="bespoke-steps">
+          {[
+            { n: "01", h: "Tell us what you imagine", p: "Fill the form below — occasion, date, colours, any inspiration you've found." },
+            { n: "02", h: "We write back within 24 hours", p: "On WhatsApp, with a hand-drawn sketch, a price, and the timeline we can promise." },
+            { n: "03", h: "You approve, we make it", p: "Made by hand in 10–14 working days, then wrapped and sent. We send a photo before it ships." },
+          ].map(s => (
+            <div key={s.n} className="bespoke-step">
+              <div className="bespoke-step-n">{s.n}</div>
+              <h3>{s.h}</h3>
+              <p>{s.p}</p>
+            </div>
+          ))}
         </div>
 
         {submitted ? (
-          <div style={{ background: "var(--white)", padding: 48, textAlign: "center", border: "0.5px solid var(--gold)" }}>
-            <div className="eyebrow gold">Thank you</div>
-            <h2 className="h-display" style={{ fontSize: 32, marginTop: 12 }}>Your request is on its way.</h2>
-            <p style={{ marginTop: 16, color: "var(--charcoal-soft)" }}>We will respond within 24 hours via WhatsApp.</p>
+          <div className="bespoke-thanks">
+            <div style={{ width: 60, height: 60, borderRadius: "50%", background: "var(--blush)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--gold)", marginBottom: 18 }}>
+              <Icon name="check" size={26} stroke={1.6}/>
+            </div>
+            <div className="eyebrow gold">Received with care</div>
+            <h2 className="h-display" style={{ fontSize: 32, marginTop: 12 }}>Your request is on its way to the studio.</h2>
+            <p style={{ marginTop: 16, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 18, maxWidth: 480, margin: "16px auto 0" }}>Gaika will read this herself and write back within 24 hours on WhatsApp. If you don't hear within that, message us — your note may have got lost.</p>
           </div>
         ) : (
           <form className="bespoke-form" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+            <div className="bespoke-form-head">
+              <div className="eyebrow gold" style={{ marginBottom: 10 }}>The brief</div>
+              <h2 className="h-display" style={{ fontSize: 28 }}>Tell us what you imagine</h2>
+            </div>
             <div className="bf-grid">
+              <Field label="Your name *" name="name"/>
+              <Field label="Email *" name="email" type="email"/>
+              <Field label="WhatsApp number *" name="wa" placeholder="+44 …"/>
               <Field label="Child's name (optional)" name="child"/>
               <Field label="Size needed *" name="size" placeholder="e.g. 12M"/>
-              <Field label="Occasion *" name="occasion" placeholder="Christening, first birthday…"/>
               <Field label="Date needed by *" name="date" type="date"/>
-              <Field label="Your name *" name="name" span={2}/>
-              <Field label="Email *" name="email" type="email"/>
-              <Field label="WhatsApp number *" name="wa" placeholder="+94 …"/>
-              <FieldArea label="Preferred colours or fabric" name="colours" placeholder="Ivory, dusty rose, organic cotton…"/>
-              <FieldArea label="Any other details" name="details" placeholder="Tell us anything else we should know."/>
+              <Field label="Occasion *" name="occasion" placeholder="Christening, first birthday…" span={2}/>
+              <FieldArea label="Preferred colours, fabric, or a piece you've seen elsewhere" name="colours" placeholder="Ivory cotton-muslin, full skirt, hand-embroidered florals…"/>
+              <FieldArea label="Anything else we should know" name="details" placeholder="A photograph, a memory, a piece your mother wore…"/>
             </div>
-            <div style={{ marginTop: 32 }}><Btn variant="primary">Send your request</Btn></div>
-            <div style={{ marginTop: 32, padding: 24, background: "var(--white)", borderLeft: "2px solid var(--gold)", fontSize: 14, color: "var(--charcoal-soft)", lineHeight: 1.85 }}>
-              <strong style={{ color: "var(--charcoal)" }}>What to expect:</strong> We will respond within 24 hours via WhatsApp. Bespoke pieces are priced from LKR 18,000. Production takes 10–14 working days.
+            <div className="bespoke-form-actions">
+              <Btn variant="primary">Send your request</Btn>
+              <a href="https://wa.me/447000000000" target="_blank" rel="noopener" className="btn btn-wa">
+                <Icon name="whatsapp" size={16}/> Or message Gaika directly
+              </a>
+            </div>
+            <div className="bespoke-fineprint">
+              <div><Icon name="check" size={13} stroke={1.6}/><span><strong>From {fromPrice}</strong> · pricing depends on the piece, fabric and finish.</span></div>
+              <div><Icon name="check" size={13} stroke={1.6}/><span><strong>10–14 working days</strong> production. Wrapped and shipped tracked.</span></div>
+              <div><Icon name="check" size={13} stroke={1.6}/><span><strong>Photo before it ships.</strong> Bespoke pieces aren't returnable, so we make sure you're sure.</span></div>
             </div>
           </form>
         )}
       </div>
       <style>{`
-        .bf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; }
+        .bespoke-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 56px; }
+        @media (max-width: 760px) { .bespoke-steps { grid-template-columns: 1fr; } }
+        .bespoke-step { background: var(--white); padding: 28px 26px; border-top: 0.5px solid var(--gold); }
+        .bespoke-step-n { font-family: var(--display); font-weight: 300; font-size: 13px; letter-spacing: 0.22em; color: var(--gold); }
+        .bespoke-step h3 { font-family: var(--display); font-weight: 400; font-size: 21px; margin-top: 10px; line-height: 1.25; }
+        .bespoke-step p { margin-top: 10px; color: var(--charcoal-soft); font-size: 14px; line-height: 1.7; }
+
+        .bespoke-form { background: var(--white); padding: 40px; border: 0.5px solid var(--line); }
+        @media (max-width: 640px) { .bespoke-form { padding: 28px 22px; } }
+        .bespoke-form-head { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 0.5px solid var(--line); }
+        .bf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 24px; }
         @media (max-width: 640px) { .bf-grid { grid-template-columns: 1fr; } }
         .field label { display: block; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); margin-bottom: 8px; }
-        .field input, .field textarea { width: 100%; background: var(--white); border: 0.5px solid var(--line); padding: 12px 14px; border-radius: 4px; font-size: 15px; }
-        .field input:focus, .field textarea:focus { outline: none; border-color: var(--gold); }
+        .field input, .field textarea { width: 100%; background: var(--ivory); border: 0.5px solid var(--line); padding: 12px 14px; border-radius: 4px; font-size: 15px; font-family: var(--body); }
+        .field input:focus, .field textarea:focus { outline: none; border-color: var(--gold); background: var(--white); }
         .field.span-2 { grid-column: 1 / -1; }
+        .bespoke-form-actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; align-items: center; }
+        .bespoke-fineprint { margin-top: 32px; padding: 22px; background: var(--ivory); border-radius: 4px; display: flex; flex-direction: column; gap: 12px; }
+        .bespoke-fineprint > div { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; color: var(--charcoal); }
+        .bespoke-fineprint svg { color: var(--gold); flex-shrink: 0; margin-top: 3px; }
+        .bespoke-fineprint strong { font-weight: 400; }
+
+        .bespoke-thanks { background: var(--white); padding: 64px 40px; text-align: center; border: 0.5px solid var(--gold); }
       `}</style>
     </div>
   );

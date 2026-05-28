@@ -48,6 +48,7 @@ const App = () => {
         </main>
         {!isDash && <Footer/>}
         <ToastStack/>
+        {!isDash && <CartDrawer/>}
       </ShopProvider>
     </CurrencyContext.Provider>
   );
