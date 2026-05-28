@@ -43,10 +43,11 @@ const ProductPage = ({ slug }) => {
           {/* Info */}
           <div className="prod-info">
             <h1>{product.name}</h1>
+            <p className="prod-poetic">{product.desc}.</p>
             <div className="gold-rule"/>
             <div className="prod-price">{window.fmtPrice(product.priceLKR, ccy)}</div>
             <div className={`avail-badge ${product.avail.type === "ready" ? "ready" : "made"}`}>
-              {product.avail.type === "ready" ? "Ready to ship" : `Made to order · ${product.avail.days} working days`}
+              {product.avail.type === "ready" ? "Ready to ship · within 2 working days" : `Made to order · yours in ${product.avail.days} working days`}
             </div>
 
             <div className="prod-section">
@@ -70,6 +71,20 @@ const ProductPage = ({ slug }) => {
                 <Icon name="whatsapp" size={16}/> Order via WhatsApp
               </a>
             </div>
+
+            {/* Trust icons — answers "what if it's wrong?" right next to the buy button */}
+            <div className="prod-trust">
+              <div className="prod-trust-item"><Icon name="check" size={14} stroke={1.6}/><span>Free worldwide shipping over £120</span></div>
+              <div className="prod-trust-item"><Icon name="gift" size={14} stroke={1.6}/><span>Wrapped with a handwritten card</span></div>
+              <div className="prod-trust-item"><Icon name="heart" size={14} stroke={1.6}/><span>14-day no-questions returns</span></div>
+            </div>
+
+            {/* One-line customer reassurance — answers "is this real?" */}
+            <blockquote className="prod-quote">
+              <span className="qm">"</span>
+              Came out of the box softer than I expected. A year on, it's softer still.
+              <cite>— Hannah, London</cite>
+            </blockquote>
 
             <div className="accord">
               <AccordItem id="piece" open={accord} onToggle={setAccord} title="The Piece">
@@ -161,6 +176,13 @@ const OurStoryPage = () => (
       <FmImage src={window.IMG.ourStoryHero} alt="Filamour piece, softly folded"/>
       <h1>For the way they should feel</h1>
     </div>
+
+    {/* Founder pull-quote, up top — answers question #1 (is this for me) in three seconds */}
+    <div className="founder-pull">
+      <p className="founder-pull-quote">"If I won't put it on Mira, it doesn't leave the studio."</p>
+      <div className="founder-pull-by">Gaika · Founder of Filamour, mother of Mira (3)</div>
+    </div>
+
     <div className="eyebrow gold" style={{ marginBottom: 12 }}>Our Story</div>
     <p className="lead">Filamour began the night a new mother held up two baby dresses in a high street shop and realised one was a glossy-finish polyester and the other had been sprayed with a wrinkle-release chemical. Neither was going on her daughter.</p>
     <h2>Why we exist</h2>

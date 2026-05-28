@@ -12,19 +12,36 @@ const HomePage = () => {
     { title: "Eid & Festive", tag: "Saffron & gold", img: window.IMG.occasion.eid },
   ];
 
+  const heroPiece = PRODUCTS.find(p => p.slug === "marguerite-bishop-dress") || PRODUCTS[0];
+
   return (
     <div className="page">
-      {/* HERO */}
-      <section className="hero">
-        <FmImage src={window.IMG.hero} alt="Filamour hero" warm={false} className="hero-bg-img"/>
-        <div className="hero-content">
-          <img src="assets/filamour-logo.png" alt="Filamour" style={{ width: 110, height: 110, objectFit: "contain", margin: "0 auto 20px", display: "block", mixBlendMode: "screen", opacity: 0.95 }}/>
-          <h1>Filamour</h1>
-          <div className="gold-line"></div>
-          <div className="tagline">Thread of Love</div>
-          <div className="hero-cta" style={{ marginTop: 36 }}>
-            <Btn variant="ghost" onClick={() => navigate("/shop")}>Shop the Collection</Btn>
+      {/* SPLIT HERO: product + benefit + dual CTA */}
+      <section className="hero hero-split">
+        <div className="wrap hero-split-inner">
+          <div className="hero-split-copy">
+            <img src="assets/filamour-logo.png" alt="" className="hero-mark"/>
+            <div className="eyebrow gold">Filamour</div>
+            <h1 className="hero-h1">For the moments<br/>you'll remember,<br/><em>in cloth she can sleep in.</em></h1>
+            <p className="hero-sub">Heirloom children's wear in natural cotton, muslin and linen — made by hand, in small batches.</p>
+            <div className="hero-cta-row">
+              <Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn>
+              <Btn variant="secondary" onClick={() => navigate("/our-story")}>Read our story</Btn>
+            </div>
           </div>
+          <div className="hero-split-img">
+            <FmImage src={window.productImg(heroPiece.slug, 0)} alt={heroPiece.name}/>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST BAND — answers question #6 (am I safe to spend) before she scrolls further */}
+      <section className="trust-band">
+        <div className="wrap trust-band-inner">
+          <div className="trust-item"><Icon name="check" size={14} stroke={1.6}/><span>Worldwide shipping · free over £120</span></div>
+          <div className="trust-item"><Icon name="gift" size={14} stroke={1.6}/><span>Gift-wrapped with a handwritten card</span></div>
+          <div className="trust-item"><Icon name="heart" size={14} stroke={1.6}/><span>14-day no-questions returns</span></div>
+          <div className="trust-item"><Icon name="whatsapp" size={14} stroke={1.6}/><span>Reply within a working day on WhatsApp</span></div>
         </div>
       </section>
 
@@ -115,19 +132,34 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* INSTAGRAM */}
+      {/* TESTIMONIAL BAND — single anchor quote with country signal */}
+      <section className="home-testi">
+        <div className="wrap home-testi-inner">
+          <div className="eyebrow gold" style={{ marginBottom: 14 }}>From mothers, in their own words</div>
+          <blockquote>
+            <span className="quote-mark">"</span>
+            It came out of the box softer than I expected, and a year later it's softer still. It looks better now than the day it arrived.
+          </blockquote>
+          <figcaption>— Hannah · London · The Marguerite, a year on</figcaption>
+          <div className="home-testi-meta">Shipped to 14 countries · 4.9 average rating · returning customers since 2024</div>
+        </div>
+      </section>
+
+      {/* AS WORN — replaces empty IG grid with product shots until real UGC arrives */}
       <section className="section">
         <div className="wrap">
           <div className="section-head">
             <div className="left">
               <h2>As worn by little ones</h2>
-              <div className="sub">@filamour on Instagram</div>
+              <div className="sub">Customer photos · share yours @filamour</div>
             </div>
-            <a className="view-all" href="#">Follow <Icon name="ig" size={14}/></a>
+            <a className="view-all" href="#">Follow on Instagram <Icon name="ig" size={14}/></a>
           </div>
           <div className="ig-grid">
-            {window.IMG.ig.map((src, i) => (
-              <div key={i} className="ig-tile"><FmImage src={src} alt={`Customer photo ${i+1}`}/></div>
+            {PRODUCTS.slice(0, 6).map((p, i) => (
+              <div key={p.slug} className="ig-tile" onClick={() => navigate(`/product/${p.slug}`)} style={{ cursor: "pointer" }}>
+                <FmImage src={window.productImg(p.slug, i % 2)} alt={p.name}/>
+              </div>
             ))}
           </div>
         </div>

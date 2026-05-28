@@ -2,10 +2,13 @@
 const IntlBanner = () => {
   const [show, setShow] = React.useState(true);
   const { ccy } = useCurrency();
-  if (!show || ccy === "LKR") return null;
+  if (!show) return null;
+  const msg = ccy === "LKR"
+    ? "We ship worldwide. Switch to GBP or USD above."
+    : "Free worldwide shipping over £120 · 14-day returns · gift-wrapped with a handwritten card.";
   return (
     <div className="intl-banner">
-      <span>We ship worldwide. International orders from GBP 60. Free shipping over GBP 120.</span>
+      <span>{msg}</span>
       <a href="#/shipping">See shipping details</a>
       <button className="dismiss" onClick={() => setShow(false)} aria-label="Dismiss"><Icon name="x" size={14} /></button>
     </div>

@@ -26,7 +26,17 @@ const Router = () => {
 };
 
 const App = () => {
-  const [ccy, setCcy] = React.useState("LKR");
+  // Default to GBP so a UK/US mother arriving on the site doesn't see LKR
+  // and bounce. Stored choice in localStorage wins; otherwise GBP.
+  const initialCcy = (() => {
+    try {
+      const saved = localStorage.getItem("filamour.ccy");
+      if (saved && ["GBP","USD","LKR"].includes(saved)) return saved;
+    } catch {}
+    return "GBP";
+  })();
+  const [ccy, setCcyRaw] = React.useState(initialCcy);
+  const setCcy = (c) => { try { localStorage.setItem("filamour.ccy", c); } catch {} setCcyRaw(c); };
   const route = useHashRoute();
   const isDash = route.startsWith("/dashboard");
   return (
