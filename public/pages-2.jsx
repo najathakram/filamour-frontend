@@ -285,7 +285,7 @@ const MaterialsPage = () => {
             <svg className="mat-sig" viewBox="0 0 220 70" aria-hidden="true">
               <path d="M10,45 C18,18 32,18 38,38 C42,52 30,58 26,50 C22,42 36,38 50,46 C66,55 80,30 92,30 C104,30 100,52 88,52 C76,52 84,30 100,30 C120,30 116,52 132,50 C148,48 144,30 158,30 C172,30 170,55 184,50 C198,46 200,30 212,30" stroke="var(--charcoal)" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
             </svg>
-            <div className="mat-founder-name">Amara · Founder</div>
+            <div className="mat-founder-name">Gaika · Founder</div>
           </div>
         </div>
       </section>
