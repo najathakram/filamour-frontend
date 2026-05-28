@@ -236,6 +236,7 @@ const Footer = () => (
           <ul>
             <li><a href="#/size-guide">Size Guide</a></li>
             <li><a href="#/care-guide">Care Guide</a></li>
+            <li><a href="#/gift-cards">Gift Cards</a></li>
             <li><a href="#/faq">FAQ</a></li>
             <li><a href="#/shipping">Shipping & Returns</a></li>
             <li><a href="#/contact">Contact</a></li>

@@ -78,6 +78,9 @@ const ShopProvider = ({ children }) => {
   const openAccount = () => setAccountOpen(true);
   const closeAccount = () => setAccountOpen(false);
   const removeFromCart = (id) => setCart(c => c.filter(it => it.id !== id));
+  const [quickViewSlug, setQuickViewSlug] = React.useState(null);
+  const openQuickView = (slug) => setQuickViewSlug(slug);
+  const closeQuickView = () => setQuickViewSlug(null);
 
   const addToCart = (slug, size) => {
     setCart(c => [...c, { slug, size, id: Math.random() }]);
@@ -90,7 +93,7 @@ const ShopProvider = ({ children }) => {
     });
   };
   return (
-    <ShopContext.Provider value={{ cart, wishlist, addToCart, removeFromCart, toggleWish, toasts, cartOpen, openCart, closeCart, accountOpen, openAccount, closeAccount, user, setUser, signOut, addToast }}>
+    <ShopContext.Provider value={{ cart, wishlist, addToCart, removeFromCart, toggleWish, toasts, cartOpen, openCart, closeCart, accountOpen, openAccount, closeAccount, user, setUser, signOut, addToast, quickViewSlug, openQuickView, closeQuickView }}>
       {children}
     </ShopContext.Provider>
   );
@@ -131,17 +134,39 @@ const Btn = ({ variant = "primary", children, block, ...p }) => (
 
 // ===== Product Card =====
 const ProductCard = ({ product }) => {
-  const { wishlist, toggleWish } = useShop();
+  const { wishlist, toggleWish, openQuickView } = useShop();
   const { ccy } = useCurrency();
   const saved = wishlist.includes(product.slug);
   const go = () => navigate(`/product/${product.slug}`);
+
+  // Refined badge — "Last of this week's batch · N left" for ready-to-ship low-stock pieces
+  const lowSizes = Object.values(product.lowStock || {}).reduce((a, b) => a + b, 0);
+  let smartBadge = product.badge;
+  let badgeKind = "default";
+  if (product.avail.type === "ready" && lowSizes > 0 && lowSizes <= 3) {
+    smartBadge = `${lowSizes} left this week`;
+    badgeKind = "urgent";
+  } else if (product.avail.type === "made" && product.avail.days <= 8) {
+    smartBadge = `Made in ${product.avail.days} days`;
+    badgeKind = "made";
+  } else if (product.badge === "Bestseller") {
+    badgeKind = "bestseller";
+  } else if (product.badge === "Limited") {
+    badgeKind = "limited";
+  } else if (product.badge === "New") {
+    badgeKind = "new";
+  }
+
   return (
     <div className="pcard">
       <div className="pcard-img" onClick={go}>
         <FmImage src={window.productImg(product.slug, 0)} alt={product.name} fallback={product.tone === "saffron" ? "linear-gradient(160deg, #d6c4a8, #a89476)" : product.tone === "honey" ? "linear-gradient(160deg, #ddbfa0, #b88f60)" : "linear-gradient(135deg, var(--blush) 0%, #f0dbd2 50%, var(--blush) 100%)"}/>
-        {product.badge && <span className="pcard-badge">{product.badge}</span>}
+        {smartBadge && <span className={`pcard-badge pcard-badge-${badgeKind}`}>{smartBadge}</span>}
         <button className={`pcard-heart ${saved ? "saved" : ""}`} aria-label="Save to wishlist" onClick={(e) => { e.stopPropagation(); toggleWish(product.slug); }}>
           <Icon name={saved ? "heart-fill" : "heart"} size={16} />
+        </button>
+        <button className="pcard-quickview" onClick={(e) => { e.stopPropagation(); openQuickView(product.slug); }}>
+          Quick view
         </button>
       </div>
       <div className="pcard-info" onClick={go}>
@@ -149,6 +174,75 @@ const ProductCard = ({ product }) => {
         <div className="pcard-desc">{product.desc}</div>
         <div className="pcard-price">{window.fmtPrice(product.priceLKR, ccy)}</div>
         <div className="pcard-sizes">Sizes · {product.sizes.join(", ")}</div>
+      </div>
+    </div>
+  );
+};
+
+// ===== Quick view drawer =====
+const QuickViewDrawer = () => {
+  const { quickViewSlug, closeQuickView, addToCart, toggleWish, wishlist } = useShop();
+  const { ccy } = useCurrency();
+  const [size, setSize] = React.useState(null);
+
+  const product = quickViewSlug ? window.FILAMOUR_DATA.products.find(p => p.slug === quickViewSlug) : null;
+
+  React.useEffect(() => {
+    if (product) setSize(product.sizes.find(s => !product.oos.includes(s)) || product.sizes[0]);
+  }, [quickViewSlug]);
+
+  React.useEffect(() => {
+    document.body.style.overflow = quickViewSlug ? "hidden" : "";
+    const onKey = (e) => { if (e.key === "Escape") closeQuickView(); };
+    if (quickViewSlug) window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [quickViewSlug, closeQuickView]);
+
+  if (!product || !size) return null;
+  const saved = wishlist.includes(product.slug);
+  const sizeOos = product.oos.includes(size);
+
+  return (
+    <div className="qv-overlay" onClick={closeQuickView}>
+      <div className="qv-panel" onClick={(e) => e.stopPropagation()}>
+        <button className="qv-x" onClick={closeQuickView} aria-label="Close"><Icon name="x" size={18}/></button>
+        <div className="qv-img">
+          <FmImage src={window.productImg(product.slug, 0)} alt={product.name} fallback={product.tone === "saffron" ? "linear-gradient(160deg, #d6c4a8, #a89476)" : "linear-gradient(135deg, var(--blush) 0%, #f0dbd2 50%, var(--blush) 100%)"}/>
+        </div>
+        <div className="qv-info">
+          <div className="eyebrow gold" style={{ marginBottom: 8 }}>{product.category}</div>
+          <h2>{product.name}</h2>
+          <p className="qv-desc">{product.desc}.</p>
+          <div className="qv-price">{window.fmtPrice(product.priceLKR, ccy)}</div>
+          <div className="qv-avail">{product.avail.type === "ready" ? "Ready to ship · 2 working days" : `Made to order · ${product.avail.days} working days`}</div>
+
+          <div className="qv-section">
+            <div className="qv-section-label"><span>Size</span><a className="link" href="#/size-guide" onClick={closeQuickView}>Size guide</a></div>
+            <div className="qv-sizes">
+              {product.sizes.map(s => (
+                <button
+                  key={s}
+                  className={`size-pill ${size === s ? "active" : ""} ${product.oos.includes(s) ? "oos" : ""}`}
+                  onClick={() => setSize(s)}
+                >{s}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="qv-actions">
+            <Btn variant="primary" block disabled={sizeOos} onClick={() => { addToCart(product.slug, size); closeQuickView(); }}>
+              {sizeOos ? `Size ${size} sold out` : `Add to bag · ${window.fmtPrice(product.priceLKR, ccy)}`}
+            </Btn>
+            <div className="qv-actions-row">
+              <button className="prod-icon-btn" onClick={() => toggleWish(product.slug)}>
+                <Icon name={saved ? "heart-fill" : "heart"} size={14}/> {saved ? "Saved" : "Save"}
+              </button>
+              <button className="prod-icon-btn" onClick={() => { closeQuickView(); navigate(`/product/${product.slug}`); }}>
+                Full details →
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -375,4 +469,4 @@ const StickyAddBar = ({ product, size, onAdd, ccy }) => {
   );
 };
 
-Object.assign(window, { Icon, Monogram, CurrencyContext, useCurrency, ShopContext, ShopProvider, useShop, RouterContext, useRoute, useHashRoute, navigate, ToastStack, Btn, ProductCard, OccChip, FmImage, CartDrawer, AccountModal, StickyAddBar });
+Object.assign(window, { Icon, Monogram, CurrencyContext, useCurrency, ShopContext, ShopProvider, useShop, RouterContext, useRoute, useHashRoute, navigate, ToastStack, Btn, ProductCard, OccChip, FmImage, CartDrawer, AccountModal, StickyAddBar, QuickViewDrawer });

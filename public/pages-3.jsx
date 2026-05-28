@@ -765,4 +765,117 @@ const AccountPage = () => {
   );
 };
 
-Object.assign(window, { GiftGuidePage, BespokePage, SizeGuidePage, FaqPage, LookbookPage, CartPage, WishlistPage, CareGuidePage, ShippingPage, ContactPage, AccountPage });
+// ===================== GIFT CARDS =====================
+const GiftCardsPage = () => {
+  const { ccy } = useCurrency();
+  const tiers = ccy === "USD"
+    ? [{ amount: 75, label: "$75" }, { amount: 150, label: "$150" }, { amount: 250, label: "$250" }, { amount: 500, label: "$500" }]
+    : ccy === "LKR"
+    ? [{ amount: 22500, label: "LKR 22,500" }, { amount: 45000, label: "LKR 45,000" }, { amount: 75000, label: "LKR 75,000" }, { amount: 150000, label: "LKR 150,000" }]
+    : [{ amount: 60, label: "£60" }, { amount: 120, label: "£120" }, { amount: 200, label: "£200" }, { amount: 400, label: "£400" }];
+
+  const [selected, setSelected] = React.useState(tiers[1].amount);
+  const [recipient, setRecipient] = React.useState({ name: "", email: "", message: "", date: "" });
+  const [sent, setSent] = React.useState(false);
+
+  if (sent) {
+    return (
+      <div className="page">
+        <div className="wrap" style={{ padding: "80px 0", textAlign: "center", maxWidth: 640, margin: "0 auto" }}>
+          <div style={{ width: 60, height: 60, borderRadius: "50%", background: "var(--blush)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--gold)", marginBottom: 24 }}>
+            <Icon name="check" size={26} stroke={1.6}/>
+          </div>
+          <div className="eyebrow gold">On its way</div>
+          <h1 className="h-display" style={{ fontSize: 40, marginTop: 8 }}>Your gift card is on its way.</h1>
+          <p style={{ marginTop: 18, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 18 }}>
+            {recipient.date ? `${recipient.name || "Your recipient"} will receive it on ${recipient.date}.` : `${recipient.name || "Your recipient"} will get the email shortly.`}
+          </p>
+          <div style={{ marginTop: 32, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <Btn variant="primary" onClick={() => navigate("/")}>Return home</Btn>
+            <Btn variant="secondary" onClick={() => { setSent(false); setRecipient({ name: "", email: "", message: "", date: "" }); }}>Send another</Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page gc-page">
+      <div className="wrap" style={{ padding: "64px 0 96px", maxWidth: 1180, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
+          <div className="eyebrow gold" style={{ marginBottom: 14 }}>Gift Cards</div>
+          <h1 className="h-display" style={{ fontSize: 52, lineHeight: 1.05 }}>For the gift you'd rather they choose</h1>
+          <p className="h-italic" style={{ fontSize: 19, marginTop: 22, color: "var(--charcoal-soft)" }}>
+            A Filamour gift card lands quietly in their inbox — or on the date you pick. They choose the piece. We send the photo before it ships, same as always.
+          </p>
+        </div>
+
+        <div className="gc-layout">
+          {/* Visual envelope mock */}
+          <div className="gc-visual">
+            <div className="gc-envelope">
+              <div className="gc-card">
+                <div className="gc-card-mono">
+                  <img src="assets/filamour-logo.png" alt="" style={{ width: 44, height: 44, objectFit: "contain" }}/>
+                </div>
+                <div className="gc-card-amount">{tiers.find(t => t.amount === selected)?.label || ""}</div>
+                <div className="gc-card-label">Filamour Gift Card</div>
+                <div className="gc-card-sub">{recipient.name ? `For ${recipient.name}` : "For someone you love"}</div>
+              </div>
+              <div className="gc-envelope-flap"/>
+            </div>
+            <div className="gc-visual-note">
+              <div className="eyebrow gold">What they receive</div>
+              <ul>
+                <li><Icon name="mail" size={12} stroke={1.6}/>An email with the amount and your message</li>
+                <li><Icon name="check" size={12} stroke={1.6}/>A code that works at checkout in any currency</li>
+                <li><Icon name="gift" size={12} stroke={1.6}/>The same handwritten card on whatever they choose</li>
+                <li><Icon name="heart" size={12} stroke={1.6}/>No expiry, no fine print, no balance email spam</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form className="gc-form" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+            <div className="gc-form-head">
+              <div className="eyebrow gold" style={{ marginBottom: 8 }}>Step 1 · Amount</div>
+            </div>
+            <div className="gc-tiers">
+              {tiers.map(t => (
+                <button type="button" key={t.amount} className={`gc-tier ${selected === t.amount ? "active" : ""}`} onClick={() => setSelected(t.amount)}>
+                  <span className="gc-tier-amt">{t.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="gc-form-head">
+              <div className="eyebrow gold" style={{ marginBottom: 8 }}>Step 2 · Their details</div>
+            </div>
+            <div className="form-grid">
+              <div><label className="form-label">Their first name</label><input className="form-input" value={recipient.name} onChange={e => setRecipient({...recipient, name: e.target.value})} required/></div>
+              <div><label className="form-label">Their email</label><input className="form-input" type="email" value={recipient.email} onChange={e => setRecipient({...recipient, email: e.target.value})} required/></div>
+              <div className="span-2"><label className="form-label">Send on (optional)</label><input className="form-input" type="date" value={recipient.date} onChange={e => setRecipient({...recipient, date: e.target.value})}/><div className="form-counter">Leave blank to send now</div></div>
+              <div className="span-2">
+                <label className="form-label">Your message <span style={{ color: "var(--charcoal-soft)", textTransform: "none", letterSpacing: 0 }}>(included in the email)</span></label>
+                <textarea className="form-text" rows="3" maxLength={300} placeholder="For Mira, with all our love." value={recipient.message} onChange={e => setRecipient({...recipient, message: e.target.value})}/>
+                <div className="form-counter">{recipient.message.length} / 300</div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 28, display: "flex", gap: 12, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{ fontFamily: "var(--display)", fontSize: 22 }}>Total · <strong style={{ fontWeight: 400 }}>{tiers.find(t => t.amount === selected)?.label}</strong></div>
+              <Btn variant="primary">Send the gift</Btn>
+            </div>
+
+            <div className="gc-fineprint">
+              <div><Icon name="check" size={13} stroke={1.6}/><span>Delivered via email · no expiry · works in any currency.</span></div>
+              <div><Icon name="heart" size={13} stroke={1.6}/><span>Unspent balance stays on the code — they don't lose a penny.</span></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window, { GiftGuidePage, BespokePage, SizeGuidePage, FaqPage, LookbookPage, CartPage, WishlistPage, CareGuidePage, ShippingPage, ContactPage, AccountPage, GiftCardsPage });
