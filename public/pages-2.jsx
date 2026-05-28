@@ -180,67 +180,154 @@ const OurStoryPage = () => (
 
 // ===================== MATERIALS =====================
 const MaterialsPage = () => {
-  const principles = [
-    {
-      n: "01",
-      h: "Natural fibers, kept simple",
-      p: "Cotton, linen, and muslin — the same family of cloth grandmothers have put against newborn skin for generations. Soft from the start, softer after every wash. Nothing about the way it's woven is clever. It's just made well.",
-    },
-    {
-      n: "02",
-      h: "No synthetic blends",
-      p: "Pure cotton wears in, drapes, and breathes. A cotton-polyester blend does the opposite — it stiffens, traps heat, and rubs. We don't blend natural with synthetic, ever. If a piece feels right against the back of your hand, that's why.",
-    },
-    {
-      n: "03",
-      h: "No finishes a baby doesn't need",
-      p: "We skip the wrinkle-release, the stain-shield, the anti-microbial sprays. Those are chemistries designed to make life easier for the wash basket. They don't make life better for the skin underneath.",
-    },
-    {
-      n: "04",
-      h: "A quiet palette",
-      p: "Ivory, blush, dusty rose, charcoal, saffron, sage. Tones that come from gentle dyeing, not from aggressive bleaching or high-intensity pigment. They wash kindly, age beautifully, and photograph the way you'll remember the day.",
-    },
+  const swatches = [
+    { name: "Ivory",      hex: "#F5EFE6" },
+    { name: "Blush",      hex: "#E8D5CE" },
+    { name: "Dusty Rose", hex: "#C4A49A" },
+    { name: "Charcoal",   hex: "#2E2926" },
+    { name: "Saffron",    hex: "#B8924A" },
+    { name: "Sage",       hex: "#A8B0A0" },
+  ];
+
+  const uses = [
+    { name: "Cotton",  body: "Long-staple, gently woven. The kind that softens with washing instead of giving up." },
+    { name: "Muslin",  body: "Open-weave, breathable, the lightest thing we can put against a small chest in summer." },
+    { name: "Linen",   body: "For gift sets and warmer-weather pieces. Honest, sturdy, ages into something better." },
+  ];
+
+  const avoid = [
+    { name: "Synthetic blends",         body: "They feel different at the second wash. We keep the cloth to its own kind." },
+    { name: "Wrinkle-release finishes", body: "A chemistry we won't put against newborn skin to save you an iron." },
+    { name: "Aggressive bleaching",     body: "We let the natural shades stand. Ivory is ivory, not paper-white." },
   ];
 
   return (
-    <div className="page">
-      <div className="wrap" style={{ padding: "72px 0 96px" }}>
-        {/* HERO */}
-        <div style={{ maxWidth: 720, margin: "0 auto 80px", textAlign: "center" }}>
-          <div className="eyebrow gold" style={{ marginBottom: 16 }}>The Materials</div>
-          <h1 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 56, lineHeight: 1.05, letterSpacing: "-0.01em" }}>The cloth before the cut</h1>
-          <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 300, fontSize: 21, marginTop: 24, color: "var(--charcoal-soft)", lineHeight: 1.5 }}>The way a piece feels in your child's hand, and against their skin all day, comes from the fabric long before it comes from the pattern.</p>
+    <div className="page mat-page">
+      {/* 1. EDITORIAL HERO */}
+      <section className="mat-hero">
+        <div className="wrap mat-hero-inner">
+          <div className="mat-hero-copy">
+            <div className="eyebrow gold">The Materials</div>
+            <h1>The cloth<br/>before the cut.</h1>
+            <p>A piece feels like something in a child's hand before it comes from the pattern. So we start there — with what touches the skin, and how it behaves the morning after.</p>
+          </div>
+          <div className="mat-hero-img">
+            <FmImage src="assets/img/macro-muslin.png" alt="Cotton-muslin, macro"/>
+          </div>
         </div>
+      </section>
 
-        {/* HOW IT FEELS */}
-        <div style={{ maxWidth: 760, margin: "0 auto 88px", textAlign: "center" }}>
-          <p style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 24, lineHeight: 1.55, color: "var(--charcoal)" }}>The first thing you'll notice, taking a Filamour piece out of the wrapping, is the hand of the cloth — a little weighty, a little cool, with the easy give that only natural fiber has. A wash or two and it softens further. A year of wear and it's the dress your child reaches for.</p>
-        </div>
+      {/* 2. FULL-BLEED FABRIC */}
+      <section className="mat-bleed">
+        <FmImage src="assets/img/fabric-bleed.png" alt="Stacked cotton-muslin"/>
+      </section>
+      <div className="wrap"><figcaption className="mat-caption">Organic cotton-muslin. The cloth that has gone against newborn skin for generations, for good reason.</figcaption></div>
 
-        {/* PRINCIPLES */}
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 28 }}>
-          {principles.map(p => (
-            <div key={p.n} style={{ background: "var(--white)", padding: "44px 40px", borderTop: "0.5px solid var(--gold)" }}>
-              <div style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 14, letterSpacing: "0.2em", color: "var(--gold)" }}>{p.n}</div>
-              <h2 style={{ fontFamily: "var(--display)", fontWeight: 400, fontSize: 28, marginTop: 14, lineHeight: 1.2 }}>{p.h}</h2>
-              <p style={{ marginTop: 18, color: "var(--charcoal-soft)", lineHeight: 1.8 }}>{p.p}</p>
+      {/* 3. WHAT WE USE / WHAT WE WON'T */}
+      <section className="section mat-two-up">
+        <div className="wrap">
+          <div className="mat-two-grid">
+            <div>
+              <div className="eyebrow gold" style={{ marginBottom: 16 }}>What we use</div>
+              <h2 className="h-display mat-h2">A short list, kept short.</h2>
+              <div className="mat-list">
+                {uses.map(u => (
+                  <div className="mat-item" key={u.name}>
+                    <div className="mat-item-name">{u.name}</div>
+                    <p>{u.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+            <div>
+              <div className="eyebrow" style={{ color: "var(--dusty-rose)", marginBottom: 16 }}>What we won't</div>
+              <h2 className="h-display mat-h2">An equally short list.</h2>
+              <div className="mat-list">
+                {avoid.map(a => (
+                  <div className="mat-item mat-item-no" key={a.name}>
+                    <div className="mat-item-name">{a.name}</div>
+                    <p>{a.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* CARE NOTE */}
-        <div style={{ maxWidth: 760, margin: "88px auto 0", padding: "48px 40px", borderTop: "0.5px solid var(--line)", borderBottom: "0.5px solid var(--line)", textAlign: "center" }}>
-          <div className="eyebrow gold" style={{ marginBottom: 14 }}>Caring for it</div>
-          <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 300, fontSize: 20, color: "var(--charcoal-soft)", lineHeight: 1.6 }}>Wash cool, skip the fabric softener, dry flat or on the line. Natural cotton looks after itself if you let it.</p>
-          <a href="#/care-guide" className="link" style={{ display: "inline-block", marginTop: 18, fontSize: 13, letterSpacing: "0.08em", borderBottom: "0.5px solid var(--charcoal)", paddingBottom: 3 }}>Full care guide →</a>
+      {/* 4. PALETTE */}
+      <section className="section mat-palette-section">
+        <div className="wrap">
+          <div className="mat-palette-head">
+            <div className="eyebrow gold">A quiet palette</div>
+            <h2 className="h-display mat-h2-center">Six shades. We keep to them.</h2>
+          </div>
+          <div className="mat-palette">
+            {swatches.map(s => (
+              <div className="mat-swatch" key={s.name}>
+                <div className="mat-chip" style={{ background: s.hex, borderColor: s.hex === "#F5EFE6" ? "var(--line)" : "transparent" }}/>
+                <div className="mat-swatch-name">{s.name}</div>
+                <div className="mat-swatch-hex">{s.hex}</div>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* CTA */}
-        <div style={{ textAlign: "center", marginTop: 72 }}>
+      {/* 5. FOUNDER NOTE */}
+      <section className="section mat-founder">
+        <div className="wrap">
+          <div className="mat-founder-inner">
+            <div className="eyebrow gold">A note from the founder</div>
+            <p className="mat-founder-quote">
+              I started Filamour the year my daughter was born, because I couldn't find what I wanted to put on her. The rule has stayed the same since: if I won't put it on Mira, it doesn't leave the studio. Everything else follows from that.
+            </p>
+            <svg className="mat-sig" viewBox="0 0 220 70" aria-hidden="true">
+              <path d="M10,45 C18,18 32,18 38,38 C42,52 30,58 26,50 C22,42 36,38 50,46 C66,55 80,30 92,30 C104,30 100,52 88,52 C76,52 84,30 100,30 C120,30 116,52 132,50 C148,48 144,30 158,30 C172,30 170,55 184,50 C198,46 200,30 212,30" stroke="var(--charcoal)" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+            </svg>
+            <div className="mat-founder-name">Amara · Founder</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. TESTIMONIAL */}
+      <section className="section mat-testimonial">
+        <div className="wrap">
+          <figure>
+            <blockquote className="mat-quote">
+              <span className="mat-quote-mark">"</span>It came out of the box softer than I expected, and a year later it's softer still. Mine has been worn for a christening and washed a dozen times since. It looks better now than it did the day it arrived.
+            </blockquote>
+            <figcaption>— Hannah, London. The Marguerite, a year on.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      {/* 7. AS IT ARRIVES / AS IT'S WORN */}
+      <section className="section mat-aspair">
+        <div className="wrap">
+          <div className="mat-pair-grid">
+            <figure className="mat-pair-fig">
+              <div className="mat-pair-img">
+                <FmImage src="assets/img/piece-aslay.png" alt="The Marguerite, laid out"/>
+              </div>
+              <figcaption>As it's worn.</figcaption>
+            </figure>
+            <figure className="mat-pair-fig">
+              <div className="mat-pair-img">
+                <FmImage src="assets/img/folded-stack.png" alt="The Marguerite, folded"/>
+              </div>
+              <figcaption>As it arrives.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. SOFT CTA */}
+      <section className="section mat-cta">
+        <div className="wrap" style={{ textAlign: "center" }}>
           <Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
