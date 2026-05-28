@@ -30,6 +30,9 @@ const Icon = ({ name, size = 20, stroke = 1.4, ...p }) => {
     plus: <><path d="M12 5v14"/><path d="M5 12h14"/></>,
     minus: <path d="M5 12h14"/>,
     check: <polyline points="5 12 10 17 19 7" fill="none"/>,
+    user: <><circle cx="12" cy="8" r="3.5"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/></>,
+    mail: <><rect x="3" y="6" width="18" height="13" rx="1"/><polyline points="3 7 12 13 21 7"/></>,
+    lock: <><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" {...p}>
@@ -58,6 +61,12 @@ const ShopProvider = ({ children }) => {
   const [wishlist, setWishlist] = React.useState([]);
   const [toasts, setToasts] = React.useState([]);
   const [cartOpen, setCartOpen] = React.useState(false);
+  const [accountOpen, setAccountOpen] = React.useState(false);
+  const [user, setUserRaw] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem("filamour.user") || "null"); } catch { return null; }
+  });
+  const setUser = (u) => { try { localStorage.setItem("filamour.user", JSON.stringify(u)); } catch {} setUserRaw(u); };
+  const signOut = () => { try { localStorage.removeItem("filamour.user"); } catch {} setUserRaw(null); };
 
   const addToast = (msg) => {
     const id = Math.random();
@@ -66,6 +75,8 @@ const ShopProvider = ({ children }) => {
   };
   const openCart = () => setCartOpen(true);
   const closeCart = () => setCartOpen(false);
+  const openAccount = () => setAccountOpen(true);
+  const closeAccount = () => setAccountOpen(false);
   const removeFromCart = (id) => setCart(c => c.filter(it => it.id !== id));
 
   const addToCart = (slug, size) => {
@@ -79,7 +90,7 @@ const ShopProvider = ({ children }) => {
     });
   };
   return (
-    <ShopContext.Provider value={{ cart, wishlist, addToCart, removeFromCart, toggleWish, toasts, cartOpen, openCart, closeCart }}>
+    <ShopContext.Provider value={{ cart, wishlist, addToCart, removeFromCart, toggleWish, toasts, cartOpen, openCart, closeCart, accountOpen, openAccount, closeAccount, user, setUser, signOut, addToast }}>
       {children}
     </ShopContext.Provider>
   );
@@ -276,4 +287,105 @@ const CartDrawer = () => {
   );
 };
 
-Object.assign(window, { Icon, Monogram, CurrencyContext, useCurrency, ShopContext, ShopProvider, useShop, RouterContext, useRoute, useHashRoute, navigate, ToastStack, Btn, ProductCard, OccChip, FmImage, CartDrawer });
+// ===== Account / sign-in modal =====
+const AccountModal = () => {
+  const { accountOpen, closeAccount, user, setUser, signOut, addToast } = useShop();
+  const [mode, setMode] = React.useState("signin"); // signin | join
+  const [email, setEmail] = React.useState("");
+  const [name, setName] = React.useState("");
+
+  React.useEffect(() => {
+    document.body.style.overflow = accountOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [accountOpen]);
+  if (!accountOpen) return null;
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    const display = (name || email.split("@")[0]).split(" ")[0];
+    setUser({ email, name: display });
+    addToast(mode === "join" ? "Welcome to Filamour." : "Welcome back.");
+    closeAccount();
+  };
+
+  if (user) {
+    return (
+      <div className="acct-overlay" onClick={closeAccount}>
+        <div className="acct-card" onClick={(e) => e.stopPropagation()}>
+          <button className="acct-x" onClick={closeAccount} aria-label="Close"><Icon name="x" size={18}/></button>
+          <div className="eyebrow gold" style={{ marginBottom: 10 }}>Your Filamour</div>
+          <h2>Hello, {user.name}.</h2>
+          <p className="acct-sub">Your bag, your wishlist, your sizes — all kept for next time. Birthday reminders go to <em>{user.email}</em>.</p>
+          <div className="acct-list">
+            <button onClick={() => { closeAccount(); navigate("/wishlist"); }}><span><Icon name="heart" size={14}/></span>Your wishlist</button>
+            <button onClick={() => { closeAccount(); navigate("/cart"); }}><span><Icon name="bag" size={14}/></span>Your bag</button>
+            <button onClick={() => { closeAccount(); navigate("/bespoke"); }}><span><Icon name="needle" size={14}/></span>Request a bespoke piece</button>
+            <button className="acct-signout" onClick={() => { signOut(); closeAccount(); addToast("Signed out."); }}>Sign out</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="acct-overlay" onClick={closeAccount}>
+      <div className="acct-card" onClick={(e) => e.stopPropagation()}>
+        <button className="acct-x" onClick={closeAccount} aria-label="Close"><Icon name="x" size={18}/></button>
+        <div className="eyebrow gold" style={{ marginBottom: 10 }}>{mode === "join" ? "Join Filamour" : "Welcome back"}</div>
+        <h2>{mode === "join" ? "Make Filamour easier next time." : "Pick up where you left off."}</h2>
+        <p className="acct-sub">{mode === "join" ? "Save your bag, your wishlist, your child's sizes and birthdays in one place. We'll write quietly when something you'd want is ready." : "Your bag and wishlist are waiting where you left them."}</p>
+        <form className="acct-form" onSubmit={submit}>
+          {mode === "join" && (
+            <label className="acct-field"><span>Your name</span><input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Sarah" required/></label>
+          )}
+          <label className="acct-field"><span>Email</span><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@…" required autoFocus/></label>
+          <label className="acct-field"><span>{mode === "join" ? "Choose a password" : "Password"}</span><input type="password" placeholder="••••••••" required/></label>
+          <Btn variant="primary" block>{mode === "join" ? "Create your account" : "Sign in"}</Btn>
+        </form>
+        <div className="acct-divider"><span>or</span></div>
+        <div className="acct-oauth">
+          <button className="acct-oauth-btn" onClick={() => submit({ preventDefault: () => {} })}><span style={{ fontSize: 16 }}></span>Continue with Apple</button>
+          <button className="acct-oauth-btn" onClick={() => submit({ preventDefault: () => {} })}><span style={{ fontSize: 14, color: "#4285F4" }}>G</span>Continue with Google</button>
+        </div>
+        <div className="acct-toggle">
+          {mode === "join" ? (
+            <>Already with us? <button onClick={() => setMode("signin")}>Sign in</button></>
+          ) : (
+            <>New here? <button onClick={() => setMode("join")}>Create an account</button></>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ===== Mobile sticky add-to-bag bar =====
+const StickyAddBar = ({ product, size, onAdd, ccy }) => {
+  const [show, setShow] = React.useState(false);
+  React.useEffect(() => {
+    const sentinel = document.querySelector('.prod-actions');
+    if (!sentinel || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setShow(!entry.isIntersecting && entry.boundingClientRect.top < 0),
+      { threshold: 0 }
+    );
+    io.observe(sentinel);
+    return () => io.disconnect();
+  }, [product?.slug]);
+  if (!product) return null;
+  return (
+    <div className={`sticky-add ${show ? "show" : ""}`} aria-hidden={!show}>
+      <div className="sticky-add-info">
+        <div className="sticky-add-thumb"><FmImage src={window.productImg(product.slug, 0)} alt={product.name}/></div>
+        <div>
+          <div className="sticky-add-name">{product.name}</div>
+          <div className="sticky-add-meta">Size · {size} · {window.fmtPrice(product.priceLKR, ccy)}</div>
+        </div>
+      </div>
+      <button className="sticky-add-btn" onClick={onAdd}>Add to bag</button>
+    </div>
+  );
+};
+
+Object.assign(window, { Icon, Monogram, CurrencyContext, useCurrency, ShopContext, ShopProvider, useShop, RouterContext, useRoute, useHashRoute, navigate, ToastStack, Btn, ProductCard, OccChip, FmImage, CartDrawer, AccountModal, StickyAddBar });

@@ -770,3 +770,64 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .wish-share { display: flex; gap: 10px; flex-wrap: wrap; }
 .btn-sm { padding: 9px 14px !important; font-size: 11px !important; }
 .wish-share-note { margin-top: 12px; padding: 10px 14px; background: var(--blush); border-radius: 4px; font-family: var(--display); font-style: italic; font-size: 14px; color: var(--charcoal); display: inline-block; }
+
+/* ============================================================ */
+/* ===== Account / sign-in modal ============================ */
+/* ============================================================ */
+.user-dot { position: absolute; top: 8px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+.acct-overlay { position: fixed; inset: 0; background: rgba(46,41,38,0.55); z-index: 250; display: flex; align-items: center; justify-content: center; padding: 24px; animation: cdFade 220ms ease; }
+.acct-card { background: var(--ivory); width: 100%; max-width: 460px; padding: 44px 40px; position: relative; max-height: calc(100vh - 48px); overflow-y: auto; animation: acctPop 240ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+@keyframes acctPop { from { transform: translateY(12px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+.acct-x { position: absolute; top: 18px; right: 20px; background: none; border: none; cursor: pointer; color: var(--charcoal); padding: 6px; }
+.acct-x:hover { color: var(--gold); }
+.acct-card h2 { font-family: var(--display); font-weight: 300; font-size: 28px; line-height: 1.2; margin-bottom: 12px; }
+.acct-sub { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 15px; line-height: 1.55; color: var(--charcoal-soft); margin-bottom: 24px; }
+.acct-sub em { color: var(--charcoal); font-style: italic; }
+.acct-form { display: flex; flex-direction: column; gap: 14px; }
+.acct-field { display: flex; flex-direction: column; gap: 6px; }
+.acct-field > span { font-family: var(--body); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); }
+.acct-field input { background: var(--white); border: 0.5px solid var(--line); padding: 11px 13px; border-radius: 3px; font-size: 14px; font-family: var(--body); color: var(--charcoal); }
+.acct-field input:focus { outline: none; border-color: var(--gold); }
+.acct-divider { text-align: center; margin: 22px 0; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--charcoal-soft); position: relative; }
+.acct-divider span { background: var(--ivory); padding: 0 12px; position: relative; z-index: 1; }
+.acct-divider::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 0.5px; background: var(--line); }
+.acct-oauth { display: flex; flex-direction: column; gap: 8px; }
+.acct-oauth-btn { background: var(--white); border: 0.5px solid var(--line); padding: 11px 14px; font-family: var(--body); font-size: 13px; letter-spacing: 0.06em; color: var(--charcoal); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 3px; }
+.acct-oauth-btn:hover { border-color: var(--charcoal); }
+.acct-toggle { text-align: center; margin-top: 22px; font-family: var(--body); font-size: 13px; color: var(--charcoal-soft); }
+.acct-toggle button { background: none; border: none; cursor: pointer; color: var(--charcoal); text-decoration: underline; text-decoration-thickness: 0.5px; text-underline-offset: 3px; font-family: var(--body); font-size: 13px; padding: 0; margin-left: 4px; }
+.acct-toggle button:hover { color: var(--gold); }
+.acct-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.acct-list button { background: none; border: 0.5px solid var(--line); padding: 14px 16px; display: flex; align-items: center; gap: 14px; font-family: var(--body); font-size: 14px; color: var(--charcoal); cursor: pointer; text-align: left; border-radius: 3px; }
+.acct-list button:hover { border-color: var(--gold); background: var(--white); }
+.acct-list button span { color: var(--gold); }
+.acct-signout { color: var(--charcoal-soft) !important; margin-top: 16px; justify-content: center; border-style: dashed !important; }
+
+/* ============================================================ */
+/* ===== Mobile sticky add-to-bag ========================== */
+/* ============================================================ */
+.sticky-add { position: fixed; left: 0; right: 0; bottom: 0; background: var(--white); border-top: 0.5px solid var(--line); padding: 12px 18px; display: flex; align-items: center; gap: 14px; transform: translateY(110%); transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1); z-index: 90; box-shadow: 0 -8px 24px rgba(46,41,38,0.06); }
+.sticky-add.show { transform: translateY(0); }
+.sticky-add-info { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.sticky-add-thumb { width: 44px; height: 56px; flex-shrink: 0; position: relative; overflow: hidden; }
+.sticky-add-name { font-family: var(--display); font-size: 14px; line-height: 1.2; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sticky-add-meta { font-family: var(--body); font-size: 11px; color: var(--charcoal-soft); margin-top: 3px; }
+.sticky-add-btn { background: var(--charcoal); color: var(--ivory); border: none; padding: 12px 18px; font-family: var(--body); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 3px; cursor: pointer; flex-shrink: 0; }
+.sticky-add-btn:hover { background: var(--gold); }
+/* Only on phones */
+@media (min-width: 760px) { .sticky-add { display: none; } }
+
+/* ============================================================ */
+/* ===== Gift mode at checkout ============================= */
+/* ============================================================ */
+.gift-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 18px 22px; background: var(--blush); border-bottom: 0.5px solid var(--line); }
+.gift-toggle-copy { flex: 1; }
+.gift-toggle-head { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-size: 17px; color: var(--charcoal); }
+.gift-toggle-head svg { color: var(--gold); }
+.gift-toggle-head strong { font-weight: 400; }
+.gift-toggle-sub { font-family: var(--body); font-size: 12px; color: var(--charcoal-soft); line-height: 1.55; margin-top: 4px; max-width: 56ch; }
+.gift-toggle-switch { width: 46px; height: 26px; border-radius: 14px; background: rgba(46,41,38,0.2); border: none; cursor: pointer; position: relative; transition: background 220ms; flex-shrink: 0; }
+.gift-toggle-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--ivory); transition: transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1); box-shadow: 0 1px 3px rgba(46,41,38,0.18); }
+.gift-toggle-switch.on { background: var(--gold); }
+.gift-toggle-switch.on::after { transform: translateX(20px); }
+.gift-recip { margin-top: 32px; padding-top: 28px; border-top: 0.5px solid var(--line); }

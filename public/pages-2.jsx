@@ -175,6 +175,8 @@ const ProductPage = ({ slug }) => {
           </div>
         </section>
 
+        <StickyAddBar product={product} size={size} onAdd={onAdd} ccy={ccy}/>
+
         {/* As worn */}
         <section style={{ marginTop: 96 }}>
           <div className="section-head">

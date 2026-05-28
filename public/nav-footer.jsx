@@ -104,7 +104,7 @@ const MobileMenu = ({ onClose }) => {
 // ===== NAV =====
 const Nav = () => {
   const route = useHashRoute();
-  const { cart, wishlist, openCart } = useShop();
+  const { cart, wishlist, openCart, openAccount, user } = useShop();
   const [mega, setMega] = React.useState(false);
   const [mob, setMob] = React.useState(false);
   const [search, setSearch] = React.useState(false);
@@ -134,6 +134,10 @@ const Nav = () => {
           <div className="nav-right">
             <CurrencyPill />
             <button className="nav-icon" aria-label="Search" onClick={() => setSearch(true)}><Icon name="search" size={18}/></button>
+            <button className="nav-icon" aria-label="Account" onClick={openAccount} style={{ position: "relative" }}>
+              <Icon name="user" size={18}/>
+              {user && <span className="user-dot" aria-hidden="true"/>}
+            </button>
             <a href="#/wishlist" className="nav-icon" aria-label="Wishlist">
               <Icon name={wishlist.length ? "heart-fill" : "heart"} size={18}/>
             </a>

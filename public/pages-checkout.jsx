@@ -6,6 +6,7 @@ const CheckoutPage = () => {
   const [done, setDone] = React.useState(false);
   const [shipping, setShipping] = React.useState({ name: "", email: "", phone: "", address: "", city: "", country: "United Kingdom", postal: "" });
   const [method, setMethod] = React.useState("card");
+  const [gift, setGift] = React.useState({ on: false, recipName: "", recipAddress: "", recipCity: "", recipPostal: "", recipCountry: "United Kingdom", message: "", hidePrices: true });
 
   const subtotal = cart.reduce((s, it) => s + (PRODUCTS.find(p => p.slug === it.slug)?.priceLKR || 0), 0);
   const ship = ccy === "LKR" ? (subtotal > 15000 ? 0 : 800) : 0;
@@ -74,20 +75,63 @@ const CheckoutPage = () => {
             {step === 1 && (
               <div className="dash-card" style={{ background: "var(--white)" }}>
                 <div className="dash-card-head"><h3>Contact & shipping</h3></div>
-                <div className="dash-card-body padded">
-                  <div className="form-grid">
-                    <div className="span-2"><label className="form-label">Full name</label><input className="form-input" value={shipping.name} onChange={e => setShipping({...shipping, name: e.target.value})}/></div>
-                    <div><label className="form-label">Email</label><input className="form-input" type="email" value={shipping.email} onChange={e => setShipping({...shipping, email: e.target.value})}/></div>
-                    <div><label className="form-label">WhatsApp</label><input className="form-input" value={shipping.phone} onChange={e => setShipping({...shipping, phone: e.target.value})}/></div>
-                    <div className="span-2"><label className="form-label">Address</label><input className="form-input" value={shipping.address} onChange={e => setShipping({...shipping, address: e.target.value})}/></div>
-                    <div><label className="form-label">City</label><input className="form-input" value={shipping.city} onChange={e => setShipping({...shipping, city: e.target.value})}/></div>
-                    <div><label className="form-label">Postal code</label><input className="form-input" value={shipping.postal} onChange={e => setShipping({...shipping, postal: e.target.value})}/></div>
-                    <div className="span-2"><label className="form-label">Country</label>
-                      <select className="form-select" value={shipping.country} onChange={e => setShipping({...shipping, country: e.target.value})}>
-                        <option>United Kingdom</option><option>United States</option><option>Canada</option><option>Australia</option><option>Ireland</option><option>Germany</option><option>France</option><option>Netherlands</option><option>United Arab Emirates</option><option>Singapore</option><option>India</option><option>Other</option>
-                      </select>
-                    </div>
+
+                {/* Gift mode toggle */}
+                <div className="gift-toggle-row">
+                  <div className="gift-toggle-copy">
+                    <div className="gift-toggle-head"><Icon name="gift" size={15} stroke={1.5}/><strong>This is a gift</strong></div>
+                    <div className="gift-toggle-sub">We'll hide the price slip, add your card message by hand, and send the confirmation to you — not them.</div>
                   </div>
+                  <button type="button" role="switch" aria-checked={gift.on} className={`gift-toggle-switch ${gift.on ? "on" : ""}`} onClick={() => setGift({ ...gift, on: !gift.on })}/>
+                </div>
+
+                <div className="dash-card-body padded">
+                  <div className="eyebrow gold" style={{ marginBottom: 14 }}>{gift.on ? "Your details (for the receipt)" : "Contact & shipping"}</div>
+                  <div className="form-grid">
+                    <div className="span-2"><label className="form-label">{gift.on ? "Your full name" : "Full name"}</label><input className="form-input" value={shipping.name} onChange={e => setShipping({...shipping, name: e.target.value})}/></div>
+                    <div><label className="form-label">{gift.on ? "Your email" : "Email"}</label><input className="form-input" type="email" value={shipping.email} onChange={e => setShipping({...shipping, email: e.target.value})}/></div>
+                    <div><label className="form-label">WhatsApp</label><input className="form-input" value={shipping.phone} onChange={e => setShipping({...shipping, phone: e.target.value})}/></div>
+                    {!gift.on && (
+                      <>
+                        <div className="span-2"><label className="form-label">Address</label><input className="form-input" value={shipping.address} onChange={e => setShipping({...shipping, address: e.target.value})}/></div>
+                        <div><label className="form-label">City</label><input className="form-input" value={shipping.city} onChange={e => setShipping({...shipping, city: e.target.value})}/></div>
+                        <div><label className="form-label">Postal code</label><input className="form-input" value={shipping.postal} onChange={e => setShipping({...shipping, postal: e.target.value})}/></div>
+                        <div className="span-2"><label className="form-label">Country</label>
+                          <select className="form-select" value={shipping.country} onChange={e => setShipping({...shipping, country: e.target.value})}>
+                            <option>United Kingdom</option><option>United States</option><option>Canada</option><option>Australia</option><option>Ireland</option><option>Germany</option><option>France</option><option>Netherlands</option><option>United Arab Emirates</option><option>Singapore</option><option>India</option><option>Other</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {gift.on && (
+                    <div className="gift-recip">
+                      <div className="eyebrow gold" style={{ marginBottom: 14 }}>Send the piece to</div>
+                      <div className="form-grid">
+                        <div className="span-2"><label className="form-label">Recipient's name</label><input className="form-input" value={gift.recipName} onChange={e => setGift({...gift, recipName: e.target.value})}/></div>
+                        <div className="span-2"><label className="form-label">Their address</label><input className="form-input" value={gift.recipAddress} onChange={e => setGift({...gift, recipAddress: e.target.value})}/></div>
+                        <div><label className="form-label">City</label><input className="form-input" value={gift.recipCity} onChange={e => setGift({...gift, recipCity: e.target.value})}/></div>
+                        <div><label className="form-label">Postal code</label><input className="form-input" value={gift.recipPostal} onChange={e => setGift({...gift, recipPostal: e.target.value})}/></div>
+                        <div className="span-2"><label className="form-label">Country</label>
+                          <select className="form-select" value={gift.recipCountry} onChange={e => setGift({...gift, recipCountry: e.target.value})}>
+                            <option>United Kingdom</option><option>United States</option><option>Canada</option><option>Australia</option><option>Ireland</option><option>Germany</option><option>France</option><option>Netherlands</option><option>United Arab Emirates</option><option>Singapore</option><option>India</option><option>Other</option>
+                          </select>
+                        </div>
+                        <div className="span-2">
+                          <label className="form-label">Your card message <span style={{ color: "var(--charcoal-soft)", textTransform: "none", letterSpacing: 0 }}>(handwritten on a Filamour card)</span></label>
+                          <textarea className="form-text" rows="3" maxLength={240} placeholder="For Mira, on her first birthday. With all our love." value={gift.message} onChange={e => setGift({...gift, message: e.target.value})}/>
+                          <div className="form-counter">{gift.message.length} / 240</div>
+                        </div>
+                        <div className="span-2">
+                          <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "var(--charcoal)", cursor: "pointer" }}>
+                            <input type="checkbox" checked={gift.hidePrices} onChange={e => setGift({...gift, hidePrices: e.target.checked})}/>
+                            Hide the price slip from the parcel. <span style={{ color: "var(--charcoal-soft)" }}>(We always do this for gifts by default.)</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div style={{ padding: 22, borderTop: "0.5px solid var(--line)", display: "flex", justifyContent: "space-between" }}>
                   <a href="#/cart" className="link" style={{ fontSize: 13, alignSelf: "center", borderBottom: "0.5px solid var(--charcoal)", paddingBottom: 3 }}>← Return to cart</a>
