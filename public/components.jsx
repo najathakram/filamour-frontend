@@ -166,7 +166,7 @@ const FmImage = ({ src, alt = "", warm = true, vignette = false, fallback, class
 
 // ===== Mini-cart drawer =====
 const CartDrawer = () => {
-  const { cart, cartOpen, closeCart, removeFromCart } = useShop();
+  const { cart, cartOpen, closeCart, removeFromCart, addToCart } = useShop();
   const { ccy } = useCurrency();
   React.useEffect(() => {
     document.body.style.overflow = cartOpen ? "hidden" : "";
@@ -232,6 +232,33 @@ const CartDrawer = () => {
                   </div>
                 );
               })}
+
+              {/* Often paired with — cross-sell. Pieces not already in the bag, max 2. */}
+              {(() => {
+                const inBag = new Set(cart.map(c => c.slug));
+                const pair = PRODUCTS.filter(p => !inBag.has(p.slug)).slice(0, 2);
+                if (!pair.length) return null;
+                return (
+                  <div className="cart-drawer-pair">
+                    <div className="eyebrow gold">Often paired with</div>
+                    <div className="cart-drawer-pair-grid">
+                      {pair.map(p => {
+                        const firstSize = p.sizes.find(s => !p.oos.includes(s)) || p.sizes[0];
+                        return (
+                          <div key={p.slug} className="cart-drawer-pair-item">
+                            <div className="cart-drawer-pair-img" onClick={() => { closeCart(); navigate(`/product/${p.slug}`); }}>
+                              <FmImage src={window.productImg(p.slug, 0)} alt={p.name}/>
+                            </div>
+                            <div className="cart-drawer-pair-name">{p.name}</div>
+                            <div className="cart-drawer-pair-price">{window.fmtPrice(p.priceLKR, ccy)}</div>
+                            <button className="cart-drawer-pair-add" onClick={() => addToCart(p.slug, firstSize)}>+ Add to bag</button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             <footer className="cart-drawer-foot">

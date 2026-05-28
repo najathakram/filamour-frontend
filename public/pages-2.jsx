@@ -50,6 +50,21 @@ const ProductPage = ({ slug }) => {
               {product.avail.type === "ready" ? "Ready to ship · within 2 working days" : `Made to order · yours in ${product.avail.days} working days`}
             </div>
 
+            {/* Dynamic stock line — updates with selected size */}
+            {(() => {
+              const lowQty = (product.lowStock || {})[size];
+              const sizeOos = product.oos.includes(size);
+              if (sizeOos) {
+                const nextAvail = product.sizes.find(s => !product.oos.includes(s));
+                return <div className="prod-stock-line oos">Size {size} is sold out{nextAvail ? ` · ${nextAvail} still available` : ""}.</div>;
+              }
+              if (lowQty === 1) return <div className="prod-stock-line low"><span className="dot"/>Last one in size {size}. The next batch is six weeks out.</div>;
+              if (lowQty > 1) return <div className="prod-stock-line low"><span className="dot"/>{lowQty} left in size {size}.</div>;
+              const lowSizes = Object.keys(product.lowStock || {}).filter(s => !product.oos.includes(s));
+              if (lowSizes.length) return <div className="prod-stock-line soft">Low stock in {lowSizes.join(", ")}. Yours will be reserved the moment you order.</div>;
+              return null;
+            })()}
+
             <div className="prod-section">
               <div className="prod-section-label">
                 <span>Select size</span>

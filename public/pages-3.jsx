@@ -412,16 +412,57 @@ const CartPage = () => {
 const WishlistPage = () => {
   const { wishlist } = useShop();
   const items = PRODUCTS.filter(p => wishlist.includes(p.slug));
+  const [shareNote, setShareNote] = React.useState("");
+
+  const share = async () => {
+    const titles = items.map(p => p.name).join(", ");
+    const text = `A few pieces I've saved on Filamour for the little one — ${titles}.`;
+    const url = window.location.origin + "/#/wishlist";
+    if (navigator.share) {
+      try { await navigator.share({ title: "My Filamour wishlist", text, url }); return; } catch {}
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      setShareNote("Link copied — paste it into a message.");
+      setTimeout(() => setShareNote(""), 3500);
+    } catch {
+      setShareNote("Long-press the link to copy: " + url);
+    }
+  };
+
+  const waMsg = encodeURIComponent(`A few pieces I've saved on Filamour for the little one — ${items.map(p => p.name).join(", ")}. ${window.location.origin}/#/wishlist`);
+
   return (
     <div className="page">
       <div className="wrap" style={{ padding: "64px 0 96px" }}>
-        <div className="eyebrow gold" style={{ marginBottom: 12 }}>Saved</div>
-        <h1 className="h-display" style={{ fontSize: 44 }}>Wishlist</h1>
+        <div className="wish-head">
+          <div>
+            <div className="eyebrow gold" style={{ marginBottom: 12 }}>Saved</div>
+            <h1 className="h-display" style={{ fontSize: 44 }}>Wishlist</h1>
+            {items.length > 0 && (
+              <p style={{ marginTop: 12, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 17 }}>
+                {items.length} {items.length === 1 ? "piece" : "pieces"} kept aside · send to whoever's asking what to gift
+              </p>
+            )}
+          </div>
+          {items.length > 0 && (
+            <div className="wish-share">
+              <button className="btn btn-secondary btn-sm" onClick={share}>
+                <Icon name="heart" size={13} stroke={1.6}/> Send to her grandmother
+              </button>
+              <a className="btn btn-wa btn-sm" href={`https://wa.me/?text=${waMsg}`} target="_blank" rel="noopener">
+                <Icon name="whatsapp" size={13}/> Share on WhatsApp
+              </a>
+            </div>
+          )}
+        </div>
+        {shareNote && <div className="wish-share-note">{shareNote}</div>}
+
         {items.length === 0 ? (
           <div style={{ background: "var(--white)", padding: 80, textAlign: "center", marginTop: 32, border: "0.5px solid var(--line)" }}>
             <Icon name="heart" size={32} stroke={1.2}/>
             <h2 className="h-display" style={{ fontSize: 26, marginTop: 16 }}>No pieces saved yet</h2>
-            <p style={{ color: "var(--charcoal-soft)", marginTop: 8 }}>Tap the heart on any piece to save it for later.</p>
+            <p style={{ color: "var(--charcoal-soft)", marginTop: 8 }}>Tap the heart on any piece to save it for later. When someone asks what to gift, send the list — they'll thank you.</p>
             <div style={{ marginTop: 28 }}><Btn variant="primary" onClick={() => navigate("/shop")}>Browse the collection</Btn></div>
           </div>
         ) : (
