@@ -25,19 +25,34 @@ const CheckoutPage = () => {
   }
 
   if (done) {
+    const orderNo = "FM-" + Math.floor(Math.random() * 9000 + 1000);
+    const firstName = shipping.name?.split(" ")[0] || "friend";
     return (
       <div className="page">
-        <div className="wrap" style={{ padding: "80px 0", textAlign: "center", maxWidth: 640, margin: "0 auto" }}>
+        <div className="wrap" style={{ padding: "80px 0", textAlign: "center", maxWidth: 720, margin: "0 auto" }}>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--blush)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--gold)" }}>
             <Icon name="check" size={28} stroke={1.6}/>
           </div>
           <div className="eyebrow gold" style={{ marginTop: 24 }}>Order received</div>
-          <h1 className="h-display" style={{ fontSize: 44, marginTop: 8 }}>Thank you, {shipping.name?.split(" ")[0] || "friend"}.</h1>
-          <p style={{ marginTop: 20, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 18 }}>Your order #FM-{Math.floor(Math.random() * 9000 + 1000)} is now with the workshop. We will write to you on WhatsApp within a working day.</p>
-          <div style={{ marginTop: 28, display: "flex", gap: 12, justifyContent: "center" }}>
+          <h1 className="h-display" style={{ fontSize: 44, marginTop: 8 }}>Thank you, {firstName}.</h1>
+          <p style={{ marginTop: 20, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 18 }}>Your order <strong>{orderNo}</strong> is now with the studio. We'll write to you on WhatsApp within a working day.</p>
+
+          {/* The photo-before-ship promise. Sets up delight, opens a WhatsApp channel. */}
+          <div className="conf-promise">
+            <div className="eyebrow gold" style={{ marginBottom: 14 }}>What happens next</div>
+            <ul>
+              <li><span className="conf-step">1</span><div><strong>You'll get an email</strong> with the order details in the next few minutes.</div></li>
+              <li><span className="conf-step">2</span><div><strong>We'll send you a photo</strong> of your piece, folded and wrapped, on WhatsApp — before it ships.</div></li>
+              <li><span className="conf-step">3</span><div><strong>Tracking lands in your inbox</strong> the moment the parcel leaves the studio.</div></li>
+              <li><span className="conf-step">4</span><div><strong>If anything is not right when it arrives,</strong> message Gaika directly. We'll make it right.</div></li>
+            </ul>
+          </div>
+
+          <div style={{ marginTop: 32, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <Btn variant="primary" onClick={() => navigate("/")}>Return home</Btn>
             <Btn variant="secondary" onClick={() => navigate("/shop")}>Keep browsing</Btn>
           </div>
+          <p style={{ marginTop: 24, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--charcoal-soft)" }}>Order {orderNo} · Confirmation sent to {shipping.email || "your email"}</p>
         </div>
       </div>
     );

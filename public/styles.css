@@ -658,3 +658,41 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .founder-pull-quote { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 32px; line-height: 1.4; color: var(--charcoal); margin: 0; max-width: 26ch; margin-left: auto; margin-right: auto; }
 @media (max-width: 640px) { .founder-pull-quote { font-size: 22px; } }
 .founder-pull-by { font-family: var(--body); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--charcoal-soft); margin-top: 24px; }
+
+/* ============================================================ */
+/* ===== Cart: free-shipping nudge + reassurance ============ */
+/* ============================================================ */
+.ship-nudge { margin-top: 18px; padding: 14px 16px; background: var(--ivory); border-radius: 4px; }
+.ship-nudge-msg { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--charcoal); line-height: 1.4; }
+.ship-nudge-msg svg { color: var(--gold); flex-shrink: 0; }
+.ship-nudge-msg strong { font-weight: 400; color: var(--charcoal); }
+.ship-nudge-won { color: var(--gold); }
+.ship-nudge-bar { margin-top: 10px; height: 4px; background: rgba(196,164,154,0.25); border-radius: 2px; overflow: hidden; }
+.ship-nudge-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--dusty-rose)); border-radius: 2px; transition: width 320ms ease; }
+.cart-reassure { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 20px; padding-top: 18px; border-top: 0.5px solid var(--line); font-family: var(--body); font-size: 11px; color: var(--charcoal-soft); letter-spacing: 0.06em; }
+.cart-reassure > div { display: flex; align-items: center; gap: 6px; }
+.cart-reassure svg { color: var(--gold); flex-shrink: 0; }
+@media (max-width: 640px) { .cart-reassure { grid-template-columns: 1fr; gap: 8px; } }
+
+/* ============================================================ */
+/* ===== Product: what arrives + size urgency =============== */
+/* ============================================================ */
+.prod-arrives { margin-top: 24px; padding: 20px 22px; background: var(--ivory); border-radius: 4px; }
+.prod-arrives ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.prod-arrives li { display: flex; align-items: flex-start; gap: 10px; font-family: var(--body); font-size: 13px; line-height: 1.55; color: var(--charcoal); }
+.prod-arrives li svg { color: var(--gold); flex-shrink: 0; margin-top: 3px; }
+
+.size-pill-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.size-tag { font-family: var(--body); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; padding: 2px 5px; border-radius: 2px; }
+.size-tag.oos { color: var(--charcoal-soft); }
+.size-tag.low { color: var(--gold); font-weight: 400; }
+.size-urgency-note { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 13px; color: var(--charcoal-soft); margin-top: 14px; }
+
+/* ============================================================ */
+/* ===== Confirmation: photo-before-ship promise ============ */
+/* ============================================================ */
+.conf-promise { margin-top: 40px; padding: 36px 32px; background: var(--white); border: 0.5px solid var(--line); text-align: left; max-width: 560px; margin-left: auto; margin-right: auto; }
+.conf-promise ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 18px; }
+.conf-promise li { display: flex; align-items: flex-start; gap: 16px; font-family: var(--body); font-size: 14px; line-height: 1.6; color: var(--charcoal); }
+.conf-promise li strong { font-weight: 400; color: var(--charcoal); }
+.conf-step { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--blush); display: inline-flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 14px; color: var(--gold); }

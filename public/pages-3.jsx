@@ -310,12 +310,47 @@ const CartPage = () => {
             </div>
             <div style={{ background: "var(--white)", padding: 32, border: "0.5px solid var(--line)", height: "fit-content", position: "sticky", top: 100 }}>
               <h3 className="eyebrow">Order summary</h3>
+
+              {/* Free-shipping progress — loss aversion + visible incentive */}
+              {(() => {
+                // Free-shipping threshold in display currency
+                const threshold = c === "LKR" ? 43200 : c === "USD" ? 150 : 120; // ≈ £120
+                const symbol = c === "LKR" ? "LKR " : c === "USD" ? "$" : "£";
+                const subtotalDisp = c === "LKR" ? subtotal : subtotal * window.FILAMOUR_DATA.rates[c];
+                const remaining = Math.max(0, threshold - subtotalDisp);
+                const pct = Math.min(100, (subtotalDisp / threshold) * 100);
+                const fmtAmt = (n) => c === "LKR" ? symbol + Math.round(n).toLocaleString() : symbol + n.toFixed(0);
+                return (
+                  <div className="ship-nudge">
+                    {remaining > 0 ? (
+                      <div className="ship-nudge-msg">
+                        <Icon name="gift" size={13} stroke={1.6}/>
+                        <span>You're <strong>{fmtAmt(remaining)}</strong> away from free worldwide shipping.</span>
+                      </div>
+                    ) : (
+                      <div className="ship-nudge-msg ship-nudge-won">
+                        <Icon name="check" size={13} stroke={1.8}/>
+                        <span>Free worldwide shipping unlocked.</span>
+                      </div>
+                    )}
+                    <div className="ship-nudge-bar"><div className="ship-nudge-fill" style={{ width: `${pct}%` }}/></div>
+                  </div>
+                );
+              })()}
+
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, fontSize: 14 }}><span>Subtotal</span><span>{window.fmtPrice(subtotal, c)}</span></div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, fontSize: 14, color: "var(--charcoal-soft)" }}><span>Shipping</span><span>Calculated at checkout</span></div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, paddingTop: 16, borderTop: "0.5px solid var(--line)", fontSize: 17 }}><span>Total</span><span>{window.fmtPrice(subtotal, c)}</span></div>
               <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 10 }}>
                 <Btn variant="primary" block onClick={() => navigate("/checkout")}>Continue to checkout</Btn>
                 <a href="https://wa.me/447000000000" target="_blank" rel="noopener" className="btn btn-wa btn-block"><Icon name="whatsapp" size={16}/> Checkout via WhatsApp</a>
+              </div>
+
+              {/* Trust micro-reassurance under the buttons */}
+              <div className="cart-reassure">
+                <div><Icon name="heart" size={12} stroke={1.6}/> 14-day returns</div>
+                <div><Icon name="gift" size={12} stroke={1.6}/> Handwritten card</div>
+                <div><Icon name="check" size={12} stroke={1.6}/> Tracked delivery</div>
               </div>
             </div>
           </div>

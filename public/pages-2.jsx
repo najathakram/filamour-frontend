@@ -56,10 +56,26 @@ const ProductPage = ({ slug }) => {
                 <a className="link" href="#/size-guide">Size guide</a>
               </div>
               <div className="size-row">
-                {product.sizes.map(s => (
-                  <button key={s} className={`size-pill ${size === s ? "active" : ""} ${product.oos.includes(s) ? "oos" : ""}`} onClick={() => !product.oos.includes(s) && setSize(s)}>{s}</button>
-                ))}
+                {product.sizes.map(s => {
+                  const isOos = product.oos.includes(s);
+                  const lowStock = (product.lowStock || {})[s];
+                  return (
+                    <div key={s} className="size-pill-wrap">
+                      <button
+                        className={`size-pill ${size === s ? "active" : ""} ${isOos ? "oos" : ""}`}
+                        onClick={() => !isOos && setSize(s)}
+                        title={isOos ? "Sold out" : lowStock ? `Only ${lowStock} left` : ""}
+                      >{s}</button>
+                      {isOos && <span className="size-tag oos">Sold out</span>}
+                      {!isOos && lowStock === 1 && <span className="size-tag low">Last one</span>}
+                      {!isOos && lowStock > 1 && <span className="size-tag low">{lowStock} left</span>}
+                    </div>
+                  );
+                })}
               </div>
+              {product.sizes.some(s => (product.lowStock || {})[s] && !product.oos.includes(s)) && (
+                <div className="size-urgency-note">A few sizes nearly gone — yours will be made the moment you order.</div>
+              )}
             </div>
 
             <div className="prod-actions">
@@ -85,6 +101,18 @@ const ProductPage = ({ slug }) => {
               Came out of the box softer than I expected. A year on, it's softer still.
               <cite>— Hannah, London</cite>
             </blockquote>
+
+            {/* What arrives — frames the unboxing, justifies the price */}
+            <div className="prod-arrives">
+              <div className="eyebrow gold" style={{ marginBottom: 12 }}>What arrives</div>
+              <ul>
+                <li><Icon name="check" size={12} stroke={1.8}/> The piece, folded in acid-free tissue</li>
+                <li><Icon name="check" size={12} stroke={1.8}/> A linen ribbon-tied charcoal box</li>
+                <li><Icon name="check" size={12} stroke={1.8}/> A handwritten note from the studio</li>
+                <li><Icon name="check" size={12} stroke={1.8}/> A small printed care guide</li>
+                <li><Icon name="check" size={12} stroke={1.8}/> No receipt or price slip — gift-ready by default</li>
+              </ul>
+            </div>
 
             <div className="accord">
               <AccordItem id="piece" open={accord} onToggle={setAccord} title="The Piece">
