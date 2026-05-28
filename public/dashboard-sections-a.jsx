@@ -902,6 +902,9 @@ const CustomerDrawer = ({ customer, onClose }) => {
   const live = mergedCustomers().find(c => c.id === customer.id) || customer;
   const [tier, setTier] = React.useState(live.tier);
   const [note, setNote] = React.useState(live.note || "");
+  // Hold the latest value in a ref so closing/blurring saves the current text
+  // even if React's onBlur fires before state has settled.
+  const noteRef = React.useRef(live.note || "");
 
   // Pull orders for this customer
   const orders = mergedOrders().filter(o => o.customer === customer.name);
@@ -911,10 +914,16 @@ const CustomerDrawer = ({ customer, onClose }) => {
     setTier(t);
     persistAdminCustomer(customer.id, { tier: t });
   };
-  const saveNote = () => persistAdminCustomer(customer.id, { note });
+  const updateNote = (v) => {
+    noteRef.current = v;
+    setNote(v);
+  };
+  const saveNote = () => persistAdminCustomer(customer.id, { note: noteRef.current });
+  // Save on close so users never lose a note they typed
+  const handleClose = () => { saveNote(); onClose(); };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleClose}>
       <div className="modal prod-editor" onClick={e => e.stopPropagation()}>
         <div className="modal-head">
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
@@ -924,7 +933,7 @@ const CustomerDrawer = ({ customer, onClose }) => {
               <div style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>{customer.email} · {customer.country}</div>
             </div>
           </div>
-          <button onClick={onClose}><Icon name="x" size={18}/></button>
+          <button onClick={handleClose}><Icon name="x" size={18}/></button>
         </div>
         <div className="modal-body">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 28 }}>
@@ -947,7 +956,7 @@ const CustomerDrawer = ({ customer, onClose }) => {
             </div>
             <div>
               <h4 className="eyebrow" style={{ marginBottom: 12 }}>Internal notes</h4>
-              <textarea className="form-text" rows="6" placeholder="VIP preferences, sizing notes, gift recipient names — visible to studio only." value={note} onChange={e => setNote(e.target.value)} onBlur={saveNote}/>
+              <textarea className="form-text" rows="6" placeholder="VIP preferences, sizing notes, gift recipient names — visible to studio only." value={note} onChange={e => updateNote(e.target.value)} onBlur={saveNote}/>
 
               <h4 className="eyebrow" style={{ marginTop: 24, marginBottom: 12 }}>Default address</h4>
               <div style={{ padding: 14, background: "var(--ivory)", borderRadius: 4, fontSize: 13, lineHeight: 1.7, color: "var(--charcoal-soft)" }}>
@@ -962,7 +971,7 @@ const CustomerDrawer = ({ customer, onClose }) => {
         <div className="modal-foot">
           <button className="btn btn-secondary btn-sm" style={{ marginRight: "auto" }} onClick={() => window.open(`mailto:${customer.email}?subject=A note from Filamour`)}>Email customer</button>
           <a href={`https://wa.me/447000000000?text=Hi%20${encodeURIComponent(customer.name.split(" ")[0])}`} target="_blank" className="btn btn-secondary btn-sm">WhatsApp</a>
-          <button className="btn btn-primary btn-sm" onClick={onClose}>Done</button>
+          <button className="btn btn-primary btn-sm" onClick={handleClose}>Done</button>
         </div>
       </div>
     </div>
