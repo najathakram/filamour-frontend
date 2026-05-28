@@ -831,3 +831,47 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .gift-toggle-switch.on { background: var(--gold); }
 .gift-toggle-switch.on::after { transform: translateX(20px); }
 .gift-recip { margin-top: 32px; padding-top: 28px; border-top: 0.5px solid var(--line); }
+
+/* ============================================================ */
+/* ===== Recently viewed band =============================== */
+/* ============================================================ */
+.recent-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 960px) { .recent-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .recent-grid { grid-template-columns: 1fr; } }
+
+/* ============================================================ */
+/* ===== Confirmation email preview ========================= */
+/* ============================================================ */
+.conf-email { max-width: 600px; margin: 40px auto 0; text-align: left; background: var(--white); border: 0.5px solid var(--line); overflow: hidden; box-shadow: 0 4px 24px rgba(46,41,38,0.06); }
+.conf-email-bar { display: flex; align-items: center; gap: 8px; padding: 12px 18px; background: var(--ivory); border-bottom: 0.5px solid var(--line); font-family: var(--body); font-size: 12px; color: var(--charcoal-soft); }
+.conf-email-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.conf-email-dot-r { background: #d77b6a; }
+.conf-email-dot-y { background: #d8b878; }
+.conf-email-dot-g { background: #94b08c; }
+.conf-email-from { margin-left: 16px; }
+.conf-email-from strong { color: var(--charcoal); font-weight: 400; }
+.conf-email-time { margin-left: auto; }
+.conf-email-body { padding: 28px 28px 32px; font-family: var(--body); font-size: 14px; line-height: 1.7; color: var(--charcoal); }
+.conf-email-subj { font-family: var(--display); font-weight: 400; font-size: 20px; line-height: 1.3; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 0.5px solid var(--line); }
+.conf-email-body p { margin: 12px 0; }
+.conf-email-items { margin: 20px 0; padding: 16px 18px; background: var(--ivory); border-radius: 3px; }
+.conf-email-row { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; font-size: 13px; }
+.conf-email-row span:first-child { color: var(--charcoal); }
+.conf-email-total { border-top: 0.5px solid var(--line); margin-top: 6px; padding-top: 12px; font-weight: 400; color: var(--charcoal); }
+.conf-email-body em { color: var(--gold); font-style: italic; font-family: var(--display); font-size: 15px; }
+
+/* ============================================================ */
+/* ===== Product reviews block ============================== */
+/* ============================================================ */
+.prod-reviews { margin-top: 96px; background: var(--white); padding: 72px 0; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+.prod-reviews-head { text-align: center; max-width: 640px; margin: 0 auto 56px; padding: 0 24px; }
+.prod-reviews-head h2 { font-family: var(--display); font-weight: 300; font-size: 36px; line-height: 1.2; }
+.prod-reviews-head p { margin-top: 14px; font-family: var(--display); font-style: italic; font-weight: 300; font-size: 16px; color: var(--charcoal-soft); line-height: 1.6; }
+.prod-reviews-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 760px) { .prod-reviews-grid { grid-template-columns: 1fr; gap: 24px; } }
+.prod-review { margin: 0; padding: 32px 28px; background: var(--ivory); border-top: 0.5px solid var(--gold); }
+.prod-review blockquote { margin: 0; font-family: var(--display); font-style: italic; font-weight: 300; font-size: 18px; line-height: 1.55; color: var(--charcoal); }
+.prod-review blockquote .qm { font-size: 30px; color: var(--gold); line-height: 0.5; vertical-align: -3px; margin-right: 3px; }
+.prod-review figcaption { margin-top: 22px; font-family: var(--body); font-size: 12px; letter-spacing: 0.06em; color: var(--charcoal); display: flex; flex-direction: column; gap: 4px; }
+.prod-review figcaption strong { font-weight: 400; }
+.prod-review-note { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--charcoal-soft); margin-top: 4px; }

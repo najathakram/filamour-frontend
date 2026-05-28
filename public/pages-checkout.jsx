@@ -38,6 +38,31 @@ const CheckoutPage = () => {
           <h1 className="h-display" style={{ fontSize: 44, marginTop: 8 }}>Thank you, {firstName}.</h1>
           <p style={{ marginTop: 20, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 18 }}>Your order <strong>{orderNo}</strong> is now with the studio. We'll write to you on WhatsApp within a working day.</p>
 
+          {/* Email-preview card — shows what's landing in her inbox in the next few minutes */}
+          <div className="conf-email">
+            <div className="conf-email-bar">
+              <span className="conf-email-dot conf-email-dot-r"/>
+              <span className="conf-email-dot conf-email-dot-y"/>
+              <span className="conf-email-dot conf-email-dot-g"/>
+              <span className="conf-email-from">From <strong>orders@filamour.com</strong></span>
+              <span className="conf-email-time">just now</span>
+            </div>
+            <div className="conf-email-body">
+              <div className="conf-email-subj">Your Filamour order {orderNo} — on its way</div>
+              <p>Hello {firstName},</p>
+              <p>Thank you for your order. Here's what's coming:</p>
+              <div className="conf-email-items">
+                {cart.map((it, i) => {
+                  const p = PRODUCTS.find(pp => pp.slug === it.slug);
+                  return p ? <div key={i} className="conf-email-row"><span>{p.name} · size {it.size}</span><span>{window.fmtPrice(p.priceLKR, ccy)}</span></div> : null;
+                })}
+                <div className="conf-email-row conf-email-total"><span>Total</span><span>{window.fmtPrice(total, ccy)}</span></div>
+              </div>
+              <p style={{ marginTop: 18 }}><em>We'll send you a photograph of your piece — folded and ribboned — before it ships. Watch WhatsApp.</em></p>
+              <p style={{ marginTop: 14, color: "var(--charcoal-soft)", fontSize: 13 }}>— Gaika, and the studio</p>
+            </div>
+          </div>
+
           {/* The photo-before-ship promise. Sets up delight, opens a WhatsApp channel. */}
           <div className="conf-promise">
             <div className="eyebrow gold" style={{ marginBottom: 14 }}>What happens next</div>

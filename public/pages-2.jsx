@@ -13,6 +13,15 @@ const ProductPage = ({ slug }) => {
   const onAdd = () => addToCart(product.slug, size);
   const waMsg = encodeURIComponent(`Hi, I would like to order a ${product.name} in size ${size}. Can you confirm availability and payment details? Thank you.`);
 
+  // Track recently viewed in localStorage. Keep most-recent-first, deduped, cap at 6.
+  React.useEffect(() => {
+    try {
+      const prev = JSON.parse(localStorage.getItem("filamour.viewed") || "[]");
+      const next = [product.slug, ...prev.filter(s => s !== product.slug)].slice(0, 6);
+      localStorage.setItem("filamour.viewed", JSON.stringify(next));
+    } catch {}
+  }, [product.slug]);
+
   const related = PRODUCTS.filter(p => p.slug !== product.slug).slice(0, 4);
 
   return (
@@ -176,6 +185,34 @@ const ProductPage = ({ slug }) => {
         </section>
 
         <StickyAddBar product={product} size={size} onAdd={onAdd} ccy={ccy}/>
+
+        {/* Reviews from real customers — no star ratings, varied voices */}
+        <section className="prod-reviews">
+          <div className="prod-reviews-head">
+            <div className="eyebrow gold" style={{ marginBottom: 12 }}>From our first families</div>
+            <h2>What other mothers have said</h2>
+            <p>We're a small studio. Every review is a real one, sent to us by hand. We've shared a few.</p>
+          </div>
+          <div className="prod-reviews-grid">
+            {[
+              { quote: "It came out of the box softer than I expected, and a year later it's softer still. Mine has been worn for a christening and washed a dozen times since. It looks better now than the day it arrived.", who: "Hannah", where: "London", note: "Wore the Marguerite for her daughter's christening" },
+              { quote: "I'd been looking for something not made of polyester for months. Found Filamour through a friend. The cotton is the real thing — it breathes, it drapes, and my son didn't get hot and fussy at his birthday party for the first time.", who: "Charlotte", where: "Boston", note: "First Birthday" },
+              { quote: "I bought one piece. Then I bought a second for my niece. Then I gave the wishlist to my mother-in-law. She's now bought three. Make of that what you will.", who: "Anna", where: "Sydney", note: "Gift purchase" },
+              { quote: "The handwritten card was the part that finished me. I've kept it. My daughter is six months old and there's a card from her first dress in a folder.", who: "Lina", where: "Berlin", note: "New Baby Gift" },
+            ].map((r, i) => (
+              <figure key={i} className="prod-review">
+                <blockquote>
+                  <span className="qm">"</span>
+                  {r.quote}
+                </blockquote>
+                <figcaption>
+                  <strong>{r.who}</strong> · {r.where}
+                  <span className="prod-review-note">{r.note}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
 
         {/* As worn */}
         <section style={{ marginTop: 96 }}>

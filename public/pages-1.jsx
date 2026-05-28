@@ -68,6 +68,9 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* RECENTLY VIEWED — brings her back to abandoned tabs */}
+      <RecentlyViewed/>
+
       {/* MATERIALS STORY */}
       <section className="section" style={{ background: "var(--white)" }}>
         <div className="wrap">
@@ -286,4 +289,33 @@ const ActiveChip = ({ label, onClear }) => (
   </button>
 );
 
-Object.assign(window, { HomePage, ShopPage, FilterGroup, ActiveChip });
+// ===== Recently viewed band =====
+const RecentlyViewed = () => {
+  const [slugs, setSlugs] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem("filamour.viewed") || "[]"); } catch { return []; }
+  });
+  // Refresh on route changes
+  const route = useHashRoute();
+  React.useEffect(() => {
+    try { setSlugs(JSON.parse(localStorage.getItem("filamour.viewed") || "[]")); } catch {}
+  }, [route]);
+  const items = slugs.map(s => PRODUCTS.find(p => p.slug === s)).filter(Boolean).slice(0, 4);
+  if (items.length === 0) return null;
+  return (
+    <section className="section">
+      <div className="wrap">
+        <div className="section-head">
+          <div className="left">
+            <h2>Where you left off</h2>
+            <div className="sub">Pieces you looked at last time</div>
+          </div>
+        </div>
+        <div className="recent-grid">
+          {items.map(p => <ProductCard key={p.slug} product={p}/>)}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+Object.assign(window, { HomePage, ShopPage, FilterGroup, ActiveChip, RecentlyViewed });
