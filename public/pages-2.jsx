@@ -5,13 +5,23 @@ const ProductPage = ({ slug }) => {
   const { addToCart, toggleWish, wishlist } = useShop();
   const [activeImg, setActiveImg] = React.useState(0);
   const [size, setSize] = React.useState(product.sizes.find(s => !product.oos.includes(s)) || product.sizes[0]);
+  const [colourway, setColourway] = React.useState(product.tone || "ivory");
   const [accord, setAccord] = React.useState("piece");
   const [gift, setGift] = React.useState(false);
   const [giftMsg, setGiftMsg] = React.useState("");
   const saved = wishlist.includes(product.slug);
 
+  const sizeOos = product.oos.includes(size);
   const onAdd = () => addToCart(product.slug, size);
+  const onExpress = () => {
+    if (sizeOos) return;
+    addToCart(product.slug, size);
+    setTimeout(() => navigate("/checkout"), 80);
+  };
   const waMsg = encodeURIComponent(`Hi, I would like to order a ${product.name} in size ${size}. Can you confirm availability and payment details? Thank you.`);
+
+  // Reset image index when product changes
+  React.useEffect(() => { setActiveImg(0); }, [product.slug]);
 
   // Track recently viewed in localStorage. Keep most-recent-first, deduped, cap at 6.
   React.useEffect(() => {
@@ -22,7 +32,24 @@ const ProductPage = ({ slug }) => {
     } catch {}
   }, [product.slug]);
 
-  const related = PRODUCTS.filter(p => p.slug !== product.slug).slice(0, 4);
+  // Colourway palette — three on-tone shades each piece is "Made to order in"
+  const COLOURWAYS = {
+    ivory:   [{ name: "Ivory", hex: "#F5EFE6" }, { name: "Blush", hex: "#E8D5CE" }, { name: "Sage", hex: "#A8B0A0" }],
+    blush:   [{ name: "Blush", hex: "#E8D5CE" }, { name: "Dusty Rose", hex: "#C4A49A" }, { name: "Ivory", hex: "#F5EFE6" }],
+    rose:    [{ name: "Dusty Rose", hex: "#C4A49A" }, { name: "Blush", hex: "#E8D5CE" }, { name: "Sage", hex: "#A8B0A0" }],
+    saffron: [{ name: "Saffron", hex: "#B8924A" }, { name: "Ivory", hex: "#F5EFE6" }, { name: "Charcoal", hex: "#2E2926" }],
+    honey:   [{ name: "Honey", hex: "#D6B584" }, { name: "Ivory", hex: "#F5EFE6" }, { name: "Sage", hex: "#A8B0A0" }],
+  };
+  const colourways = COLOURWAYS[product.tone] || COLOURWAYS.ivory;
+
+  // Smarter "More like this": same category first, then same occasion, then the rest
+  const related = (() => {
+    const others = PRODUCTS.filter(p => p.slug !== product.slug);
+    const sameCat = others.filter(p => p.category === product.category);
+    const sameOcc = others.filter(p => p.occasion === product.occasion && !sameCat.includes(p));
+    const rest = others.filter(p => !sameCat.includes(p) && !sameOcc.includes(p));
+    return [...sameCat, ...sameOcc, ...rest].slice(0, 4);
+  })();
 
   return (
     <div className="page">
@@ -77,9 +104,31 @@ const ProductPage = ({ slug }) => {
             {/* Sold-out waitlist — captures the buyer who would have left */}
             {product.oos.includes(size) && <SoldOutWaitlist product={product} size={size}/>}
 
+            {/* Colourways — visual variety teaser */}
+            <div className="prod-section prod-colour-section">
+              <div className="prod-section-label">
+                <span>Colourway · <em>{colourway.charAt(0).toUpperCase() + colourway.slice(1)}</em></span>
+                <span className="prod-section-hint">Made to order in your shade</span>
+              </div>
+              <div className="prod-colourways">
+                {colourways.map(c => (
+                  <button
+                    key={c.name}
+                    className={`prod-colour ${colourway === product.tone && c.name.toLowerCase() === product.tone ? "active" : ""}`}
+                    title={c.name}
+                    aria-label={c.name}
+                    onClick={() => setColourway(c.name.toLowerCase())}
+                  >
+                    <span className="prod-colour-chip" style={{ background: c.hex, borderColor: c.hex === "#F5EFE6" ? "var(--line)" : "transparent" }}/>
+                    <span className="prod-colour-name">{c.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="prod-section">
               <div className="prod-section-label">
-                <span>Select size</span>
+                <span>Size</span>
                 <a className="link" href="#/size-guide">Size guide</a>
               </div>
               <div className="size-row">
@@ -90,8 +139,8 @@ const ProductPage = ({ slug }) => {
                     <div key={s} className="size-pill-wrap">
                       <button
                         className={`size-pill ${size === s ? "active" : ""} ${isOos ? "oos" : ""}`}
-                        onClick={() => !isOos && setSize(s)}
-                        title={isOos ? "Sold out" : lowStock ? `Only ${lowStock} left` : ""}
+                        onClick={() => setSize(s)}
+                        title={isOos ? "Tap to be notified when it's back" : lowStock ? `Only ${lowStock} left` : ""}
                       >{s}</button>
                       {isOos && <span className="size-tag oos">Sold out</span>}
                       {!isOos && lowStock === 1 && <span className="size-tag low">Last one</span>}
@@ -106,13 +155,21 @@ const ProductPage = ({ slug }) => {
             </div>
 
             <div className="prod-actions">
-              <Btn variant="primary" block onClick={onAdd}>Add to cart · {window.fmtPrice(product.priceLKR, ccy)}</Btn>
-              <Btn variant="secondary" block onClick={() => toggleWish(product.slug)}>
-                <Icon name={saved ? "heart-fill" : "heart"} size={15}/> {saved ? "Saved to wishlist" : "Add to wishlist"}
+              <Btn variant="primary" block onClick={onAdd} disabled={sizeOos}>
+                {sizeOos ? `Size ${size} is sold out` : `Add to bag · ${window.fmtPrice(product.priceLKR, ccy)}`}
               </Btn>
-              <a href={`https://wa.me/447000000000?text=${waMsg}`} target="_blank" rel="noopener" className="btn btn-wa btn-block">
-                <Icon name="whatsapp" size={16}/> Order via WhatsApp
-              </a>
+              <button className="btn btn-express btn-block" onClick={onExpress} disabled={sizeOos}>
+                <span className="btn-express-pay" aria-hidden="true"></span>
+                <span>Buy with Apple Pay</span>
+              </button>
+              <div className="prod-actions-row">
+                <button className="prod-icon-btn" onClick={() => toggleWish(product.slug)} aria-label={saved ? "Saved to wishlist" : "Add to wishlist"}>
+                  <Icon name={saved ? "heart-fill" : "heart"} size={15}/> {saved ? "Saved" : "Save"}
+                </button>
+                <a href={`https://wa.me/447000000000?text=${waMsg}`} target="_blank" rel="noopener" className="prod-icon-btn prod-icon-btn-wa">
+                  <Icon name="whatsapp" size={14}/> WhatsApp
+                </a>
+              </div>
             </div>
 
             {/* Trust icons — answers "what if it's wrong?" right next to the buy button */}
@@ -175,12 +232,14 @@ const ProductPage = ({ slug }) => {
           </div>
         </div>
 
-        {/* Related */}
-        <section style={{ marginTop: 96 }}>
+        {/* More like this — same category first, then occasion */}
+        <section className="prod-more">
           <div className="section-head">
             <div className="left">
-              <h2 style={{ fontSize: 32 }}>You may also like</h2>
+              <h2 style={{ fontSize: 32 }}>More like this</h2>
+              <div className="sub">In the same family · {product.category.toLowerCase()} for {product.occasion.toLowerCase()}</div>
             </div>
+            <a className="view-all" href="#/shop">See the full collection <Icon name="arrow-right" size={14}/></a>
           </div>
           <div className="grid-4">
             {related.map(p => <ProductCard key={p.slug} product={p}/>)}
