@@ -71,10 +71,10 @@ window.DASH_DATA = {
   ],
 
   seo: {
-    "/": { title: "Filamour · Heirloom children's wear in organic cotton", description: "Hand-made children's wear in GOTS-certified organic cotton and fine muslin. The fabrics we'd choose for a baby of our own — and nothing else.", canonical: "https://filamour.com/", indexable: true },
+    "/": { title: "Filamour · Heirloom children's wear in natural fibers", description: "Hand-made children's wear in natural cotton, muslin, and linen — kept simple, with no synthetic blends or chemical finishes. The cloth we'd choose for a baby of our own.", canonical: "https://filamour.com/", indexable: true },
     "/shop": { title: "Shop · Filamour", description: "The complete Filamour collection — organic cotton dresses, rompers, gift sets, and made-to-order pieces for newborn to T5.", canonical: "https://filamour.com/shop", indexable: true },
     "/our-story": { title: "Our Story · Filamour", description: "Why we obsess over fabric: the materials we chose, the ones we ruled out, and the way we want a baby's first wardrobe to feel against the skin.", canonical: "https://filamour.com/our-story", indexable: true },
-    "/materials": { title: "The Materials · Filamour", description: "Why GOTS organic cotton and fine muslin — and why we won't use polyester, conventional cotton, bamboo viscose, or chemical wrinkle-release finishes on children's clothing.", canonical: "https://filamour.com/materials", indexable: true },
+    "/materials": { title: "The Materials · Filamour", description: "How Filamour thinks about cloth: natural fibers only, no synthetic blends, no added wrinkle-release or stain-shield finishes, and a quiet palette of gentle dyes.", canonical: "https://filamour.com/materials", indexable: true },
     "/gift-guide": { title: "Gift Guide · Filamour", description: "Beautifully wrapped organic cotton gifts for new babies, first birthdays, and christenings. Free gift wrapping on every order.", canonical: "https://filamour.com/gift-guide", indexable: true },
   },
 

@@ -412,7 +412,7 @@ const SettingsSection = () => {
             <div><label className="form-label">Business email</label><input className="form-input" defaultValue="studio@filamour.com"/></div>
             <div><label className="form-label">WhatsApp number</label><input className="form-input" defaultValue="+44 7000 000 000"/></div>
             <div className="span-2"><label className="form-label">Studio address</label><input className="form-input" defaultValue="Studio 14, Westbourne Park, London W11"/></div>
-            <div className="span-2"><label className="form-label">About (footer)</label><textarea className="form-text" rows="3" defaultValue="Heirloom children's wear made from GOTS-certified organic cotton and fine muslin. The fabrics we'd choose for a baby of our own, and nothing else."/></div>
+            <div className="span-2"><label className="form-label">About (footer)</label><textarea className="form-text" rows="3" defaultValue="Heirloom children's wear made from natural fibers — cotton, muslin, linen — kept simple. The cloth we'd choose for a baby of our own, and nothing else."/></div>
           </div>
         )}
         {tab === "shipping" && (

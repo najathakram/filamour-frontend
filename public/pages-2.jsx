@@ -74,14 +74,14 @@ const ProductPage = ({ slug }) => {
             <div className="accord">
               <AccordItem id="piece" open={accord} onToggle={setAccord} title="The Piece">
                 <p>A softly-gathered bishop silhouette cut from cotton-muslin, with a high yoke that sits gently above the collarbones and never pulls. The smocked panel gives at the chest as your baby breathes — no waistband, no elastic dig.</p>
-                <p><strong>Fabric:</strong> 100% GOTS-certified organic cotton-muslin, double-layered through the bodice for shape and softness. <strong>Closure:</strong> three covered buttons at the back, sized large enough for adult fingers in a hurry. <strong>Care:</strong> machine wash cool on a delicate cycle, hang to dry, warm iron if you like. It will be softer in three months than the day it arrived.</p>
+                <p><strong>Fabric:</strong> 100% organic cotton-muslin, double-layered through the bodice for shape and softness. <strong>Closure:</strong> three covered buttons at the back, sized large enough for adult fingers in a hurry. <strong>Care:</strong> machine wash cool on a delicate cycle, hang to dry, warm iron if you like. It will be softer in three months than the day it arrived.</p>
                 <p><strong>Availability:</strong> {product.avail.type === "ready" ? "in stock, ships within 2 working days." : `made to order — ${product.avail.days} working days, then shipped.`}</p>
               </AccordItem>
-              <AccordItem id="materials" open={accord} onToggle={setAccord} title="Why this fabric, for your baby">
-                <p><strong>GOTS-certified organic cotton.</strong> Grown without pesticides — important, because conventional cotton is one of the most chemically-treated crops on earth, and traces of those chemicals can linger in the fibers that sit against your baby's skin.</p>
-                <p><strong>A loose, breathable weave.</strong> Air moves through it, so your baby doesn't overheat. Synthetic blends (polyester, acrylic) trap heat against the body and can leave the skin clammy after an hour of wear. Muslin does the opposite — it cools as it breathes.</p>
-                <p><strong>Softer with every wash.</strong> Natural cotton softens; synthetics pill and roughen. The piece you buy today will feel kinder against the skin in six months than it did when it arrived.</p>
-                <p><strong>What you won't find:</strong> optical brighteners, formaldehyde finishes, azo dyes, or anti-wrinkle treatments. <a href="#/materials" className="link">More on our materials →</a></p>
+              <AccordItem id="materials" open={accord} onToggle={setAccord} title="The cloth, and why it feels the way it does">
+                <p><strong>Natural fiber, kept pure.</strong> Cotton, muslin, linen — no synthetic blends. Pure cotton wears in beautifully, drapes against a small body, and breathes. Blended fabrics do the opposite: they stiffen, trap heat, and rub.</p>
+                <p><strong>Soft, getting softer.</strong> The first wash takes off the loom finish. The next ten teach the fabric what it wants to be. By the time your child has worn it through a season, it'll feel kinder than it did the day it arrived.</p>
+                <p><strong>No added chemistry.</strong> We skip wrinkle-release sprays, stain-shields, and anti-microbial finishes. These coat the cloth in things designed for an adult's laundry basket — not for what sits against a baby's face when they sleep.</p>
+                <p><a href="#/materials" className="link">How we think about fabric →</a></p>
               </AccordItem>
               <AccordItem id="delivery" open={accord} onToggle={setAccord} title="Delivery & Returns">
                 <p><strong>Worldwide shipping</strong> with tracked, signed-for delivery. UK & EU: 3-5 days via DHL. North America: 4-7 days via DHL. Rest of world: 7-14 days via EMS.</p>
@@ -169,7 +169,7 @@ const OurStoryPage = () => (
     <p>The hand of the fabric. The drape on a small body. How a seam sits behind the knee when your baby is sitting on the floor. Whether the natural cotton came from a field that was sprayed with something that shouldn't be against newborn skin. Whether the dye held in the wash. Whether the buttons are sewn on tightly enough that you'll never find one in a mouth.</p>
     <div className="fullwidth-img"><FmImage src={window.IMG.artisanPortraits[1]} alt="Soft cotton-muslin, folded"/></div>
     <h2>The materials, only two</h2>
-    <p>We make every Filamour piece from one of two fabrics. <strong>GOTS-certified organic cotton-muslin</strong> for the warmth of summer and the layers of every other season — breathable, light, gentler with every wash. <strong>Heavyweight organic cotton</strong> for our pinafores, jackets, and the structured pieces. That's the whole list. No polyester blends, no chemical "easy-care" finishes, no surprises against the skin.</p>
+    <p>We make every Filamour piece from a small family of natural fibers — organic cotton, muslin, and linen. Light, breathable cloth for summer and layering; heavier weights for pinafores and jackets. No synthetic blends, no chemical wrinkle-release or stain-shield finishes, no surprises against the skin.</p>
     <h2>The promise</h2>
     <p>Every piece is checked twice — once at the sewing table, once by a person whose only job that day is to make sure nothing leaves with a loose thread, a rough seam, or a button that wouldn't survive a determined two-year-old. Then it's folded, wrapped, and sent. That is what luxury for babies should actually mean: not a price tag, but a fabric you'd be glad to find against your own skin.</p>
     <div style={{ textAlign: "center", marginTop: 64 }}>
@@ -180,78 +180,65 @@ const OurStoryPage = () => (
 
 // ===================== MATERIALS =====================
 const MaterialsPage = () => {
-  const used = [
+  const principles = [
     {
-      title: "GOTS-certified organic cotton",
-      cert: "GOTS · OEKO-TEX Standard 100",
-      use: "Our day dresses, sets, layettes, pinafores.",
-      why: "Grown without synthetic pesticides, processed without chlorine bleach or formaldehyde finishes. The full chain — field, mill, dye-house — is audited, so what reaches your baby is the cotton, and only the cotton.",
-      feel: "Soft from the first wash, softer after the tenth. Holds shape, breathes, and doesn't pill the way blends do.",
+      n: "01",
+      h: "Natural fibers, kept simple",
+      p: "Cotton, linen, and muslin — the same family of cloth grandmothers have put against newborn skin for generations. Soft from the start, softer after every wash. Nothing about the way it's woven is clever. It's just made well.",
     },
     {
-      title: "Fine cotton-muslin",
-      cert: "Organic · loose-weave · undyed or low-impact dyed",
-      use: "Our bishop dresses, rompers, summer pieces.",
-      why: "Loose-woven, so air moves through it. A baby's body temperature rises and falls faster than yours — they need something that breathes, not something that traps heat against the skin.",
-      feel: "Barely-there weight, drapes like a whisper, gets softer every time it's washed. The fabric your grandmother put against newborn skin, for good reason.",
+      n: "02",
+      h: "No synthetic blends",
+      p: "Pure cotton wears in, drapes, and breathes. A cotton-polyester blend does the opposite — it stiffens, traps heat, and rubs. We don't blend natural with synthetic, ever. If a piece feels right against the back of your hand, that's why.",
     },
-  ];
-
-  const avoided = [
-    { name: "Polyester, acrylic, nylon blends", reason: "Plastic-based fibers. Trap heat against the body, shed microplastics in the wash, can leave skin clammy and irritated after an hour of wear. Common in fast-fashion baby clothes." },
-    { name: "Conventional (non-organic) cotton", reason: "One of the most pesticide-treated crops in the world. Residues can remain in the fibers — not what you want against thin newborn skin." },
-    { name: "Bamboo viscose / rayon", reason: "Marketed as natural; chemically processed into fiber using sodium hydroxide and carbon disulfide. The finished thread is technically a regenerated cellulose, not a plant fiber. We don't use it." },
-    { name: "Anti-wrinkle, easy-care, stain-release finishes", reason: "Usually formaldehyde-based or PFC-based. Designed to make laundry easy for adults; not designed for what sits against a baby's face when they sleep." },
-    { name: "Optical brighteners and azo dyes", reason: "Brighteners make whites look extra-white by reflecting UV. Some azo dyes break down into compounds you really don't want in skin contact. Common in mass-market children's wear, banned in the EU at certain levels, never used in ours." },
+    {
+      n: "03",
+      h: "No finishes a baby doesn't need",
+      p: "We skip the wrinkle-release, the stain-shield, the anti-microbial sprays. Those are chemistries designed to make life easier for the wash basket. They don't make life better for the skin underneath.",
+    },
+    {
+      n: "04",
+      h: "A quiet palette",
+      p: "Ivory, blush, dusty rose, charcoal, saffron, sage. Tones that come from gentle dyeing, not from aggressive bleaching or high-intensity pigment. They wash kindly, age beautifully, and photograph the way you'll remember the day.",
+    },
   ];
 
   return (
     <div className="page">
       <div className="wrap" style={{ padding: "72px 0 96px" }}>
-        <div style={{ maxWidth: 780, margin: "0 auto 64px", textAlign: "center" }}>
+        {/* HERO */}
+        <div style={{ maxWidth: 720, margin: "0 auto 80px", textAlign: "center" }}>
           <div className="eyebrow gold" style={{ marginBottom: 16 }}>The Materials</div>
-          <h1 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 52, lineHeight: 1.1 }}>What's against the skin matters</h1>
-          <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 300, fontSize: 20, marginTop: 20, color: "var(--charcoal-soft)" }}>A baby's skin is up to 30% thinner than yours. It absorbs more. It reacts faster. We chose Filamour's two fabrics with that in mind — and ruled almost everything else out.</p>
+          <h1 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 56, lineHeight: 1.05, letterSpacing: "-0.01em" }}>The cloth before the cut</h1>
+          <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 300, fontSize: 21, marginTop: 24, color: "var(--charcoal-soft)", lineHeight: 1.5 }}>The way a piece feels in your child's hand, and against their skin all day, comes from the fabric long before it comes from the pattern.</p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 56, marginBottom: 88 }}>
-          {used.map((m, i) => (
-            <div key={m.title} style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 56, alignItems: "center", background: "var(--white)", padding: 48 }}>
-              <div style={{ aspectRatio: "4/5", overflow: "hidden" }}>
-                <FmImage src={window.IMG.artisanPortraits[i] || window.IMG.artisanWork} alt={m.title}/>
-              </div>
-              <div>
-                <div className="eyebrow gold">What we use no. 0{i+1}</div>
-                <h2 style={{ fontFamily: "var(--display)", fontWeight: 400, fontSize: 38, marginTop: 8 }}>{m.title}</h2>
-                <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gold)", marginTop: 8 }}>{m.cert}</div>
-                <p style={{ marginTop: 24 }}><strong>Where you'll find it:</strong> {m.use}</p>
-                <p style={{ marginTop: 12 }}><strong>Why we chose it:</strong> {m.why}</p>
-                <p style={{ marginTop: 12 }}><strong>How it feels:</strong> {m.feel}</p>
-              </div>
+        {/* HOW IT FEELS */}
+        <div style={{ maxWidth: 760, margin: "0 auto 88px", textAlign: "center" }}>
+          <p style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 24, lineHeight: 1.55, color: "var(--charcoal)" }}>The first thing you'll notice, taking a Filamour piece out of the wrapping, is the hand of the cloth — a little weighty, a little cool, with the easy give that only natural fiber has. A wash or two and it softens further. A year of wear and it's the dress your child reaches for.</p>
+        </div>
+
+        {/* PRINCIPLES */}
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 28 }}>
+          {principles.map(p => (
+            <div key={p.n} style={{ background: "var(--white)", padding: "44px 40px", borderTop: "0.5px solid var(--gold)" }}>
+              <div style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 14, letterSpacing: "0.2em", color: "var(--gold)" }}>{p.n}</div>
+              <h2 style={{ fontFamily: "var(--display)", fontWeight: 400, fontSize: 28, marginTop: 14, lineHeight: 1.2 }}>{p.h}</h2>
+              <p style={{ marginTop: 18, color: "var(--charcoal-soft)", lineHeight: 1.8 }}>{p.p}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ maxWidth: 880, margin: "0 auto", background: "var(--white)", padding: "56px 48px" }}>
-          <div className="eyebrow gold" style={{ marginBottom: 16, textAlign: "center" }}>What you won't find in a Filamour piece</div>
-          <h2 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 36, textAlign: "center", lineHeight: 1.15 }}>The list of things we ruled out is longer than the list of things we use</h2>
-          <div style={{ marginTop: 48, display: "grid", gap: 28 }}>
-            {avoided.map(a => (
-              <div key={a.name} style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 24, paddingBottom: 24, borderBottom: "0.5px solid var(--line)" }}>
-                <div style={{ fontFamily: "var(--display)", fontSize: 18, color: "var(--charcoal)" }}>{a.name}</div>
-                <div style={{ color: "var(--charcoal-soft)", lineHeight: 1.7 }}>{a.reason}</div>
-              </div>
-            ))}
-          </div>
+        {/* CARE NOTE */}
+        <div style={{ maxWidth: 760, margin: "88px auto 0", padding: "48px 40px", borderTop: "0.5px solid var(--line)", borderBottom: "0.5px solid var(--line)", textAlign: "center" }}>
+          <div className="eyebrow gold" style={{ marginBottom: 14 }}>Caring for it</div>
+          <p style={{ fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 300, fontSize: 20, color: "var(--charcoal-soft)", lineHeight: 1.6 }}>Wash cool, skip the fabric softener, dry flat or on the line. Natural cotton looks after itself if you let it.</p>
+          <a href="#/care-guide" className="link" style={{ display: "inline-block", marginTop: 18, fontSize: 13, letterSpacing: "0.08em", borderBottom: "0.5px solid var(--charcoal)", paddingBottom: 3 }}>Full care guide →</a>
         </div>
 
-        <div style={{ maxWidth: 780, margin: "72px auto 0", textAlign: "center" }}>
-          <div className="eyebrow gold" style={{ marginBottom: 16 }}>How we check</div>
-          <h2 style={{ fontFamily: "var(--display)", fontWeight: 300, fontSize: 36, lineHeight: 1.15 }}>Every batch, every piece, every seam</h2>
-          <p style={{ marginTop: 20, color: "var(--charcoal-soft)", lineHeight: 1.8 }}>Each new batch of fabric is washed at 40°C and inspected for shrinkage, colour hold, and how it feels against the inside of the wrist after a full 24 hours. Every finished piece is felt for seam roughness before it's folded. We'd rather scrap a piece than ship one we wouldn't put on a baby we love.</p>
-          <div style={{ marginTop: 40 }}>
-            <Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn>
-          </div>
+        {/* CTA */}
+        <div style={{ textAlign: "center", marginTop: 72 }}>
+          <Btn variant="primary" onClick={() => navigate("/shop")}>Shop the collection</Btn>
         </div>
       </div>
     </div>

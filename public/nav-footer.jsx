@@ -161,7 +161,7 @@ const Footer = () => (
               <div className="tagline">Thread of Love</div>
             </div>
           </div>
-          <p className="blurb">Heirloom children's wear made from GOTS-certified organic cotton and fine muslin. The fabrics we'd choose for a baby of our own, and nothing else.</p>
+          <p className="blurb">Heirloom children's wear made from natural fibers — cotton, muslin, linen — kept simple. The cloth we'd choose for a baby of our own, and nothing else.</p>
           <div className="footer-wa"><Icon name="whatsapp" size={16}/> Message us on WhatsApp</div>
         </div>
         <div>

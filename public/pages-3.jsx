@@ -196,10 +196,10 @@ const FaqPage = () => {
       ["Can I exchange a size?", "Yes — within 14 days, for any in-stock piece in another size."],
     ]},
     { h: "Materials & care", qs: [
-      ["What fabrics do you use?", "GOTS-certified organic cotton and fine cotton-muslin. That's the whole list. No polyester blends, no chemical easy-care finishes."],
-      ["Why does organic cotton matter for a baby?", "A baby's skin is up to 30% thinner than yours. Conventional cotton is one of the most pesticide-treated crops in the world, and residues can stay in the finished fabric. Organic cotton means a cleaner fiber against very sensitive skin."],
-      ["Are the dyes safe for sensitive skin?", "Yes. OEKO-TEX Standard 100 certified, dyed without azo compounds, optical brighteners, or formaldehyde finishes."],
-      ["How do I wash a Filamour piece?", "Machine wash cool on a delicate cycle is fine. Hang to dry. Warm iron if you like. Our fabrics soften with every wash."],
+      ["What fabrics do you use?", "Natural fibers only — cotton, muslin, and linen. No synthetic blends, no wrinkle-release or stain-shield finishes."],
+      ["Why does fabric choice matter for a baby?", "Babies wear what we give them, all day, against very sensitive skin. Natural fibers breathe; synthetics trap heat. Pure fabrics wear in beautifully; blends pill and stiffen. The cloth makes more difference than the cut."],
+      ["Are the colours gentle on sensitive skin?", "We work in a quiet palette — ivory, blush, dusty rose, charcoal, saffron, sage — using gentle dyeing, not aggressive bleaching or high-intensity pigment."],
+      ["How do I wash a Filamour piece?", "Machine wash cool on a delicate cycle is fine. Skip fabric softener — natural cotton softens on its own. Hang or lay flat to dry. Warm iron from the reverse if you like a crisp finish."],
     ]},
   ];
   const [open, setOpen] = React.useState({});
@@ -366,7 +366,7 @@ const CareGuidePage = () => (
   <SimplePage eyebrow="Care" title="Caring for your Filamour piece">
     <p className="lead">Organic cotton is tougher than it looks. With small kindnesses, your Filamour piece will outlast its first wearer — and very probably the next.</p>
     <h2>Washing</h2>
-    <p>Machine wash cool on a delicate cycle is fine. Use a gentle, fragrance-free detergent. Avoid bleach, fabric softener, and anything with optical brighteners — these can build up in natural fibers over time. If your washing machine is on the older side, a mesh bag protects the smocking from snagging.</p>
+    <p>Machine wash cool on a delicate cycle is fine. Use a gentle, fragrance-free detergent. Skip the fabric softener — natural cotton softens on its own, and softeners coat the fibers in a way that dulls them over time. If your washing machine is on the older side, a mesh bag protects the smocking from snagging.</p>
     <h2>Drying</h2>
     <p>Hang to dry, or lay flat on a clean towel — never tumble dry. Heat sets shrinkage and distorts the gathered stitches.</p>
     <h2>Ironing</h2>

@@ -59,11 +59,11 @@ const HomePage = () => {
               <FmImage src={window.IMG.artisanWork} alt="Folded organic cotton-muslin"/>
             </div>
             <div className="artisan-copy">
-              <div className="eyebrow gold" style={{ marginBottom: 16 }}>What's against the skin</div>
-              <h2>Two fabrics.<br/>Nothing else.</h2>
-              <p>A baby's skin is up to 30% thinner than yours. It absorbs more and reacts faster. Every Filamour piece is made from one of two fabrics — GOTS-certified organic cotton, or a fine cotton-muslin that breathes. No polyester blends, no chemical easy-care finishes, no surprises.</p>
-              <div className="artisan-tag">GOTS organic cotton · OEKO-TEX certified</div>
-              <div><a className="link" href="#/materials">Why these fabrics, and what we ruled out <Icon name="arrow-right" size={12}/></a></div>
+              <div className="eyebrow gold" style={{ marginBottom: 16 }}>The cloth before the cut</div>
+              <h2>Natural fibers,<br/>kept simple.</h2>
+              <p>Cotton, linen, and muslin — the same family of cloth grandmothers have put against newborn skin for generations. No synthetic blends, no wrinkle-release finishes, no anti-microbial sprays. Just well-made cloth that softens with every wash.</p>
+              <div className="artisan-tag">Natural fiber · gentle dyes · no added finishes</div>
+              <div><a className="link" href="#/materials">How we think about fabric <Icon name="arrow-right" size={12}/></a></div>
             </div>
           </div>
         </div>

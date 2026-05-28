@@ -247,7 +247,7 @@ const ProductEditor = ({ product, onClose }) => {
             <div className="form-grid">
               <div className="span-2"><label className="form-label">Name</label><input className="form-input" defaultValue={product.name}/></div>
               <div className="span-2"><label className="form-label">Short description</label><input className="form-input" defaultValue={product.desc}/></div>
-              <div className="span-2"><label className="form-label">Full description</label><textarea className="form-text" rows="4" defaultValue="A softly-gathered bishop dress cut from GOTS-certified organic cotton-muslin, with a high yoke that sits gently above the collarbones and gives at the chest as your baby breathes."/></div>
+              <div className="span-2"><label className="form-label">Full description</label><textarea className="form-text" rows="4" defaultValue="A softly-gathered bishop dress cut from natural cotton-muslin, with a high yoke that sits gently above the collarbones and gives at the chest as your baby breathes."/></div>
               <div><label className="form-label">Category</label><select className="form-select" defaultValue={product.category}><option>Dresses</option><option>Rompers</option><option>Sets</option><option>Tops</option><option>Gift Sets</option></select></div>
               <div><label className="form-label">Occasion</label><select className="form-select" defaultValue={product.occasion}><option>Christening & Baptism</option><option>First Birthday</option><option>Family Photoshoot</option><option>Everyday Luxury</option></select></div>
               <div><label className="form-label">Assigned maker</label><select className="form-select" defaultValue={product.maker || product.artisan}>{D.customers && ["Studio 01","Studio 02","Studio 03"].map(a => <option key={a}>{a}</option>)}</select></div>
@@ -300,14 +300,14 @@ const ProductEditor = ({ product, onClose }) => {
             <div>
               <div className="form-grid">
                 <div className="span-2"><label className="form-label">Meta title</label><input className="form-input" defaultValue={`${product.name} · Filamour`} maxLength={60}/><div className="form-counter">0 / 60</div></div>
-                <div className="span-2"><label className="form-label">Meta description</label><textarea className="form-text" rows="3" maxLength={160} defaultValue={`${product.desc}. GOTS-certified organic cotton, made by hand.`}/><div className="form-counter">0 / 160</div></div>
+                <div className="span-2"><label className="form-label">Meta description</label><textarea className="form-text" rows="3" maxLength={160} defaultValue={`${product.desc}. Natural fiber, made by hand.`}/><div className="form-counter">0 / 160</div></div>
                 <div className="span-2"><label className="form-label">URL handle</label><input className="form-input" defaultValue={`/product/${product.slug || "new-piece"}`}/></div>
               </div>
               <h4 className="eyebrow" style={{ marginTop: 20, marginBottom: 10 }}>Google preview</h4>
               <div className="preview-card">
                 <div className="url">filamour.com › product › {product.slug || "new-piece"}</div>
                 <div className="ttl">{product.name || "New piece"} · Filamour</div>
-                <div className="desc">{product.desc || "A new Filamour piece."}. GOTS-certified organic cotton, made by hand.</div>
+                <div className="desc">{product.desc || "A new Filamour piece."}. Natural fiber, made by hand.</div>
               </div>
             </div>
           )}

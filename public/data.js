@@ -19,7 +19,7 @@ window.FILAMOUR_DATA = {
     {
       slug: "floret-romper",
       name: "The Floret Romper",
-      desc: "Soft-yoked romper in GOTS-certified organic cotton — the kind of piece you reach for every morning",
+      desc: "Soft-yoked romper in organic cotton — the kind of piece you reach for every morning",
       category: "Rompers",
       occasion: "Everyday Luxury",
       sizes: ["NB","3M","6M","12M","18M"],
