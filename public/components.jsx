@@ -309,23 +309,10 @@ const AccountModal = () => {
     closeAccount();
   };
 
+  // Signed-in users use /account page; if the modal is somehow opened, redirect.
   if (user) {
-    return (
-      <div className="acct-overlay" onClick={closeAccount}>
-        <div className="acct-card" onClick={(e) => e.stopPropagation()}>
-          <button className="acct-x" onClick={closeAccount} aria-label="Close"><Icon name="x" size={18}/></button>
-          <div className="eyebrow gold" style={{ marginBottom: 10 }}>Your Filamour</div>
-          <h2>Hello, {user.name}.</h2>
-          <p className="acct-sub">Your bag, your wishlist, your sizes — all kept for next time. Birthday reminders go to <em>{user.email}</em>.</p>
-          <div className="acct-list">
-            <button onClick={() => { closeAccount(); navigate("/wishlist"); }}><span><Icon name="heart" size={14}/></span>Your wishlist</button>
-            <button onClick={() => { closeAccount(); navigate("/cart"); }}><span><Icon name="bag" size={14}/></span>Your bag</button>
-            <button onClick={() => { closeAccount(); navigate("/bespoke"); }}><span><Icon name="needle" size={14}/></span>Request a bespoke piece</button>
-            <button className="acct-signout" onClick={() => { signOut(); closeAccount(); addToast("Signed out."); }}>Sign out</button>
-          </div>
-        </div>
-      </div>
-    );
+    if (accountOpen) { closeAccount(); navigate("/account"); }
+    return null;
   }
 
   return (

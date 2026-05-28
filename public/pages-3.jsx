@@ -551,4 +551,179 @@ const ContactPage = () => (
   </div>
 );
 
-Object.assign(window, { GiftGuidePage, BespokePage, SizeGuidePage, FaqPage, LookbookPage, CartPage, WishlistPage, CareGuidePage, ShippingPage, ContactPage });
+// ===================== ACCOUNT PAGE =====================
+const AccountPage = () => {
+  const { user, signOut, addToast, cart, wishlist } = useShop();
+  const [tab, setTab] = React.useState("overview");
+
+  // Not signed in — invite them
+  if (!user) {
+    const { openAccount } = useShop();
+    return (
+      <div className="page">
+        <div className="wrap" style={{ padding: "96px 0", textAlign: "center", maxWidth: 600, margin: "0 auto" }}>
+          <Icon name="user" size={36} stroke={1.2}/>
+          <div className="eyebrow gold" style={{ marginTop: 20 }}>Your Filamour</div>
+          <h1 className="h-display" style={{ fontSize: 40, marginTop: 8 }}>Sign in to pick up where you left off</h1>
+          <p style={{ marginTop: 18, color: "var(--charcoal-soft)", fontFamily: "var(--display)", fontStyle: "italic", fontSize: 17 }}>Your bag, your wishlist, your child's sizes, and the birthdays you've added — kept quietly in one place.</p>
+          <div style={{ marginTop: 32 }}><Btn variant="primary" onClick={openAccount}>Sign in or create account</Btn></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mock data — real backend wires later
+  const orders = [
+    { id: "FM-2045", date: "12 May 2026", status: "Delivered", total: 11900, items: ["The Marguerite Bishop Dress · 6M"] },
+    { id: "FM-1987", date: "28 Mar 2026", status: "Delivered", total: 26100, items: ["The Floret Romper · 3M", "The Linen-Cotton Gift Set · NB"] },
+  ];
+  const children = [{ name: "Mira", birthday: "12 Apr 2024" }];
+  const addresses = [{ label: "Home", line: "42 Westbourne Grove, London W11" }];
+
+  return (
+    <div className="page">
+      <div className="wrap" style={{ padding: "48px 0 96px", maxWidth: 1080, margin: "0 auto" }}>
+        <div className="acct-page-head">
+          <div>
+            <div className="eyebrow gold" style={{ marginBottom: 8 }}>Your Filamour</div>
+            <h1 className="h-display" style={{ fontSize: 40 }}>Hello, {user.name}.</h1>
+            <p style={{ marginTop: 8, color: "var(--charcoal-soft)" }}>{user.email}</p>
+          </div>
+          <button className="acct-page-signout" onClick={() => { signOut(); addToast("Signed out."); navigate("/"); }}>Sign out</button>
+        </div>
+
+        <div className="acct-page-tabs">
+          {[
+            ["overview", "Overview"],
+            ["orders", "Orders"],
+            ["addresses", "Addresses"],
+            ["children", "Children & birthdays"],
+            ["settings", "Settings"],
+          ].map(([id, label]) => (
+            <button key={id} className={`acct-page-tab ${tab === id ? "active" : ""}`} onClick={() => setTab(id)}>{label}</button>
+          ))}
+        </div>
+
+        <div className="acct-page-body">
+          {tab === "overview" && (
+            <div className="acct-overview-grid">
+              <div className="acct-card-block">
+                <div className="eyebrow gold">Recent order</div>
+                <h3>{orders[0].id}</h3>
+                <div className="acct-meta">{orders[0].date} · {orders[0].status}</div>
+                <div className="acct-overview-items">{orders[0].items.map((i, k) => <div key={k}>{i}</div>)}</div>
+                <button className="acct-link" onClick={() => setTab("orders")}>See all orders →</button>
+              </div>
+              <div className="acct-card-block">
+                <div className="eyebrow gold">In your bag</div>
+                <h3>{cart.length} {cart.length === 1 ? "piece" : "pieces"}</h3>
+                <div className="acct-meta">Last saved {cart.length ? "today" : "never"}</div>
+                <button className="acct-link" onClick={() => navigate("/cart")}>Continue your order →</button>
+              </div>
+              <div className="acct-card-block">
+                <div className="eyebrow gold">Saved for later</div>
+                <h3>{wishlist.length} {wishlist.length === 1 ? "piece" : "pieces"}</h3>
+                <div className="acct-meta">{wishlist.length ? "Send the list to whoever's asking what to gift." : "Tap the heart on a piece to save it."}</div>
+                <button className="acct-link" onClick={() => navigate("/wishlist")}>Open your wishlist →</button>
+              </div>
+              <div className="acct-card-block">
+                <div className="eyebrow gold">Birthday reminders</div>
+                <h3>{children.length} {children.length === 1 ? "child" : "children"} added</h3>
+                <div className="acct-meta">{children[0] ? `${children[0].name} · ${children[0].birthday}` : "Add a date — we'll write 6 weeks before."}</div>
+                <button className="acct-link" onClick={() => setTab("children")}>Manage →</button>
+              </div>
+            </div>
+          )}
+
+          {tab === "orders" && (
+            <div className="acct-orders">
+              {orders.map(o => (
+                <div key={o.id} className="acct-order">
+                  <div className="acct-order-head">
+                    <div>
+                      <div className="acct-order-id">{o.id}</div>
+                      <div className="acct-meta">{o.date}</div>
+                    </div>
+                    <div className="acct-order-status">{o.status}</div>
+                  </div>
+                  <div className="acct-order-items">{o.items.map((i, k) => <div key={k}>{i}</div>)}</div>
+                  <div className="acct-order-foot">
+                    <div className="acct-order-total">{window.fmtPrice(o.total, "GBP")}</div>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <button className="btn btn-secondary btn-sm">View invoice</button>
+                      <button className="btn btn-secondary btn-sm">Re-order</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "addresses" && (
+            <div>
+              {addresses.map((a, i) => (
+                <div key={i} className="acct-address">
+                  <div>
+                    <div className="acct-address-label">{a.label}</div>
+                    <div className="acct-address-line">{a.line}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button className="btn btn-secondary btn-sm">Edit</button>
+                    <button className="btn btn-secondary btn-sm" style={{ color: "#a85a3f" }}>Remove</button>
+                  </div>
+                </div>
+              ))}
+              <div style={{ marginTop: 20 }}><Btn variant="secondary">+ Add a new address</Btn></div>
+            </div>
+          )}
+
+          {tab === "children" && (
+            <div>
+              {children.map((c, i) => (
+                <div key={i} className="acct-address">
+                  <div>
+                    <div className="acct-address-label">{c.name}</div>
+                    <div className="acct-address-line">Birthday · {c.birthday} · we'll write 6 weeks before</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button className="btn btn-secondary btn-sm">Edit</button>
+                    <button className="btn btn-secondary btn-sm" style={{ color: "#a85a3f" }}>Remove</button>
+                  </div>
+                </div>
+              ))}
+              <div style={{ marginTop: 20 }}><Btn variant="secondary">+ Add another child</Btn></div>
+            </div>
+          )}
+
+          {tab === "settings" && (
+            <div className="acct-settings">
+              <div className="acct-setting-row">
+                <div>
+                  <strong>Email reminders</strong>
+                  <p>Six weeks before each birthday, with a suggested piece in the right size.</p>
+                </div>
+                <button type="button" className="gift-toggle-switch on"/>
+              </div>
+              <div className="acct-setting-row">
+                <div>
+                  <strong>WhatsApp updates</strong>
+                  <p>Order confirmation, dispatch, and the photograph of your piece before it ships.</p>
+                </div>
+                <button type="button" className="gift-toggle-switch on"/>
+              </div>
+              <div className="acct-setting-row">
+                <div>
+                  <strong>Letters from Gaika</strong>
+                  <p>An occasional note from the studio — small batches, new pieces, never a sale.</p>
+                </div>
+                <button type="button" className="gift-toggle-switch"/>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window, { GiftGuidePage, BespokePage, SizeGuidePage, FaqPage, LookbookPage, CartPage, WishlistPage, CareGuidePage, ShippingPage, ContactPage, AccountPage });

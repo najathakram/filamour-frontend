@@ -19,6 +19,7 @@ const Router = () => {
   else if (route === "/checkout") page = <CheckoutPage/>;
   else if (route === "/wishlist") page = <WishlistPage/>;
   else if (route === "/journal") page = <JournalPage/>;
+  else if (route === "/account") page = <AccountPage/>;
   else if (route.startsWith("/dashboard")) page = <Dashboard route={route}/>;
   else page = <HomePage/>;
   // Hide public chrome on dashboard

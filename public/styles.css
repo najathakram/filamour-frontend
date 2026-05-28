@@ -875,3 +875,74 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .prod-review figcaption { margin-top: 22px; font-family: var(--body); font-size: 12px; letter-spacing: 0.06em; color: var(--charcoal); display: flex; flex-direction: column; gap: 4px; }
 .prod-review figcaption strong { font-weight: 400; }
 .prod-review-note { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--charcoal-soft); margin-top: 4px; }
+
+/* ============================================================ */
+/* ===== Personal shopper band (Shop) ====================== */
+/* ============================================================ */
+.ps-band { margin: 8px 0 32px; background: var(--white); border: 0.5px solid var(--line); border-radius: 4px; overflow: hidden; }
+.ps-band-collapsed { width: 100%; background: none; border: none; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: var(--body); font-size: 13px; color: var(--charcoal); }
+.ps-band-collapsed > span:first-child { display: flex; align-items: center; gap: 10px; }
+.ps-band-collapsed svg { color: var(--gold); }
+.ps-band-cta { color: var(--gold); display: flex; align-items: center; gap: 6px; letter-spacing: 0.08em; font-size: 11px; text-transform: uppercase; }
+.ps-band-form { padding: 8px 20px 22px; border-top: 0.5px solid var(--line); }
+.ps-band-lede { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 15px; color: var(--charcoal-soft); margin: 16px 0 18px; }
+.ps-band-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: end; }
+@media (max-width: 760px) { .ps-band-row { grid-template-columns: 1fr; } }
+.ps-band-row label { display: flex; flex-direction: column; gap: 6px; }
+.ps-band-row label > span { font-family: var(--body); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); }
+.ps-band-row select { background: var(--ivory); border: 0.5px solid var(--line); padding: 10px 12px; font-size: 14px; font-family: var(--body); color: var(--charcoal); border-radius: 3px; }
+.ps-band-row select:focus { outline: none; border-color: var(--gold); background: var(--white); }
+
+/* ============================================================ */
+/* ===== Search overlay polish ============================= */
+/* ============================================================ */
+.search-ov { position: fixed; inset: 0; background: rgba(46,41,38,0.55); z-index: 200; animation: cdFade 220ms ease; }
+.search-ov-panel { background: var(--ivory); padding: 32px 0 56px; animation: cdSlideD 280ms cubic-bezier(0.22,0.61,0.36,1); }
+@keyframes cdSlideD { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.search-ov-bar { display: flex; align-items: center; gap: 16px; border-bottom: 0.5px solid var(--charcoal); padding-bottom: 12px; }
+.search-ov-bar svg { color: var(--gold); flex-shrink: 0; }
+.search-ov-bar input { flex: 1; background: none; border: none; outline: none; font-family: var(--display); font-weight: 300; font-size: 28px; color: var(--charcoal); }
+.search-ov-bar input::placeholder { color: var(--charcoal-soft); }
+.search-ov-close { background: none; border: none; cursor: pointer; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); }
+.search-ov-close:hover { color: var(--charcoal); }
+.search-ov-quick { margin-top: 22px; }
+.search-ov-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-ov-chips .chip { background: var(--white); border: 0.5px solid var(--line); padding: 8px 14px; font-family: var(--body); font-size: 12px; color: var(--charcoal); cursor: pointer; border-radius: 999px; transition: all 160ms; }
+.search-ov-chips .chip:hover { border-color: var(--gold); color: var(--gold); }
+.search-ov-empty { padding: 40px 24px; text-align: center; color: var(--charcoal-soft); }
+.search-ov-empty p { margin: 0; line-height: 1.6; }
+.search-ov-empty-hint { margin-top: 8px !important; font-family: var(--display); font-style: italic; font-size: 14px; }
+
+/* ============================================================ */
+/* ===== Account page ====================================== */
+/* ============================================================ */
+.acct-page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 36px; }
+.acct-page-signout { background: none; border: 0.5px solid var(--line); padding: 10px 16px; font-family: var(--body); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); cursor: pointer; border-radius: 3px; }
+.acct-page-signout:hover { border-color: var(--charcoal); color: var(--charcoal); }
+.acct-page-tabs { display: flex; gap: 32px; border-bottom: 0.5px solid var(--line); margin-bottom: 40px; overflow-x: auto; }
+.acct-page-tab { background: none; border: none; padding: 12px 0; font-family: var(--body); font-size: 13px; letter-spacing: 0.06em; color: var(--charcoal-soft); cursor: pointer; position: relative; flex-shrink: 0; white-space: nowrap; }
+.acct-page-tab.active { color: var(--charcoal); }
+.acct-page-tab.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -0.5px; height: 1.5px; background: var(--gold); }
+.acct-page-tab:hover { color: var(--charcoal); }
+.acct-overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 760px) { .acct-overview-grid { grid-template-columns: 1fr; } }
+.acct-card-block { background: var(--white); padding: 28px 26px; border-top: 0.5px solid var(--gold); display: flex; flex-direction: column; gap: 8px; }
+.acct-card-block h3 { font-family: var(--display); font-weight: 400; font-size: 24px; margin-top: 6px; }
+.acct-meta { font-family: var(--body); font-size: 12px; color: var(--charcoal-soft); letter-spacing: 0.04em; }
+.acct-overview-items { font-family: var(--body); font-size: 13px; color: var(--charcoal); margin: 10px 0; line-height: 1.6; }
+.acct-link { background: none; border: none; padding: 0; cursor: pointer; font-family: var(--body); font-size: 12px; letter-spacing: 0.06em; color: var(--gold); align-self: flex-start; margin-top: auto; padding-top: 12px; }
+.acct-link:hover { color: var(--charcoal); }
+.acct-order { background: var(--white); padding: 24px 26px; margin-bottom: 14px; border: 0.5px solid var(--line); }
+.acct-order-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 0.5px solid var(--line); }
+.acct-order-id { font-family: var(--mono, monospace); font-size: 13px; color: var(--charcoal); font-weight: 400; }
+.acct-order-status { font-family: var(--body); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 5px 10px; background: var(--ivory); border-radius: 3px; }
+.acct-order-items { padding: 16px 0; font-family: var(--body); font-size: 13px; line-height: 1.7; color: var(--charcoal); }
+.acct-order-foot { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 0.5px solid var(--line); gap: 12px; flex-wrap: wrap; }
+.acct-order-total { font-family: var(--display); font-size: 19px; color: var(--charcoal); }
+.acct-address { display: flex; justify-content: space-between; align-items: center; gap: 24px; background: var(--white); padding: 22px 26px; margin-bottom: 12px; border: 0.5px solid var(--line); flex-wrap: wrap; }
+.acct-address-label { font-family: var(--display); font-size: 18px; color: var(--charcoal); }
+.acct-address-line { font-family: var(--body); font-size: 13px; color: var(--charcoal-soft); margin-top: 4px; line-height: 1.55; }
+.acct-settings { display: flex; flex-direction: column; gap: 16px; }
+.acct-setting-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; background: var(--white); padding: 22px 26px; border: 0.5px solid var(--line); }
+.acct-setting-row strong { font-weight: 400; font-family: var(--display); font-size: 17px; color: var(--charcoal); display: block; }
+.acct-setting-row p { font-family: var(--body); font-size: 13px; color: var(--charcoal-soft); margin: 6px 0 0; line-height: 1.55; max-width: 56ch; }

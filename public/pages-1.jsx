@@ -200,6 +200,8 @@ const ShopPage = () => {
           <div className="sub">Made by hand, in small batches</div>
         </div>
 
+        <PersonalShopper/>
+
         <div className="shop-layout">
           <aside className="shop-filters">
             {activeCount > 0 && (
@@ -318,4 +320,65 @@ const RecentlyViewed = () => {
   );
 };
 
-Object.assign(window, { HomePage, ShopPage, FilterGroup, ActiveChip, RecentlyViewed });
+// ===== Personal shopper inline helper (Shop page) =====
+const PersonalShopper = () => {
+  const [age, setAge] = React.useState("");
+  const [occasion, setOccasion] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+
+  const waBody = () => {
+    const lines = [
+      `Hi Gaika — looking for something for a ${age || "young one"}, occasion: ${occasion || "tbc"}.`,
+      `Any suggestions from the current collection?`,
+    ];
+    return encodeURIComponent(lines.join("\n"));
+  };
+
+  return (
+    <div className="ps-band">
+      <button className="ps-band-collapsed" onClick={() => setOpen(!open)} aria-expanded={open}>
+        <span><Icon name="needle" size={14} stroke={1.4}/> Not sure where to start?</span>
+        <span className="ps-band-cta">{open ? "Hide" : "We'll suggest three"} <Icon name="chev-down" size={12} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 180ms" }}/></span>
+      </button>
+      {open && (
+        <div className="ps-band-form">
+          <p className="ps-band-lede">Tell us who you're shopping for. We'll send three pieces back on WhatsApp within a working day.</p>
+          <div className="ps-band-row">
+            <label>
+              <span>Age</span>
+              <select value={age} onChange={e => setAge(e.target.value)}>
+                <option value="">Select age…</option>
+                <option>Newborn (0–3 months)</option>
+                <option>3–6 months</option>
+                <option>6–12 months</option>
+                <option>12–18 months</option>
+                <option>18–24 months</option>
+                <option>2 years</option>
+                <option>3 years</option>
+                <option>4–5 years</option>
+              </select>
+            </label>
+            <label>
+              <span>Occasion</span>
+              <select value={occasion} onChange={e => setOccasion(e.target.value)}>
+                <option value="">Select occasion…</option>
+                <option>Christening</option>
+                <option>First birthday</option>
+                <option>New baby gift</option>
+                <option>Family photoshoot</option>
+                <option>Wedding guest</option>
+                <option>Everyday</option>
+                <option>I'll explain</option>
+              </select>
+            </label>
+            <a className="btn btn-wa" href={`https://wa.me/447000000000?text=${waBody()}`} target="_blank" rel="noopener">
+              <Icon name="whatsapp" size={14}/> Send to Gaika
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+Object.assign(window, { HomePage, ShopPage, FilterGroup, ActiveChip, RecentlyViewed, PersonalShopper });

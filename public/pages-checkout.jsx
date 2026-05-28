@@ -293,24 +293,69 @@ const JournalPage = () => {
 // ===================== SEARCH OVERLAY =====================
 const SearchOverlay = ({ onClose }) => {
   const [q, setQ] = React.useState("");
-  React.useEffect(() => { document.body.style.overflow = "hidden"; return () => { document.body.style.overflow = ""; }; }, []);
-  const matches = q.trim() ? PRODUCTS.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.desc.toLowerCase().includes(q.toLowerCase())) : PRODUCTS.slice(0, 4);
+  React.useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => { if (e.key === "Escape") onClose?.(); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [onClose]);
+
+  const term = q.trim().toLowerCase();
+  const matches = term
+    ? PRODUCTS.filter(p =>
+        [p.name, p.desc, p.category, p.occasion].some(s => (s || "").toLowerCase().includes(term))
+      )
+    : PRODUCTS.slice(0, 4);
+
+  const quick = [
+    { label: "Christening dresses", q: "christening" },
+    { label: "First birthday", q: "first birthday" },
+    { label: "New baby gift", q: "gift" },
+    { label: "Newborn (NB–3M)", q: "romper" },
+    { label: "Day dresses", q: "day dress" },
+    { label: "Made to order", q: "smocked" },
+  ];
+
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(46,41,38,0.6)", zIndex: 200, animation: "fadeIn 150ms ease-out" }} onClick={onClose}>
-      <div style={{ background: "var(--ivory)", padding: "32px 0 48px", animation: "slideUp 200ms ease-out" }} onClick={(e) => e.stopPropagation()}>
+    <div className="search-ov" onClick={onClose}>
+      <div className="search-ov-panel" onClick={(e) => e.stopPropagation()}>
         <div className="wrap" style={{ maxWidth: 880, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, borderBottom: "0.5px solid var(--charcoal)", paddingBottom: 12 }}>
+          <div className="search-ov-bar">
             <Icon name="search" size={22}/>
-            <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Search pieces, occasions, materials…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--display)", fontSize: 28, fontWeight: 300 }}/>
-            <button onClick={onClose} style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase" }}>Esc · Close</button>
+            <input
+              autoFocus
+              value={q}
+              onChange={e => setQ(e.target.value)}
+              placeholder="Search pieces, occasions, materials…"
+            />
+            <button className="search-ov-close" onClick={onClose}>Esc · Close</button>
           </div>
-          <div style={{ marginTop: 24 }}>
-            <div className="eyebrow gold" style={{ marginBottom: 16 }}>{q.trim() ? `${matches.length} matches` : "Popular"}</div>
-            <div className="grid-4">
-              {matches.slice(0, 4).map(p => <ProductCard key={p.slug} product={p}/>)}
+
+          {!term && (
+            <div className="search-ov-quick">
+              <div className="eyebrow gold" style={{ marginBottom: 12 }}>Or jump in</div>
+              <div className="search-ov-chips">
+                {quick.map(c => (
+                  <button key={c.label} className="chip" onClick={() => setQ(c.q)}>{c.label}</button>
+                ))}
+              </div>
             </div>
-            {q.trim() && matches.length === 0 && (
-              <div style={{ padding: 48, textAlign: "center", color: "var(--charcoal-soft)" }}>No matches. Try "dress", "romper", or "christening".</div>
+          )}
+
+          <div style={{ marginTop: 28 }}>
+            <div className="eyebrow gold" style={{ marginBottom: 16 }}>{term ? `${matches.length} ${matches.length === 1 ? "match" : "matches"} for "${q}"` : "Popular pieces"}</div>
+            {matches.length > 0 ? (
+              <div className="grid-4">
+                {matches.slice(0, 4).map(p => <ProductCard key={p.slug} product={p}/>)}
+              </div>
+            ) : (
+              <div className="search-ov-empty">
+                <p>No pieces match "{q}" yet.</p>
+                <p className="search-ov-empty-hint">Try a softer term — "dress", "romper", or "christening" — or ask Gaika directly:</p>
+                <a className="btn btn-wa btn-sm" style={{ marginTop: 16 }} href={`https://wa.me/447000000000?text=${encodeURIComponent(`Hi — looking for ${q || "something specific"}. Any suggestions?`)}`} target="_blank" rel="noopener">
+                  <Icon name="whatsapp" size={13}/> Ask on WhatsApp
+                </a>
+              </div>
             )}
           </div>
         </div>
