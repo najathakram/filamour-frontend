@@ -17,7 +17,7 @@ const HomePage = () => {
   return (
     <div className="page">
       {/* SPLIT HERO: product + benefit + dual CTA */}
-      <section className="hero hero-split">
+      <section className="hero-split">
         <div className="wrap hero-split-inner">
           <div className="hero-split-copy">
             <img src="assets/filamour-logo.png" alt="" className="hero-mark"/>
